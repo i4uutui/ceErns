@@ -2,35 +2,15 @@
   <div class="login-container">
     <div class="login-wrapper">
       <div class="login-logo">管理系统</div>
-      <el-form 
-        ref="loginFormRef" 
-        :model="loginForm" 
-        :rules="loginRules" 
-        label-width="0"
-        class="login-form"
-      >
+      <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" label-width="0" class="login-form">
         <el-form-item prop="username">
-          <el-input 
-            v-model="loginForm.username" 
-            prefix-icon="UserFilled" 
-            placeholder="用户名"
-          />
+          <el-input v-model="loginForm.username" :prefix-icon="UserFilled" placeholder="用户名" />
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
-            v-model="loginForm.password"
-            prefix-icon="LockFilled"
-            type="password"
-            placeholder="密码"
-          />
+          <el-input v-model="loginForm.password" :prefixIcon="Key" type="password" placeholder="密码" />
         </el-form-item>
         <el-form-item>
-          <el-button 
-            type="primary" 
-            :loading="loading" 
-            @click="handleLogin"
-            class="w-full"
-          >
+          <el-button type="primary" :loading="loading" @click="handleLogin" class="w-full" style="width: 100%;">
             登录
           </el-button>
         </el-form-item>
@@ -42,7 +22,8 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElForm, ElFormItem, ElInput, ElButton } from 'element-plus';
+import { Key, UserFilled } from '@element-plus/icons-vue'
 import request from '@/utils/request';
 
 const router = useRouter();
@@ -113,4 +94,4 @@ const handleLogin = async () => {
 .login-form {
   margin-top: 20px;
 }
-</style>    
+</style>
