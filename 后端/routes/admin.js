@@ -24,10 +24,10 @@ router.post('/login', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: '账号或密码错误' });
     }
-
+    
     const token = jwt.sign({ id: rows[0].id }, process.env.JWT_SECRET);
     
-    res.json({ token });
+    res.json({ token, code: 200 });
   } catch (error) {
     res.status(500).json({ message: '服务器错误' });
   }

@@ -5,17 +5,12 @@ const routes = [
   {
     path: '/admin/login',
     name: 'AdminLogin',
-    component: () => import('../views/LoginPage.vue')
+    component: () => import('../views/Login.vue')
   },
-  {
-    path: '/admin/userList',
-    name: 'AdminUserList',
-    component: () => import('../views/UserListPage.vue')
-  },
-  // 默认重定向
   {
     path: '/',
-    redirect: '/admin/login'
+    name: 'AdminUserList',
+    component: () => import('../views/UserListPage.vue')
   }
 ];
 
