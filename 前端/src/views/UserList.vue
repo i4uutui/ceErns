@@ -16,8 +16,13 @@
       <el-table :data="adminList" stripe style="width: 100%">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="username" label="用户名" />
+        <el-table-column prop="company" label="公司名" />
+        <el-table-column prop="created_at" label="添加时间" />
         <el-table-column label="操作">
           <template #default="scope">
+            <el-button size="small" type="default" @click="handleUplate(scope.row)">
+              修改
+            </el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">
               删除
             </el-button>
@@ -25,30 +30,30 @@
         </el-table-column>
       </el-table>
       <div class="pagination-container">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 30]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
+        <el-pagination 
+        layout="prev, pager, next, jumper, slot, total, sizes" :current-page="currentPage" 
+        :page-size="pageSize" 
+        :page-count="total" 
+        :page-sizes='[10, 20, 40, 60]'
+        @update:current-page="currentPageChange"
+        @update:page-size="pageSizeChange"
         />
       </div>
     </el-card>
 
     <!-- 添加管理员对话框 -->
-    <el-dialog :visible.sync="dialogVisible" title="添加子管理员">
-      <template #content>
-        <el-form :model="form" ref="formRef" label-width="80px">
-          <el-form-item label="用户名" prop="username">
-            <el-input v-model="form.username" />
-          </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input v-model="form.password" type="password" />
-          </el-form-item>
-        </el-form>
-      </template>
+    <el-dialog v-model="dialogVisible" title="添加子管理员">
+      <el-form :model="form" ref="formRef" label-width="80px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="form.username" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="form.password" type="password" />
+        </el-form-item>
+        <el-form-item label="公司名称" prop="company">
+          <el-input v-model="form.company" />
+        </el-form-item>
+      </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
@@ -69,36 +74,59 @@ const formRef = ref(null);
 const form = reactive({
   username: '',
   password: '',
+  company: ''
 });
 const adminList = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+let edit = ref(0)
+
 
 // 获取子管理员列表
 const fetchAdminList = async () => {
-  const { data } = await request.get('/admin/sub-admins', {
+  const res = await request.get('/admin/sub-admins', {
     params: {
       page: currentPage.value,
-      pageSize: pageSize.value,
+      pageSize: pageSize.value
     },
   });
-  adminList.value = data.list;
-  total.value = data.total;
+  adminList.value = res.data;
+  total.value = res.total;
 };
-
+const handleUplate = async (admin) => {
+  edit.value = admin.id;
+  dialogVisible.value = true;
+  form.username = admin.username;
+  form.password = admin.password;
+  form.company = admin.company;
+}
 // 添加管理员
 const handleAdd = () => {
+  edit.value = 0;
   dialogVisible.value = true;
   form.username = '';
   form.password = '';
+  form.company = ''
 };
 
 // 提交表单
 const handleSubmit = async () => {
   try {
-    await request.post('/api/super-admin/sub-admins', form);
-    ElMessage.success('添加成功');
+    if(!edit.value){
+      await request.post('/admin/sub-admins', form);
+      ElMessage.success('添加成功');
+    }else{
+      const myForm = {
+        id: edit.value,
+        username: form.username,
+        password: form.password,
+        company: form.company,
+      }
+      await request.put('/admin/sub-admins', myForm);
+      ElMessage.success('修改成功');
+    }
+    
     dialogVisible.value = false;
     fetchAdminList();
   } catch (error) {
@@ -110,7 +138,7 @@ const handleSubmit = async () => {
 const handleDelete = async (admin) => {
   if (confirm('确定要删除该管理员吗？')) {
     try {
-      await request.delete(`/api/super-admin/sub-admins/${admin.id}`);
+      await request.delete(`/admin/sub-admins/${admin.id}`);
       ElMessage.success('删除成功');
       fetchAdminList();
     } catch (error) {
@@ -120,15 +148,15 @@ const handleDelete = async (admin) => {
 };
 
 // 分页相关
-const handleSizeChange = (newSize) => {
-  pageSize.value = newSize;
+function pageSizeChange(val) {
+  currentPage.value = 1;
+  pageSize.value = val;
+  fetchAdminList()
+}
+function currentPageChange(val) {
+  currentPage.value = val;
   fetchAdminList();
-};
-
-const handleCurrentChange = (newPage) => {
-  currentPage.value = newPage;
-  fetchAdminList();
-};
+}
 
 onMounted(() => {
   fetchAdminList();
