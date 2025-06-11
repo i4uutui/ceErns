@@ -31,8 +31,8 @@ const loginFormRef = ref(null);
 const loading = ref(false);
 
 const loginForm = reactive({
-  username: '',
-  password: '',
+  username: 'admin',
+  password: 'admin123',
 });
 
 const loginRules = reactive({
@@ -54,7 +54,7 @@ const handleLogin = async () => {
     const res = await request.post('/admin/login', loginForm);
     localStorage.setItem('token', res.token);
     ElMessage.success('登录成功');
-    router.push('/');
+    router.push('/admin/user');
   } catch (error) {
     console.error('登录失败', error);
     ElMessage.error(error.message || '登录失败');

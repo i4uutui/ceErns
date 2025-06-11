@@ -12,7 +12,7 @@ service.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers['Authorization'] = `${token}`;
     }
     return config;
   },
@@ -44,7 +44,7 @@ service.interceptors.response.use(
       ElMessage.error('登录状态已过期，请重新登录');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      router.push('/login');
+      router.push('/');
     } else {
       ElMessage({
         message: error.message,

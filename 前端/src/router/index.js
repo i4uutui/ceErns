@@ -3,14 +3,14 @@ import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
   // 总后台路由
   {
-    path: '/admin/login',
+    path: '/',
     name: 'AdminLogin',
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/',
+    path: '/admin/user',
     name: 'AdminUserList',
-    component: () => import('../views/UserListPage.vue')
+    component: () => import('../views/UserList.vue')
   }
 ];
 

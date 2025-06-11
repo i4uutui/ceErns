@@ -61,7 +61,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElDialog, ElButton, ElCard, ElPagination, ElTable, ElTableColumn, ElInput, ElFormItem, ElForm } from 'element-plus';
 import request from '@/utils/request';
 
 const dialogVisible = ref(false);
@@ -77,18 +77,14 @@ const total = ref(0);
 
 // 获取子管理员列表
 const fetchAdminList = async () => {
-  try {
-    const { data } = await request.get('/api/super-admin/sub-admins', {
-      params: {
-        page: currentPage.value,
-        pageSize: pageSize.value,
-      },
-    });
-    adminList.value = data.list;
-    total.value = data.total;
-  } catch (error) {
-    ElMessage.error('获取列表失败');
-  }
+  const { data } = await request.get('/admin/sub-admins', {
+    params: {
+      page: currentPage.value,
+      pageSize: pageSize.value,
+    },
+  });
+  adminList.value = data.list;
+  total.value = data.total;
 };
 
 // 添加管理员

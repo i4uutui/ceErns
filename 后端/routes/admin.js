@@ -43,7 +43,7 @@ router.get('/sub-admins', authMiddleware, async (req, res) => {
       [parseInt(pageSize), offset]
     );
     const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins');
-    res.json({ data: rows, total: countRows[0].total });
+    res.json({ data: rows, total: countRows[0].total, code: 200 });
   } catch (error) {
     res.status(500).json({ message: '服务器错误' });
   }
