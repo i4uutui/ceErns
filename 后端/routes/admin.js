@@ -109,4 +109,18 @@ router.put('/sub-admins', authMiddleware, async (req, res) => {
   }
 });
 
+// 删除子后台用户
+router.delete('/sub-admins/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.execute(
+      'DELETE FROM sub_admins WHERE id = ?',
+      [id]
+    );
+    res.json({ message: '删除成功', code: 200 });
+  } catch (error) {
+    res.status(500).json({ message: '服务器错误' });
+  }
+});
+
 module.exports = router;
