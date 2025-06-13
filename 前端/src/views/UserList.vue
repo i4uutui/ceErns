@@ -47,7 +47,7 @@
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="密码" prop="password"  v-if="!edit">
           <el-input v-model="form.password" type="password" />
         </el-form-item>
         <el-form-item label="公司名称" prop="company">
@@ -120,7 +120,6 @@ const handleSubmit = async () => {
       const myForm = {
         id: edit.value,
         username: form.username,
-        password: form.password,
         company: form.company,
       }
       await request.put('/admin/sub-admins', myForm);

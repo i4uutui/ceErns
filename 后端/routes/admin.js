@@ -69,9 +69,12 @@ router.get('/sub-admins', authMiddleware, async (req, res) => {
 router.post('/sub-admins', authMiddleware, async (req, res) => {
   const { username, password, company } = req.body;
   try {
+    // 对密码进行加密
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const [result] = await pool.execute(
       'INSERT INTO sub_admins (username, password, company) VALUES (?, ?, ?)',
-      [username, password, company]
+      [username, hashedPassword, company]
     );
     
     // 查询包含时间字段的完整信息
@@ -91,10 +94,24 @@ router.put('/sub-admins', authMiddleware, async (req, res) => {
   const { username, password, company, id } = req.body;
   
   try {
+    // 先查询原始密码
+    const [adminRows] = await pool.execute(
+      'SELECT password FROM sub_admins WHERE id = ?',
+      [id]
+    );
+    
+    if (adminRows.length === 0) {
+      return res.status(404).json({ message: '管理员不存在', code: 404 });
+    }
+    
+    // 如果密码字段存在且不为空，则加密新密码
+    // 否则使用原始密码
+    const passwordToUpdate = password ? await bcrypt.hash(password, 10) : adminRows[0].password;
+
     // 更新管理员信息（updated_at 会自动更新）
     await pool.execute(
       'UPDATE sub_admins SET username = ?, password = ?, company = ? WHERE id = ?',
-      [username, password, company, id]
+      [username, passwordToUpdate, company, id]
     );
     
     // 查询更新后的完整信息
