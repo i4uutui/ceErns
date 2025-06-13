@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 // 路由
 app.use('/admin', require('./routes/admin'));
 app.use('/api', require('./routes/subAdmin'));
+app.use('/upload', require('./routes/upload'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
