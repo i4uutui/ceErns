@@ -79,7 +79,7 @@ router.post('/sub-admins', authMiddleware, async (req, res) => {
       'SELECT * FROM sub_admins WHERE id = ?',
       [result.insertId]
     );
-    
+
     res.json({ data: rows[0], code: 200 });
   } catch (error) {
     res.status(500).json({ message: '服务器错误' });
