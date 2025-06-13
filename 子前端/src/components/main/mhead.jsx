@@ -1,15 +1,15 @@
-import { computed, defineComponent, inject } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElAvatar, ElBreadcrumb, ElBreadcrumbItem, ElIcon, ElText, ElSpace, ElMessage } from 'element-plus';
+import { ElRow, ElCol } from 'element-plus';
 import { SwitchButton } from '@element-plus/icons-vue'
-import Tags from './tags';
+import { getItem } from '@/assets/js/storage';
+import imageError from '@/assets/images/0fc7d20532fdaf769a25683617711.png'
 import "./main.css"
 
 export default defineComponent({
   setup(){
     const router = useRouter();
-    const showModal = inject('showModal')
-    const user = localStorage.getItem('user')
+    const user = reactive(getItem('user'))
 
     const errorHandler = () => {
       // 头像没显示出来
@@ -22,41 +22,27 @@ export default defineComponent({
         },
       })
     }
-    const handleBreadcrumbClick = (path) => {
-      router.push(path);
-    };
-
-    const breadcrumbItems = computed(() => {
-      const matched = route.matched;
-      return matched.map((match) => ({
-        path: match.path,
-        title: match.meta.title,
-      }));
-    })
 
     return() => (
       <>
-        <div class="header">
-          <ElBreadcrumb separator="/">
-            {breadcrumbItems.value.map((item) => (
-              <ElBreadcrumbItem key={ item.path } onClick={() => handleBreadcrumbClick(item.path)}>
-                { item.title }
-              </ElBreadcrumbItem>
-            ))}
-          </ElBreadcrumb>
-          <ElSpace wrap>
-            <ElAvatar size={ 40 } src={ user.avatar } onError={ errorHandler }>
-              <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
-            </ElAvatar>
-            <ElText style='padding-right:40px'>{ user.nickName }</ElText>
-
-            <ElText style='cursor: pointer;' onClick={ loginOut }>
-              <ElIcon style='margin-right: 6px'><SwitchButton /></ElIcon>
-              退出登录
-            </ElText>
-          </ElSpace>
-        </div>
-        {/* <Tags></Tags> */}
+        <ElRow align='middle' style={{ height: "64px" }}>
+          <ElCol span={ 8 }>
+            <img src="https://cn.element-plus.org/images/element-plus-logo.svg" style={{ width: "180px" }} />
+          </ElCol>
+          <ElCol span={ 8 }>
+            <div class="f28" style={{ fontWeight: 'bold', textAlign: 'center' }}>
+              企业数字化管理平台
+            </div>
+          </ElCol>
+          <ElCol span={ 8 }>
+            <div class="flex row-right">
+              <ElAvatar shape="circle" size={ 40 } fit="cover" src={ user.avatar_url }>
+                <img src={ imageError } style={{ width: "40px", borderRadius: '50%' }} />
+              </ElAvatar>
+              <div class="pl10">欢迎你，{ user.username }</div>
+            </div>
+          </ElCol>
+        </ElRow>
       </>
     )
   }

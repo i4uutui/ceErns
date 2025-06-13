@@ -2,6 +2,7 @@ import { defineComponent, ref, reactive } from 'vue';
 import { ElMessage, ElForm, ElFormItem, ElInput, ElButton } from 'element-plus';
 import { Key, UserFilled } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
+import { setItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import "@/assets/css/login.css"
 
@@ -26,10 +27,11 @@ export default defineComponent({
       loginFormRef.value.validate((valid) => {
         if (!valid) return false;
         request.post('/login', loginForm).then(res => {
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('user', res.user)
+          console.log(res);
+          setItem('token', res.token);
+          setItem('user', res.user)
           ElMessage.success('登录成功');
-          router.push('/admin/user');
+          router.push('/menber/user');
         })
       });
     };

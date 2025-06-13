@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: rows[0].id }, process.env.JWT_SECRET);
     
     const { password: _, ...userWithoutPassword } = rows[0];
-    res.json({ token, user: formatObjectTime(userWithoutPassword) });
+    res.json({ token, user: formatObjectTime(userWithoutPassword), code: 200 });
   } catch (error) {
     res.status(500).json({ message: '服务器错误' });
   }
