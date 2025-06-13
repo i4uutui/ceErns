@@ -56,7 +56,7 @@
         <el-form-item label="头像">
           <el-upload
             class="avatar-uploader"
-            name="avatar"
+            name="image"
             :action="config.api + 'upload/image'"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
