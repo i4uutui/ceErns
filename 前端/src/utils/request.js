@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
+import config from './config'
 
 const service = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: config.api,
   timeout: 5000,
 });
 
@@ -38,7 +39,6 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    console.log('err' + error);
     const { status } = error.response || {};
     if (status === 401) {
       ElMessage.error('登录状态已过期，请重新登录');
