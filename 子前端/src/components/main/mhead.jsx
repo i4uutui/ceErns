@@ -1,5 +1,5 @@
 import { computed, defineComponent, inject } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { ElAvatar, ElBreadcrumb, ElBreadcrumbItem, ElIcon, ElText, ElSpace, ElMessage } from 'element-plus';
 import { SwitchButton } from '@element-plus/icons-vue'
 import Tags from './tags';
@@ -7,11 +7,9 @@ import "./main.css"
 
 export default defineComponent({
   setup(){
-    const router = useRouter()
-    const route = useRoute()
-    const store = useStore()
+    const router = useRouter();
     const showModal = inject('showModal')
-    const user = store.userInfo
+    const user = localStorage.getItem('user')
 
     const errorHandler = () => {
       // 头像没显示出来
@@ -19,21 +17,9 @@ export default defineComponent({
     const loginOut = () => {
       showModal('是否确认退出登录？',{
         onConfirm: () => {
-          userOut()
+          localStorage.clear()
+          router.push('/login');
         },
-      })
-    }
-    // 用户确认退出登录，正式退出
-    const userOut = () => {
-      post('/logout').then(res => {
-        if(res.code != 200)
-        return ElMessage.error(res.msg)
-
-        ElMessage.success('退出成功')
-        store.clearToken()
-        setTimeout(() => {
-          router.push('/login')
-        }, 500);
       })
     }
     const handleBreadcrumbClick = (path) => {

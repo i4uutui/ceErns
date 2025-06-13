@@ -4,6 +4,7 @@ const pool = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
 // 子后台登录
 router.post('/login', async (req, res) => {
@@ -26,8 +27,9 @@ router.post('/login', async (req, res) => {
     }
     
     const token = jwt.sign({ id: rows[0].id }, process.env.JWT_SECRET);
-    rows[0].token = token;
-    res.json({ data: rows[0], code: 200 });
+    
+    const { password: _, ...userWithoutPassword } = rows[0];
+    res.json({ token, user: formatObjectTime(userWithoutPassword) });
   } catch (error) {
     res.status(500).json({ message: '服务器错误' });
   }

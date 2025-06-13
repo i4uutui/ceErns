@@ -27,6 +27,7 @@ export default defineComponent({
         if (!valid) return false;
         request.post('/login', loginForm).then(res => {
           localStorage.setItem('token', res.token);
+          localStorage.setItem('user', res.user)
           ElMessage.success('登录成功');
           router.push('/admin/user');
         })
