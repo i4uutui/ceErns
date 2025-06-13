@@ -1,6 +1,6 @@
 import { defineComponent, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElRow, ElCol } from 'element-plus';
+import { ElRow, ElCol, ElAvatar } from 'element-plus';
 import { SwitchButton } from '@element-plus/icons-vue'
 import { getItem } from '@/assets/js/storage';
 import imageError from '@/assets/images/0fc7d20532fdaf769a25683617711.png'

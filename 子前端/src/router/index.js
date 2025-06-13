@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { myRouter } from './router'
+import route from './routes'
 
 const routes = [
-  // 总后台路由
-  myRouter,
+  ...route,
   {
     path: '/login',
     name: 'AdminLogin',
