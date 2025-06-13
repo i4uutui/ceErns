@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus';
 import router from '@/router';
 
 const service = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: "http://localhost:3000/api/",
   timeout: 5000,
 });
 
@@ -23,8 +23,7 @@ service.interceptors.request.use(
 );
 
 // 响应拦截器
-service.interceptors.response.use(
-  (response) => {
+service.interceptors.response.use((response) => {
     const res = response.data;
     if (res.code !== 200) {
       ElMessage({
@@ -32,13 +31,11 @@ service.interceptors.response.use(
         type: 'error',
         duration: 3 * 1000,
       });
-      return Promise.reject(new Error(res.message || 'Error'));
+      return;
     } else {
       return res;
     }
-  },
-  (error) => {
-    console.log('err' + error);
+  }, (error) => {
     const { status } = error.response || {};
     if (status === 401) {
       ElMessage.error('登录状态已过期，请重新登录');
