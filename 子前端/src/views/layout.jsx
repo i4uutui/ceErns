@@ -12,7 +12,7 @@ export default defineComponent({
   setup(){
     return() => (
       <ElContainer style={{ height: "100vh" }}>
-        <ElHeader height='64px' style={{ borderBottom: "1px solid #eee" }}>
+        <ElHeader height='64px' style={{ borderBottom: "1px solid #eee", backgroundColor: '#FFF' }}>
           <Mhead />
         </ElHeader>
         <ElContainer>
@@ -21,7 +21,19 @@ export default defineComponent({
           </ElScrollbar>
           <ElMain><RouterView /></ElMain>
         </ElContainer>
-        <ElFooter height='40px'>Footer</ElFooter>
+        <ElFooter height='40px' style="backgroundColor: #FFF">
+          <div class="flex row-center" style={{ height: "40px" }}>
+            <div class="flex-1 text-left">
+            开发者 ┃ 东莞元方企业管理咨询有限公司 ┃ 徐庆华 18666885858
+            </div>
+            <div class="flex-1 text-center">
+            使用企业 ┃ 东莞市骏宏达铝业科技有限公司
+            </div>
+            <div class="flex-1 text-right">
+              使用者 ┃ ADMI001
+            </div>
+          </div>
+        </ElFooter>
       </ElContainer>
     )
   }

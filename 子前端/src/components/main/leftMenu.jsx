@@ -21,11 +21,14 @@ export default defineComponent({
           groupedRoutes[parent].push(route);
         }
       });
-      menuRoutes.value = Object.entries(groupedRoutes).map(([key, value]) => ({
+      // 过滤掉没有子路由的父菜单组
+      const filteredRoutes = Object.fromEntries(
+        Object.entries(groupedRoutes).filter(([_, routes]) => routes.length > 0)
+      );
+      menuRoutes.value = Object.entries(filteredRoutes).map(([key, value]) => ({
         title: key,
         children: value
       }));
-      console.log(menuRoutes.value);
     });
     
     return() => (
