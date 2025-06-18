@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import route from './routes'
+import { getItem } from '@/assets/js/storage';
 
 const routes = [
   ...route,
@@ -24,6 +25,18 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  const token = getItem('token');
+  console.log(to);
+  if (!token && to.name !== 'AdminLogin') {
+    // 如果没有 token 且访问的不是登录页面，跳转到登录页面
+    next({ name: 'AdminLogin' });
+  } else {
+    // 否则继续访问
+    next();
+  }
 });
 
 export default router;  

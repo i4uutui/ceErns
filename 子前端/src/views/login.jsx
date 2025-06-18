@@ -26,12 +26,12 @@ export default defineComponent({
     const handleLogin = () => {
       loginFormRef.value.validate((valid) => {
         if (!valid) return false;
-        request.post('/login', loginForm).then(res => {
+        request.post('api/login', loginForm).then(res => {
           console.log(res);
           setItem('token', res.token);
           setItem('user', res.user)
           ElMessage.success('登录成功');
-          router.push('/menber/user');
+          router.push('/');
         })
       });
     };

@@ -75,7 +75,7 @@ export default defineComponent({
           {{
             header: () => (
               <div class="clearfix">
-                <ElButton style="float: right; margin-top: -5px" type="primary" onClick={ handleAdd } >
+                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
                   添加管理员
                 </ElButton>
               </div>
@@ -90,15 +90,17 @@ export default defineComponent({
           }}
         </ElCard>
         <ElDialog v-model={ dialogVisible.value } title="添加管理员">
-          <ElForm model={ form.value } ref="formRef" label-width="80px">
-            <ElFormItem label="用户名" prop="username">
-              <ElInput v-model={ form.value.username } />
-            </ElFormItem>
-            <ElFormItem label="密码" prop="password">
-              <ElInput v-model={ form.value.password } type="password" />
-            </ElFormItem>
-          </ElForm>
           {{
+            default: () => (
+              <ElForm model={ form.value } ref="formRef" label-width="80px">
+                <ElFormItem label="用户名" prop="username">
+                  <ElInput v-model={ form.value.username } />
+                </ElFormItem>
+                <ElFormItem label="密码" prop="password">
+                  <ElInput v-model={ form.value.password } type="password" />
+                </ElFormItem>
+              </ElForm>
+            ),
             footer: () => (
               <span class="dialog-footer">
                 <ElButton onClick={ handleClose }>取消</ElButton>

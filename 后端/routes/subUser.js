@@ -4,6 +4,7 @@ const pool = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
 // 添加用户
 router.post('/user', authMiddleware, async (req, res) => {

@@ -3,7 +3,18 @@ const routes = [
     path: '/',
     name: 'Layout',
     component: () => import('../views/layout.jsx'),
+    redirect: '/home',
     children: [
+      //首页
+      {
+        path: 'home',
+        name: 'Home',
+        component: () => import('../views/home.jsx'),
+        meta: {
+          title: '首页',
+          parent: '首页'
+        }
+      },
       // 系统管理
       {
         path: 'system/user',

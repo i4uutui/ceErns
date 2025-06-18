@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
+import { getItem } from '@/assets/js/storage';
 
 const service = axios.create({
   baseURL: "http://localhost:3000/",
@@ -10,7 +11,7 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = getItem('token');
     if (token) {
       config.headers['Authorization'] = `${token}`;
     }
