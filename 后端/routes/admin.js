@@ -93,7 +93,6 @@ router.post('/sub-admins', authMiddleware, async (req, res) => {
 router.put('/sub-admins', authMiddleware, async (req, res) => {
   const { username, password, name, company, attr, status, id } = req.body;
   
-  try {
     // 先查询原始密码
     const [adminRows] = await pool.execute(
       'SELECT password FROM sub_admins WHERE id = ?',
@@ -121,9 +120,6 @@ router.put('/sub-admins', authMiddleware, async (req, res) => {
     );
     
     res.json({ data: rows[0], code: 200 });
-  } catch (error) {
-    res.status(500).json({ message: '服务器错误' });
-  }
 });
 
 // 删除子后台用户

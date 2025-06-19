@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElSwitch, ElCascader, ElCascaderPanel } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElSwitch, ElCascader, ElMessageBox } from 'element-plus'
 import request from '@/utils/request';
 import router from '@/router';
 import { getItem } from '@/assets/js/storage';
@@ -75,8 +75,30 @@ export default defineComponent({
         ElMessage.error(error.response?.data?.message || '添加失败');
       }
     }
+    const handleDelete = (row) => {
+      ElMessageBox.confirm(
+        "是否确认删除？",
+        "提示",
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(async () => {
+        await request.delete('/api/user/' + row.id);
+        ElMessage.success('删除成功');
+        fetchAdminList();
+      }).catch(() => {})
+    }
+    const closeUser = (row) => {
+      form.value = row;
+      const power = JSON.parse(row.power)
+      form.value.power = power
+      edit.value = row.id;
+      handleSubmit()
+    }
     const handleUplate = (row) => {
-      edit.value = 1;
+      edit.value = row.id;
       dialogVisible.value = true;
       form.value.username = row.username;
       form.value.name = row.name;
@@ -141,13 +163,13 @@ export default defineComponent({
                 <ElTableColumn prop="username" label="用户名" width="180" />
                 <ElTableColumn prop="name" label="姓名" width="180" />
                 <ElTableColumn prop="status" label="状态">
-                  <ElSwitch />
+                  {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } onChange={ () => closeUser(scope.row) } />}
                 </ElTableColumn>
                 <ElTableColumn label="操作">
                   {(scope) => (
                     <>
                       <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                      <ElButton size="small" type="danger">删除</ElButton>
+                      <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                     </>
                   )}
                 </ElTableColumn>

@@ -7,7 +7,7 @@ const routes = [
     children: [
       //首页
       {
-        path: 'home',
+        path: '/home',
         name: 'Home',
         component: () => import('../views/home.jsx'),
         meta: {
@@ -17,7 +17,7 @@ const routes = [
       },
       // 系统管理
       {
-        path: 'system/user',
+        path: '/system/user',
         name: 'UserManagement',
         component: () => import('@/views/System/UserManagement.jsx'),
         meta: {
@@ -27,7 +27,7 @@ const routes = [
       },
       // 基础资料
       {
-        path: 'basic/product-code',
+        path: '/basic/product-code',
         name: 'ProductCode',
         component: () => import('@/views/Basic/ProductCode.jsx'),
         meta: {
@@ -36,7 +36,7 @@ const routes = [
         }
       },
       {
-        path: 'basic/part-code',
+        path: '/basic/part-code',
         name: 'PartCode',
         component: () => import('@/views/Basic/PartCode.jsx'),
         meta: {
@@ -45,7 +45,7 @@ const routes = [
         }
       },
       {
-        path: 'basic/material-code',
+        path: '/basic/material-code',
         name: 'MaterialCode',
         component: () => import('@/views/Basic/MaterialCode.jsx'),
         meta: {
@@ -54,7 +54,7 @@ const routes = [
         }
       },
       {
-        path: 'basic/process-code',
+        path: '/basic/process-code',
         name: 'ProcessCode',
         component: () => import('@/views/Basic/ProcessCode.jsx'),
         meta: {
@@ -63,7 +63,7 @@ const routes = [
         }
       },
       {
-        path: 'basic/equipment-code',
+        path: '/basic/equipment-code',
         name: 'EquipmentCode',
         component: () => import('@/views/Basic/EquipmentCode.jsx'),
         meta: {
@@ -72,7 +72,7 @@ const routes = [
         }
       },
       {
-        path: 'basic/employee-info',
+        path: '/basic/employee-info',
         name: 'EmployeeInfo',
         component: () => import('@/views/Basic/EmployeeInfo.jsx'),
         meta: {
@@ -82,7 +82,7 @@ const routes = [
       },
       // 订单管理
       {
-        path: 'order/customer-info',
+        path: '/order/customer-info',
         name: 'CustomerInfo',
         component: () => import('@/views/Order/CustomerInfo.jsx'),
         meta: {
@@ -91,7 +91,7 @@ const routes = [
         }
       },
       {
-        path: 'order/product-quote',
+        path: '/order/product-quote',
         name: 'ProductQuote',
         component: () => import('@/views/Order/ProductQuote.jsx'),
         meta: {
@@ -100,7 +100,7 @@ const routes = [
         }
       },
       {
-        path: 'order/sales-order',
+        path: '/order/sales-order',
         name: 'SalesOrder',
         component: () => import('@/views/Order/SalesOrder.jsx'),
         meta: {
@@ -109,7 +109,7 @@ const routes = [
         }
       },
       {
-        path: 'order/product-delivery',
+        path: '/order/product-delivery',
         name: 'ProductDelivery',
         component: () => import('@/views/Order/ProductDelivery.jsx'),
         meta: {
@@ -119,7 +119,7 @@ const routes = [
       },
       // 产品信息
       // {
-      //   path: 'product/product-bom',
+      //   path: '/product/product-bom',
       //   name: 'ProductBOM',
       //   component: () => import('@/views/Product/ProductBOM.vue'),
       //   meta: {
@@ -128,7 +128,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'product/material-bom',
+      //   path: '/product/material-bom',
       //   name: 'MaterialBOM',
       //   component: () => import('@/views/Product/MaterialBOM.vue'),
       //   meta: {
@@ -137,7 +137,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'product/process-bom',
+      //   path: '/product/process-bom',
       //   name: 'ProcessBOM',
       //   component: () => import('@/views/Product/ProcessBOM.vue'),
       //   meta: {
@@ -147,7 +147,7 @@ const routes = [
       // },
       // // 采购管理
       // {
-      //   path: 'purchase/supplier-info',
+      //   path: '/purchase/supplier-info',
       //   name: 'SupplierInfo',
       //   component: () => import('@/views/Purchase/SupplierInfo.vue'),
       //   meta: {
@@ -156,7 +156,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'purchase/material-quote',
+      //   path: '/purchase/material-quote',
       //   name: 'MaterialQuote',
       //   component: () => import('@/views/Purchase/MaterialQuote.vue'),
       //   meta: {
@@ -165,7 +165,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'purchase/purchase-order',
+      //   path: '/purchase/purchase-order',
       //   name: 'PurchaseOrder',
       //   component: () => import('@/views/Purchase/PurchaseOrder.vue'),
       //   meta: {
@@ -175,7 +175,7 @@ const routes = [
       // },
       // // 委外管理
       // {
-      //   path: 'outsourcing/outsourcing-quote',
+      //   path: '/outsourcing/outsourcing-quote',
       //   name: 'OutsourcingQuote',
       //   component: () => import('@/views/Outsourcing/OutsourcingQuote.vue'),
       //   meta: {
@@ -184,7 +184,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'outsourcing/outsourcing-order',
+      //   path: '/outsourcing/outsourcing-order',
       //   name: 'OutsourcingOrder',
       //   component: () => import('@/views/Outsourcing/OutsourcingOrder.vue'),
       //   meta: {
@@ -193,7 +193,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'outsourcing/outsourcing-material',
+      //   path: '/outsourcing/outsourcing-material',
       //   name: 'OutsourcingMaterial',
       //   component: () => import('@/views/Outsourcing/OutsourcingMaterial.vue'),
       //   meta: {
@@ -203,7 +203,7 @@ const routes = [
       // },
       // // 生产管理
       // {
-      //   path: 'production/production-progress',
+      //   path: '/production/production-progress',
       //   name: 'ProductionProgress',
       //   component: () => import('@/views/Production/ProductionProgress.vue'),
       //   meta: {
@@ -212,7 +212,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'production/work-order',
+      //   path: '/production/work-order',
       //   name: 'WorkOrder',
       //   component: () => import('@/views/Production/WorkOrder.vue'),
       //   meta: {
@@ -221,7 +221,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'production/report-order',
+      //   path: '/production/report-order',
       //   name: 'ReportOrder',
       //   component: () => import('@/views/Production/ReportOrder.vue'),
       //   meta: {
@@ -230,7 +230,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'production/production-material',
+      //   path: '/production/production-material',
       //   name: 'ProductionMaterial',
       //   component: () => import('@/views/Production/ProductionMaterial.vue'),
       //   meta: {
@@ -239,7 +239,7 @@ const routes = [
       //   }
       // },
       // {
-      //   path: 'production/employee-piece-rate',
+      //   path: '/production/employee-piece-rate',
       //   name: 'EmployeePieceRate',
       //   component: () => import('@/views/Production/EmployeePieceRate.vue'),
       //   meta: {

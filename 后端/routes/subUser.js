@@ -33,7 +33,7 @@ router.get('/user', authMiddleware, async (req, res) => {
   const currentUserId = req.user.id;
   // 查询当前页的数据，排除当前登录用户，只显示其创建的用户
   const [rows] = await pool.execute(
-    'SELECT * FROM sub_admins WHERE uid = ? LIMIT ? OFFSET ?',
+    'SELECT id, username, name, company, avatar_url, attr, power, uid, status, created_at, updated_at FROM sub_admins WHERE uid = ? LIMIT ? OFFSET ?',
     [currentUserId, parseInt(pageSize), offset]
   );
   // 查询总记录数
@@ -54,12 +54,12 @@ router.get('/user', authMiddleware, async (req, res) => {
 });
 // 更新子管理员接口
 router.put('/user', authMiddleware, async (req, res) => {
-  const { username, password, name, power, id } = req.body;
+  const { username, password, name, power, status, id } = req.body;
   
   try {
     // 先查询原始密码
     const [adminRows] = await pool.execute(
-      'SELECT password FROM sub_user WHERE id = ?',
+      'SELECT password FROM sub_admins WHERE id = ?',
       [id]
     );
     
@@ -73,13 +73,13 @@ router.put('/user', authMiddleware, async (req, res) => {
 
     // 更新管理员信息（updated_at 会自动更新）
     await pool.execute(
-      'UPDATE sub_user SET username = ?, password = ?, name = ?, power = ? WHERE id = ?',
-      [username, passwordToUpdate, name, power, id]
+      'UPDATE sub_admins SET username = ?, password = ?, name = ?, power = ?, status = ? WHERE id = ?',
+      [username, passwordToUpdate, name, power, status, id]
     );
     
     // 查询更新后的完整信息
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_user WHERE id = ?',
+      'SELECT * FROM sub_admins WHERE id = ?',
       [id]
     );
     
@@ -93,7 +93,7 @@ router.delete('/user/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     await pool.execute(
-      'DELETE FROM sub_user WHERE id = ?',
+      'DELETE FROM sub_admins WHERE id = ?',
       [id]
     );
     res.json({ message: '删除成功', code: 200 });
