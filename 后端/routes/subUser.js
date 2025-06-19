@@ -8,26 +8,22 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 
 // 添加用户
 router.post('/user', authMiddleware, async (req, res) => {
-  const { username, password } = req.body;
-  try {
+  const { username, password, company, uid, power, status, attr } = req.body;
     // 对密码进行加密
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await pool.execute(
-      'INSERT INTO sub_user (username, password, tid, power) VALUES (?, ?, ?, ?, ?)',
-      [username, hashedPassword]
+      'INSERT INTO sub_admins (username, password, company, uid, power, status, attr) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [username, hashedPassword, company, uid, power, status, attr]
     );
     
     // 查询包含时间字段的完整信息
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_user WHERE id = ?',
+      'SELECT * FROM sub_admins WHERE id = ?',
       [result.insertId]
     );
 
     res.json({ data: rows[0], code: 200 });
-  } catch (error) {
-    res.status(500).json({ message: '服务器错误' });
-  }
 });
 // 获取后台用户列表（分页）
 router.get('/user', authMiddleware, async (req, res) => {
@@ -36,12 +32,12 @@ router.get('/user', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_user LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_admins WHERE attr = 2 LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
 
     // 查询总记录数
-    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_user');
+    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE attr = 2');
     const total = countRows[0].total;
     // 计算总页数
     const totalPages = Math.ceil(total / pageSize);

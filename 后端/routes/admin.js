@@ -41,12 +41,12 @@ router.get('/sub-admins', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_admins WHERE status = 1 LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_admins WHERE attr = 1 LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
 
     // 查询总记录数
-    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE status = 1');
+    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE attr = 1');
     const total = countRows[0].total;
     // 计算总页数
     const totalPages = Math.ceil(total / pageSize);

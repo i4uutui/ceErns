@@ -17,8 +17,10 @@ export default defineComponent({
         if (!groupedRoutes[parent]) {
           groupedRoutes[parent] = [];
         }
-        if (permissions.value.includes(route.name)) {
-          groupedRoutes[parent].push(route);
+        if(permissions.value.length){
+          if (permissions.value.includes(route.name)) {
+            groupedRoutes[parent].push(route);
+          }
         }
       });
       // 过滤掉没有子路由的父菜单组
