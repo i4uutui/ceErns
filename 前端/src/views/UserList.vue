@@ -17,6 +17,7 @@
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="username" label="用户名" />
         <el-table-column prop="company" label="公司名" />
+        <el-table-column prop="name" label="姓名" />
         <el-table-column prop="created_at" label="添加时间" />
         <el-table-column label="是否开启">
           <template #default="scope">
@@ -54,6 +55,9 @@
         </el-form-item>
         <el-form-item label="密码" prop="password"  v-if="!edit">
           <el-input v-model="form.password" type="password" />
+        </el-form-item>
+        <el-form-item label="姓名" prop="name"  v-if="!edit">
+          <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="公司名称" prop="company">
           <el-input v-model="form.company" />
@@ -97,6 +101,7 @@ const formRef = ref(null);
 const form = reactive({
   username: '',
   password: '',
+  name: '',
   company: '',
   avatarUrl: '',
   attr: 1,
@@ -125,6 +130,7 @@ const handleUplate = async (admin) => {
   dialogVisible.value = true;
   form.username = admin.username;
   form.password = '';
+  form.name = admin.name;
   form.company = admin.company;
   form.avatarUrl = admin.avatarUrl || '';
   form.attr = 1;
@@ -136,6 +142,7 @@ const handleAdd = () => {
   dialogVisible.value = true;
   form.username = '';
   form.password = '';
+  form.name = '';
   form.company = '';
   form.avatarUrl = '';
   form.attr = 1;
@@ -155,6 +162,7 @@ const handleSubmit = async () => {
         id: edit.value,
         username: form.username,
         password: form.password,
+        name: form.name,
         company: form.company,
         avatarUrl: form.avatarUrl,
         attr: 1,

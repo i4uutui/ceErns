@@ -14,6 +14,7 @@ export default defineComponent({
       uid: user.id,
       username: '',
       password: '',
+      name: '',
       power: [] // 添加权限字段
     })
     let tableData = ref([])
@@ -22,7 +23,6 @@ export default defineComponent({
     const total = ref(0);
     let edit = ref(0)
     let options = ref([])
-    let power = ref([])
 
     onMounted(() => {
       fetchAdminList()
@@ -46,7 +46,11 @@ export default defineComponent({
         if(!edit.value){
           form.value.attr = 2
           form.value.company = user.company
-          await request.post('/api/user', form.value);
+          const formValue = {
+            ...form.value,
+            power: JSON.stringify(form.value.power)
+          }
+          await request.post('/api/user', formValue);
           ElMessage.success('添加成功');
         }else{
           // 修改
@@ -54,7 +58,8 @@ export default defineComponent({
             id: edit.value,
             username: form.value.username,
             password: form.value.password,
-            power: form.value.power,
+            name: form.value.name,
+            power: JSON.stringify(form.value.power),
             status: form.value.status,
             uid: user.id,
             company: user.company,
@@ -69,6 +74,16 @@ export default defineComponent({
       } catch (error) {
         ElMessage.error(error.response?.data?.message || '添加失败');
       }
+    }
+    const handleUplate = (row) => {
+      edit.value = 1;
+      dialogVisible.value = true;
+      form.value.username = row.username;
+      form.value.name = row.name;
+      form.value.power = JSON.parse(row.power); // 清空权限选择
+      form.value.status = row.status;
+      form.value.uid = row.uid;
+      form.value.company = row.company;
     }
     // 生成级联选择器的选项
     const generateCascaderOptions = () => {
@@ -91,15 +106,13 @@ export default defineComponent({
         children: value
       }));
     }
-    const cascaderHandler = (CascaderValue) => {
-      form.value.power = JSON.stringify(CascaderValue)
-    }
     // 添加管理员
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
       form.value.username = '';
       form.value.password = '';
+      form.value.name = '';
       form.value.power = []; // 清空权限选择
     };
     // 取消弹窗
@@ -108,6 +121,7 @@ export default defineComponent({
       dialogVisible.value = false;
       form.value.username = '';
       form.value.password = '';
+      form.value.name = '';
       form.value.power = []; // 清空权限选择
     }
 
@@ -124,17 +138,24 @@ export default defineComponent({
             ),
             default: () => (
               <ElTable data={ tableData.value } border style={{ width: "100%" }}>
-                <ElTableColumn prop="date" label="Date" width="180" />
-                <ElTableColumn prop="name" label="Name" width="180" />
-                <ElTableColumn prop="address" label="Address" />
-                <ElTableColumn prop="address" label="Address">
+                <ElTableColumn prop="username" label="用户名" width="180" />
+                <ElTableColumn prop="name" label="姓名" width="180" />
+                <ElTableColumn prop="status" label="状态">
                   <ElSwitch />
+                </ElTableColumn>
+                <ElTableColumn label="操作">
+                  {(scope) => (
+                    <>
+                      <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                      <ElButton size="small" type="danger">删除</ElButton>
+                    </>
+                  )}
                 </ElTableColumn>
               </ElTable>
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title="添加管理员">
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改管理员' : '添加管理员' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref="formRef" label-width="80px">
@@ -144,8 +165,11 @@ export default defineComponent({
                 <ElFormItem label="密码" prop="password">
                   <ElInput v-model={ form.value.password } type="password" />
                 </ElFormItem>
+                <ElFormItem label="姓名" prop="name">
+                  <ElInput v-model={ form.value.name } />
+                </ElFormItem>
                 <ElFormItem label="菜单权限" prop="power">
-                  <ElCascader v-model={ power.value } options={ options.value } props={ props } show-all-levels={ false } collapse-tags={ true } max-collapse-tags={ 1 } onChange={ cascaderHandler }  />
+                  <ElCascader v-model={ form.value.power } options={ options.value } props={ props } show-all-levels={ false } collapse-tags={ true } max-collapse-tags={ 1 } />
                 </ElFormItem>
                 <ElFormItem label="状态" prop="status">
                   <ElSwitch v-model={ form.value.status } active-value={ 1 } inactive-value={ 0 } />

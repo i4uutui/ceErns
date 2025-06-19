@@ -67,14 +67,14 @@ router.get('/sub-admins', authMiddleware, async (req, res) => {
 
 // 添加子后台用户
 router.post('/sub-admins', authMiddleware, async (req, res) => {
-  const { username, password, company, attr, status } = req.body;
+  const { username, password, name, company, attr, status } = req.body;
   try {
     // 对密码进行加密
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await pool.execute(
-      'INSERT INTO sub_admins (username, password, company, attr, status) VALUES (?, ?, ?, ?, ?)',
-      [username, hashedPassword, company, attr, status]
+      'INSERT INTO sub_admins (username, password, name, company, attr, status) VALUES (?, ?, ?, ?, ?, ?)',
+      [username, hashedPassword, name, company, attr, status]
     );
     
     // 查询包含时间字段的完整信息
@@ -91,7 +91,7 @@ router.post('/sub-admins', authMiddleware, async (req, res) => {
 
 // 更新子管理员接口
 router.put('/sub-admins', authMiddleware, async (req, res) => {
-  const { username, password, company, attr, status, id } = req.body;
+  const { username, password, name, company, attr, status, id } = req.body;
   
   try {
     // 先查询原始密码
@@ -110,8 +110,8 @@ router.put('/sub-admins', authMiddleware, async (req, res) => {
 
     // 更新管理员信息（updated_at 会自动更新）
     await pool.execute(
-      'UPDATE sub_admins SET username = ?, password = ?, company = ? attr = ? status = ? WHERE id = ?',
-      [username, passwordToUpdate, company, attr, status, id]
+      'UPDATE sub_admins SET username = ?, password = ?, name = ?, company = ? attr = ? status = ? WHERE id = ?',
+      [username, passwordToUpdate, name, company, attr, status, id]
     );
     
     // 查询更新后的完整信息
