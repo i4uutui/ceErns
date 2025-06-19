@@ -128,13 +128,18 @@ router.delete('/sub-admins/:id', authMiddleware, async (req, res) => {
   try {
     // 更新 deleted_at 为当前时间
     const [result] = await pool.execute(
-      'UPDATE sub_admins SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL',
+      'UPDATE sub_admins SET deleted_at = NOW() WHERE id = ?',
+      [id]
+    );
+
+    await pool.execute(
+      'UPDATE sub_admins SET deleted_at = NOW() WHERE uid = ?',
       [id]
     );
     
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: '用户不存在或已被删除' });
-    }
+    // if (result.affectedRows === 0) {
+    //   return res.status(404).json({ message: '用户不存在或已被删除' });
+    // }
     
     res.json({ message: '删除成功', code: 200 });
   } catch (error) {
