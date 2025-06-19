@@ -41,12 +41,12 @@ router.get('/sub-admins', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_admins WHERE attr = 1 LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_admins WHERE attr = 1 AND deleted_at IS NULL LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
 
     // 查询总记录数
-    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE attr = 1');
+    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE attr = 1 AND deleted_at IS NULL');
     const total = countRows[0].total;
     // 计算总页数
     const totalPages = Math.ceil(total / pageSize);
@@ -109,7 +109,7 @@ router.put('/sub-admins', authMiddleware, async (req, res) => {
 
     // 更新管理员信息（updated_at 会自动更新）
     await pool.execute(
-      'UPDATE sub_admins SET username = ?, password = ?, name = ?, company = ? attr = ? status = ? WHERE id = ?',
+      'UPDATE sub_admins SET username = ?, password = ?, name = ?, company = ?, attr = ?, status = ? WHERE id = ?',
       [username, passwordToUpdate, name, company, attr, status, id]
     );
     
@@ -126,10 +126,16 @@ router.put('/sub-admins', authMiddleware, async (req, res) => {
 router.delete('/sub-admins/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
-    await pool.execute(
-      'DELETE FROM sub_admins WHERE id = ?',
+    // 更新 deleted_at 为当前时间
+    const [result] = await pool.execute(
+      'UPDATE sub_admins SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL',
       [id]
     );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: '用户不存在或已被删除' });
+    }
+    
     res.json({ message: '删除成功', code: 200 });
   } catch (error) {
     res.status(500).json({ message: '服务器错误' });

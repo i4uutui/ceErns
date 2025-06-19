@@ -15,7 +15,9 @@ router.post('/login', async (req, res) => {
       'SELECT * FROM sub_admins WHERE username = ?',
       [username]
     );
-    
+    if(rows[0].status == 0){
+      return res.json({ message: '账号已被禁用，请联系管理员', code: 401 });
+    }
     if (rows.length === 0) {
       return res.json({ message: '账号或密码错误', code: 401 });
     }
