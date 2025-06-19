@@ -11,8 +11,8 @@ export default defineComponent({
     const router = useRouter();
     const loginFormRef = ref(null);
     const loginForm = reactive({
-      username: 'ceshi',
-      password: '123456',
+      username: 'admin',
+      password: 'admin123',
     });
     const loginRules = reactive({
       username: [
@@ -48,7 +48,7 @@ export default defineComponent({
               <ElInput v-model={ loginForm.password } prefixIcon={ Key } type="password" placeholder="密码" />
             </ElFormItem>
             <ElFormItem>
-              <ElButton type="primary" onClick={ handleLogin } class="w-full" style="width: 100%;">
+              <ElButton type="primary" onClick={ handleLogin } class="w-full" style={{ width: "100%" }}>
                 登录
               </ElButton>
             </ElFormItem>

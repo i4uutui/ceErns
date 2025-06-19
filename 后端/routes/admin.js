@@ -41,12 +41,12 @@ router.get('/sub-admins', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_admins LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_admins WHERE status = 1 LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
 
     // 查询总记录数
-    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins');
+    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE status = 1');
     const total = countRows[0].total;
     // 计算总页数
     const totalPages = Math.ceil(total / pageSize);
@@ -67,14 +67,14 @@ router.get('/sub-admins', authMiddleware, async (req, res) => {
 
 // 添加子后台用户
 router.post('/sub-admins', authMiddleware, async (req, res) => {
-  const { username, password, company } = req.body;
+  const { username, password, company, attr, status } = req.body;
   try {
     // 对密码进行加密
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await pool.execute(
-      'INSERT INTO sub_admins (username, password, company) VALUES (?, ?, ?)',
-      [username, hashedPassword, company]
+      'INSERT INTO sub_admins (username, password, company, attr, status) VALUES (?, ?, ?, ?, ?)',
+      [username, hashedPassword, company, attr, status]
     );
     
     // 查询包含时间字段的完整信息
@@ -91,7 +91,7 @@ router.post('/sub-admins', authMiddleware, async (req, res) => {
 
 // 更新子管理员接口
 router.put('/sub-admins', authMiddleware, async (req, res) => {
-  const { username, password, company, id } = req.body;
+  const { username, password, company, attr, status, id } = req.body;
   
   try {
     // 先查询原始密码
@@ -110,8 +110,8 @@ router.put('/sub-admins', authMiddleware, async (req, res) => {
 
     // 更新管理员信息（updated_at 会自动更新）
     await pool.execute(
-      'UPDATE sub_admins SET username = ?, password = ?, company = ? WHERE id = ?',
-      [username, passwordToUpdate, company, id]
+      'UPDATE sub_admins SET username = ?, password = ?, company = ? attr = ? status = ? WHERE id = ?',
+      [username, passwordToUpdate, company, attr, status, id]
     );
     
     // 查询更新后的完整信息

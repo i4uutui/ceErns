@@ -1,10 +1,12 @@
-import { defineComponent, ref, onMounted } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage } from 'element-plus'
+import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElSwitch, ElCascader } from 'element-plus'
 import request from '@/utils/request';
+import router from '@/router';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const props = reactive({ multiple: true })
     let dialogVisible = ref(false)
     let form = ref({
       username: '',
@@ -15,6 +17,7 @@ export default defineComponent({
     const pageSize = ref(10);
     const total = ref(0);
     let edit = ref(0)
+    let options = ref([])
 
     onMounted(() => {
       fetchAdminList()
@@ -81,10 +84,13 @@ export default defineComponent({
               </div>
             ),
             default: () => (
-              <ElTable data={ tableData.value } border style="width: 100%">
+              <ElTable data={ tableData.value } border style={{ width: "100%" }}>
                 <ElTableColumn prop="date" label="Date" width="180" />
                 <ElTableColumn prop="name" label="Name" width="180" />
                 <ElTableColumn prop="address" label="Address" />
+                <ElTableColumn prop="address" label="Address">
+                  <ElSwitch />
+                </ElTableColumn>
               </ElTable>
             )
           }}
@@ -98,6 +104,12 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="密码" prop="password">
                   <ElInput v-model={ form.value.password } type="password" />
+                </ElFormItem>
+                <ElFormItem label="菜单权限" prop="power">
+                  <ElCascader options={ options.value } props={ props } collapse-tags={ true } max-collapse-tags={ 1 } />
+                </ElFormItem>
+                <ElFormItem label="状态" prop="status">
+                  <ElSwitch v-model={ form.value.status } active-value={ 1 } inactive-value={ 0 } />
                 </ElFormItem>
               </ElForm>
             ),

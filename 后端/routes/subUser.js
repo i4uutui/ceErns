@@ -14,7 +14,7 @@ router.post('/user', authMiddleware, async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await pool.execute(
-      'INSERT INTO sub_user (username, password) VALUES (?, ?, ?)',
+      'INSERT INTO sub_user (username, password, tid, power) VALUES (?, ?, ?, ?, ?)',
       [username, hashedPassword]
     );
     

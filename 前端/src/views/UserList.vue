@@ -18,6 +18,11 @@
         <el-table-column prop="username" label="用户名" />
         <el-table-column prop="company" label="公司名" />
         <el-table-column prop="created_at" label="添加时间" />
+        <el-table-column label="是否开启">
+          <template #default="scope">
+            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template #default="scope">
             <el-button size="small" type="default" @click="handleUplate(scope.row)">
@@ -66,6 +71,9 @@
             <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </el-form-item>
+        <el-form-item label="是否开启" prop="status">
+          <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -79,7 +87,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage, ElDialog, ElButton, ElCard, ElPagination, ElTable, ElTableColumn, ElInput, ElFormItem, ElForm, ElUpload, ElIcon } from 'element-plus';
+import { ElMessage, ElDialog, ElButton, ElCard, ElPagination, ElTable, ElTableColumn, ElInput, ElFormItem, ElForm, ElUpload, ElIcon, ElSwitch } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue'
 import request from '@/utils/request';
 import config from '@/utils/config'
@@ -90,7 +98,9 @@ const form = reactive({
   username: '',
   password: '',
   company: '',
-  avatarUrl: ''
+  avatarUrl: '',
+  attr: 1,
+  status: 0
 });
 const adminList = ref([]);
 const currentPage = ref(1);
@@ -117,6 +127,8 @@ const handleUplate = async (admin) => {
   form.password = '';
   form.company = admin.company;
   form.avatarUrl = admin.avatarUrl || '';
+  form.attr = 1;
+  form.status = admin.status;
 }
 // 添加管理员
 const handleAdd = () => {
@@ -126,12 +138,15 @@ const handleAdd = () => {
   form.password = '';
   form.company = '';
   form.avatarUrl = '';
+  form.attr = 1;
+  form.status = 0;
 };
 // 提交表单
 const handleSubmit = async () => {
   try {
     // 添加
     if(!edit.value){
+      form.attr = 1;
       await request.post('/admin/sub-admins', form);
       ElMessage.success('添加成功');
     }else{
@@ -141,7 +156,9 @@ const handleSubmit = async () => {
         username: form.username,
         password: form.password,
         company: form.company,
-        avatarUrl: form.avatarUrl
+        avatarUrl: form.avatarUrl,
+        attr: 1,
+        status: form.status
       }
       await request.put('/admin/sub-admins', myForm);
       ElMessage.success('修改成功');
