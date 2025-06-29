@@ -10,8 +10,9 @@ app.use(bodyParser.json());
 // 路由
 app.use('/admin', require('./routes/admin'));
 app.use('/api', require('./routes/subAdmin'));
-app.use('/api', require('./routes/subUser'));
-app.use('/api', require('./routes/subBasic'));
+app.use('/api', require('./routes/subUser')); // 用户管理
+app.use('/api', require('./routes/subBasic')); // 基础资料
+app.use('/api', require('./routes/subOrder')); // 订单管理
 app.use('/upload', require('./routes/upload'));
 
 const PORT = process.env.PORT || 3000;

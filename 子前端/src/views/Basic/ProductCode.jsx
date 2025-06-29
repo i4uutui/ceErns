@@ -1,47 +1,68 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElSwitch, ElCascader, ElMessageBox } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage } from 'element-plus'
 import request from '@/utils/request';
-import router from '@/router';
-import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
-    const props = reactive({ multiple: true })
-    const user = getItem('user')
     const rules = reactive({
-      username: [
-        { required: true, message: '请输入用户名', trigger: 'blur' },
+      product_code: [
+        { required: true, message: '请输入产品编码', trigger: 'blur' },
       ],
-      name: [],
-      power: [
-        { required: true, message: '请选择用户权限', trigger: 'blur' },
-      ]
+      product_name: [
+        { required: true, message: '请输入产品名称', trigger: 'blur' },
+      ],
+      model: [
+        { required: true, message: '请输入型号', trigger: 'blur' },
+      ],
+      specification: [
+        { required: true, message: '请输入规格', trigger: 'blur' },
+      ],
+      other_features: [
+        { required: true, message: '请输入其它特性', trigger: 'blur' },
+      ],
+      component_structure: [
+        { required: true, message: '请输入部件结构', trigger: 'blur' },
+      ],
+      unit: [
+        { required: true, message: '请输入单位', trigger: 'blur' },
+      ],
+      unit_price: [
+        { required: true, message: '请输入单价', trigger: 'blur' },
+      ],
+      currency: [
+        { required: true, message: '请输入币别', trigger: 'blur' },
+      ],
+      production_requirements: [
+        { required: true, message: '请输入生产要求', trigger: 'blur' },
+      ],
     })
     let dialogVisible = ref(false)
     let form = ref({
-      uid: user.id,
-      username: '',
-      password: '',
-      name: '',
-      power: [] // 添加权限字段
+      product_code: '',
+      product_name: '',
+      model: '',
+      specification: '',
+      other_features: '',
+      component_structure: '',
+      unit: '',
+      unit_price: '',
+      currency: '',
+      production_requirements: '',
     })
     let tableData = ref([])
     const currentPage = ref(1);
     const pageSize = ref(10);
     const total = ref(0);
     let edit = ref(0)
-    let options = ref([])
-    let placeholder = ref('')
 
     onMounted(() => {
-      fetchAdminList()
-      generateCascaderOptions()
+      fetchProductList()
     })
 
-    // 获取子管理员列表
-    const fetchAdminList = async () => {
-      const res = await request.get('/api/user', {
+    // 获取列表
+    const fetchProductList = async () => {
+      const res = await request.get('/api/products_code', {
         params: {
           page: currentPage.value,
           pageSize: pageSize.value
@@ -55,13 +76,7 @@ export default defineComponent({
       await formEl.validate(async (valid, fields) => {
         if (valid){
           if(!edit.value){
-            form.value.attr = 2
-            form.value.company = user.company
-            const formValue = {
-              ...form.value,
-              power: JSON.stringify(form.value.power)
-            }
-            const res = await request.post('/api/user', formValue);
+            const res = await request.post('/api/products_code', form.value);
             if(res && res.code == 200){
               ElMessage.success('添加成功');
             }
@@ -70,125 +85,49 @@ export default defineComponent({
             // 修改
             const myForm = {
               id: edit.value,
-              username: form.value.username,
-              password: form.value.password,
-              name: form.value.name,
-              power: JSON.stringify(form.value.power),
-              status: form.value.status,
-              uid: user.id,
-              company: user.company,
-              attr: 2
+              ...form.value
             }
-            const res = await request.put('/api/user', myForm);
+            const res = await request.put('/api/products_code', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
             }
           }
           
           dialogVisible.value = false;
-          fetchAdminList();
+          fetchProductList();
         }
       })
     }
-    const handleDelete = (row) => {
-      ElMessageBox.confirm(
-        "是否确认删除？",
-        "提示",
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      ).then(async () => {
-        const res = await request.delete('/api/user/' + row.id);
-        if(res && res.code == 200){
-          ElMessage.success('删除成功');
-          fetchAdminList();
-        }
-      }).catch(() => {})
-    }
-    const closeUser = (row) => {
-      form.value = row;
-      const power = JSON.parse(row.power)
-      form.value.power = power
-      edit.value = row.id;
-      handleSubmit()
-    }
     const handleUplate = (row) => {
       edit.value = row.id;
-      placeholder.value = '不输入则默认旧密码'
       dialogVisible.value = true;
-      form.value.username = row.username;
-      form.value.name = row.name;
-      form.value.power = JSON.parse(row.power); // 清空权限选择
-      form.value.status = row.status;
-      form.value.uid = row.uid;
-      form.value.company = row.company;
-      
-      if(rules.password){
-        delete rules.password
-      }
+      form.value = { ...row };
     }
-    // 生成级联选择器的选项
-    const generateCascaderOptions = () => {
-      const { children } = router.options.routes.find(route => route.name === 'Layout');
-      const groupedRoutes = {};
-      children.forEach(route => {
-        const { parent } = route.meta;
-        if (!groupedRoutes[parent]) {
-          groupedRoutes[parent] = [];
-        }
-        groupedRoutes[parent].push({
-          value: route.name,
-          label: route.meta.title,
-          children: []
-        });
-      });
-      let filtered = Object.fromEntries(
-        Object.entries(filterMenu(groupedRoutes)).filter(([_, routes]) => routes.length > 0)
-      );
-      options.value = Object.entries(filtered).map(([key, value]) => ({
-        value: key,
-        label: key,
-        children: value
-      }));
-    }
-    function filterMenu(data) {
-      const newData = { ...data }; // 浅拷贝对象
-    
-      // 遍历所有菜单分类
-      Object.keys(newData).forEach(category => {
-          // 过滤当前分类下的菜单项
-          newData[category] = newData[category].filter(item => 
-              item.label !== '用户管理'
-          );
-      });
-      
-      return newData;
-    }
-    // 添加管理员
+    // 添加
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
-      form.value.username = '';
-      form.value.password = '';
-      form.value.name = '';
-      form.value.power = []; // 清空权限选择
-
-      placeholder.value = '请输入密码'
-      rules.password = [
-        { required: true, message: '请输入密码', trigger: 'blur' },
-        { min: 6, message: '密码长度不少于6位', trigger: 'blur' },
-      ]
+      resetForm()
     };
     // 取消弹窗
     const handleClose = () => {
       edit.value = 0;
       dialogVisible.value = false;
-      form.value.username = '';
-      form.value.password = '';
-      form.value.name = '';
-      form.value.power = []; // 清空权限选择
+      resetForm()
+    }
+    const resetForm = () => {
+      form.value = {
+        product_code: '',
+        product_name: '',
+        model: '',
+        specification: '',
+        other_features: '',
+        component_structure: '',
+        unit: '',
+        unit_price: '',
+        currency: '',
+        production_requirements: '',
+      }
     }
 
     return() => (
@@ -198,22 +137,26 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  添加管理员
+                  添加产品编码
                 </ElButton>
               </div>
             ),
             default: () => (
               <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                <ElTableColumn prop="username" label="用户名" width="180" />
-                <ElTableColumn prop="name" label="姓名" width="180" />
-                <ElTableColumn prop="status" label="是否开启">
-                  {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } onChange={ () => closeUser(scope.row) } />}
-                </ElTableColumn>
+                <ElTableColumn prop="product_code" label="产品编码" />
+                <ElTableColumn prop="product_name" label="产品名称" />
+                <ElTableColumn prop="model" label="型号" />
+                <ElTableColumn prop="specification" label="规格" />
+                <ElTableColumn prop="other_features" label="其它特性" />
+                <ElTableColumn prop="component_structure" label="部件结构" />
+                <ElTableColumn prop="unit" label="单位" width="100" />
+                <ElTableColumn prop="unit_price" label="单价" width="100" />
+                <ElTableColumn prop="currency" label="币别" width="100" />
+                <ElTableColumn prop="production_requirements" label="生产要求" />
                 <ElTableColumn label="操作">
                   {(scope) => (
                     <>
                       <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                      <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                     </>
                   )}
                 </ElTableColumn>
@@ -221,24 +164,39 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改管理员' : '添加管理员' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品编码' : '添加产品编码' } onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">
-                <ElFormItem label="用户名" prop="username">
-                  <ElInput v-model={ form.value.username } placeholder="请输入用户名" />
+              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">
+                <ElFormItem label="产品编码" prop="product_code">
+                  <ElInput v-model={ form.value.product_code } placeholder="请输入产品编码" />
                 </ElFormItem>
-                <ElFormItem label="密码" prop="password">
-                  <ElInput v-model={ form.value.password } type="password" placeholder={ placeholder.value } />
+                <ElFormItem label="产品名称" prop="product_name">
+                  <ElInput v-model={ form.value.product_name } placeholder="请输入产品名称" />
                 </ElFormItem>
-                <ElFormItem label="姓名" prop="name">
-                  <ElInput v-model={ form.value.name } placeholder="请输入姓名" />
+                <ElFormItem label="型号" prop="model">
+                  <ElInput v-model={ form.value.model } placeholder="请输入型号" />
                 </ElFormItem>
-                <ElFormItem label="菜单权限" prop="power">
-                  <ElCascader v-model={ form.value.power } options={ options.value } props={ props } show-all-levels={ false } collapse-tags={ true } max-collapse-tags={ 1 } placeholder="请选择用户权限" />
+                <ElFormItem label="规格" prop="specification">
+                  <ElInput v-model={ form.value.specification } placeholder="请输入规格" />
                 </ElFormItem>
-                <ElFormItem label="是否开启" prop="status">
-                  <ElSwitch v-model={ form.value.status } active-value={ 1 } inactive-value={ 0 } />
+                <ElFormItem label="其它特性" prop="other_features">
+                  <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
+                </ElFormItem>
+                <ElFormItem label="部件结构" prop="component_structure">
+                  <ElInput v-model={ form.value.component_structure } placeholder="请输入部件结构" />
+                </ElFormItem>
+                <ElFormItem label="单位" prop="unit">
+                  <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
+                </ElFormItem>
+                <ElFormItem label="单价" prop="unit_price">
+                  <ElInput v-model={ form.value.unit_price } type="number" placeholder="请输入单价" />
+                </ElFormItem>
+                <ElFormItem label="币别" prop="currency">
+                  <ElInput v-model={ form.value.currency } placeholder="请输入币别" />
+                </ElFormItem>
+                <ElFormItem label="生产要求" prop="production_requirements">
+                  <ElInput v-model={ form.value.production_requirements } placeholder="请输入生产要求" />
                 </ElFormItem>
               </ElForm>
             ),
