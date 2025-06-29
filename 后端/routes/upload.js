@@ -21,11 +21,11 @@ const upload = multer({ storage: storage });
 // 图片上传接口
 router.post('/image', upload.single('image'), (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ message: '未上传图片' });
+    return res.status(400).json({ message: '未上传图片', code: 400 });
   }
   // 返回图片的路径
   const imagePath = `/public/uploads/${req.file.filename}`;
-  res.json({ message: '图片上传成功', imagePath });
+  res.json({ message: '图片上传成功', imagePath, code: 200 });
 });
 
 module.exports = router;

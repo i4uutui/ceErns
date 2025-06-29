@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 app.use('/admin', require('./routes/admin'));
 app.use('/api', require('./routes/subAdmin'));
 app.use('/api', require('./routes/subUser'));
+app.use('/api', require('./routes/subBasic'));
 app.use('/upload', require('./routes/upload'));
 
 const PORT = process.env.PORT || 3000;
