@@ -13,11 +13,11 @@ router.get('/user', authMiddleware, async (req, res) => {
   const userId = req.user.id;
   // 查询当前页的数据，排除当前登录用户，只显示其创建的用户
   const [rows] = await pool.execute(
-    'SELECT id, username, name, company, avatar_url, attr, power, uid, status, created_at, updated_at FROM sub_admins WHERE uid = ? AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?',
+    'SELECT id, username, name, company, avatar_url, attr, power, uid, status, created_at, updated_at FROM sub_admins WHERE uid = ? AND is_delete = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?',
     [userId, parseInt(pageSize), offset]
   );
   // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE uid = ? AND deleted_at IS NULL', [userId]);
+  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE uid = ? AND is_delete = 0', [userId]);
   const total = countRows[0].total;
   // 计算总页数
   const totalPages = Math.ceil(total / pageSize);
@@ -125,7 +125,7 @@ router.delete('/user/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   // 更新 deleted_at 为当前时间
   const [result] = await pool.execute(
-    'UPDATE sub_admins SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL',
+    'UPDATE sub_admins SET is_delete = 1 WHERE id = ? AND is_delete = 0',
     [id]
   );
   
@@ -134,7 +134,7 @@ router.delete('/user/:id', authMiddleware, async (req, res) => {
   }
 
   await pool.execute(
-    'UPDATE sub_admins SET deleted_at = NOW() WHERE uid = ? AND deleted_at IS NULL',
+    'UPDATE sub_admins SET is_delete = 1 WHERE uid = ? AND is_delete = 0',
     [id]
   );
   

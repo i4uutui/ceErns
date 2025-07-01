@@ -9,7 +9,7 @@ const authMiddleware = async (req, res, next) => {
     if (err) return res.status(401).json({ message: '认证失败', code: 401 });
 
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_admins WHERE id = ? AND deleted_at IS NULL',
+      'SELECT * FROM sub_admins WHERE id = ? AND is_delete = 0',
       [decoded.id]
     );
     if (rows.length === 0) {

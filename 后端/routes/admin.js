@@ -31,12 +31,12 @@ router.get('/sub-admins', async (req, res) => {
   const offset = (page - 1) * pageSize;
   // 查询当前页的数据
   const [rows] = await pool.execute(
-    'SELECT * FROM sub_admins WHERE attr = 1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?',
+    'SELECT * FROM sub_admins WHERE attr = 1 AND is_delete = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?',
     [parseInt(pageSize), offset]
   );
 
   // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE attr = 1 AND deleted_at IS NULL');
+  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE attr = 1 AND is_delete = 0');
   const total = countRows[0].total;
   // 计算总页数
   const totalPages = Math.ceil(total / pageSize);
@@ -129,12 +129,12 @@ router.delete('/sub-admins/:id', async (req, res) => {
   const { id } = req.params;
   // 更新 deleted_at 为当前时间
   await pool.execute(
-    'UPDATE sub_admins SET deleted_at = NOW() WHERE id = ?',
+    'UPDATE sub_admins SET is_delete = 1 WHERE id = ?',
     [id]
   );
   // 软删除同一张表中所有uid = id的数据
   await pool.execute(
-    'UPDATE sub_admins SET deleted_at = NOW() WHERE uid = ?',
+    'UPDATE sub_admins SET is_delete = 1 WHERE uid = ?',
     [id]
   );
   

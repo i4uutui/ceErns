@@ -11,7 +11,7 @@ export default defineComponent({
     const router = useRouter();
     const loginFormRef = ref(null);
     const loginForm = reactive({
-      username: 'admin',
+      username: 'admin1',
       password: 'admin123',
     });
     const loginRules = reactive({

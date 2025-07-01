@@ -206,9 +206,10 @@ export default defineComponent({
               <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                 <ElTableColumn prop="username" label="用户名" width="180" />
                 <ElTableColumn prop="name" label="姓名" width="180" />
-                <ElTableColumn prop="status" label="是否开启">
+                <ElTableColumn prop="status" label="是否开启" width="180">
                   {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } onChange={ () => closeUser(scope.row) } />}
                 </ElTableColumn>
+                <ElTableColumn prop="created_at" label="创建时间" width="180" />
                 <ElTableColumn label="操作">
                   {(scope) => (
                     <>

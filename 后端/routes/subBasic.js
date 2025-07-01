@@ -9,33 +9,28 @@ router.get('/products_code', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
   
-  try {
-    // 查询当前页的数据
-    const [rows] = await pool.execute(
-      'SELECT * FROM sub_products_code ORDER BY created_at DESC LIMIT ? OFFSET ?',
-      [parseInt(pageSize), offset]
-    );
-    
-    // 查询总记录数
-    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_products_code');
-    const total = countRows[0].total;
-    
-    // 计算总页数
-    const totalPages = Math.ceil(total / pageSize);
+  // 查询当前页的数据
+  const [rows] = await pool.execute(
+    'SELECT * FROM sub_products_code WHERE is_delete = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?',
+    [parseInt(pageSize), offset]
+  );
+  
+  // 查询总记录数
+  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_products_code');
+  const total = countRows[0].total;
+  
+  // 计算总页数
+  const totalPages = Math.ceil(total / pageSize);
 
-    // 返回所需信息
-    res.json({ 
-      data: formatArrayTime(rows), 
-      total, 
-      totalPages, 
-      currentPage: parseInt(page), 
-      pageSize: parseInt(pageSize),
-      code: 200 
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: '服务器错误', code: 500 });
-  }
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(rows), 
+    total, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
 });
 
 // 添加产品编码
