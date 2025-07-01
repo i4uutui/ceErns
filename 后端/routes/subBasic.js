@@ -12,7 +12,7 @@ router.get('/products_code', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_products_code LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_products_code ORDER BY created_at DESC LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
     
@@ -103,7 +103,7 @@ router.get('/part_code', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_part_code LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_part_code ORDER BY created_at DESC LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
     
@@ -196,7 +196,7 @@ router.get('/material_code', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_material_code LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_material_code ORDER BY created_at DESC LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
     
@@ -289,7 +289,7 @@ router.get('/process_code', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_process_code LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_process_code ORDER BY created_at DESC LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
     
@@ -382,7 +382,7 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_equipment_code LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_equipment_code ORDER BY created_at DESC LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
     
@@ -476,7 +476,7 @@ router.get('/employee_info', authMiddleware, async (req, res) => {
   try {
     // 查询当前页的数据
     const [rows] = await pool.execute(
-      'SELECT * FROM sub_employee_info LIMIT ? OFFSET ?',
+      'SELECT * FROM sub_employee_info ORDER BY created_at DESC LIMIT ? OFFSET ?',
       [parseInt(pageSize), offset]
     );
     

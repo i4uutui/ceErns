@@ -31,7 +31,7 @@ router.get('/sub-admins', async (req, res) => {
   const offset = (page - 1) * pageSize;
   // 查询当前页的数据
   const [rows] = await pool.execute(
-    'SELECT * FROM sub_admins WHERE attr = 1 AND deleted_at IS NULL LIMIT ? OFFSET ?',
+    'SELECT * FROM sub_admins WHERE attr = 1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?',
     [parseInt(pageSize), offset]
   );
 

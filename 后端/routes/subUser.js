@@ -13,7 +13,7 @@ router.get('/user', authMiddleware, async (req, res) => {
   const userId = req.user.id;
   // 查询当前页的数据，排除当前登录用户，只显示其创建的用户
   const [rows] = await pool.execute(
-    'SELECT id, username, name, company, avatar_url, attr, power, uid, status, created_at, updated_at FROM sub_admins WHERE uid = ? AND deleted_at IS NULL LIMIT ? OFFSET ?',
+    'SELECT id, username, name, company, avatar_url, attr, power, uid, status, created_at, updated_at FROM sub_admins WHERE uid = ? AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?',
     [userId, parseInt(pageSize), offset]
   );
   // 查询总记录数
