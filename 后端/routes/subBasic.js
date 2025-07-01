@@ -10,31 +10,77 @@ router.get('/products_code', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   const userId = req.user.id;
 
-  const [sharedUserRows] = await pool.execute(
-    'SELECT id FROM sub_admins WHERE id = ? OR uid = ?',
-    [userId, userId]
+  // 首先查询当前用户信息
+  const [userRows] = await pool.execute(
+    'SELECT id, uid, power FROM sub_admins WHERE id = ?',
+    [userId]
   );
-  const sharedUserIds = sharedUserRows.map(row => row.id);
-
+  const currentUser = userRows[0];
+  if (!currentUser) {
+    return res.json({ message: '用户不存在', code: 404 });
+  }
+  
+  let userIds = [];
+  // 如果当前用户的uid有数据，则查询所有uid相同的用户
+  if (currentUser.uid !== null) {
+    const [sameUidRows] = await pool.execute(
+      'SELECT id FROM sub_admins WHERE uid = ?',
+      [currentUser.uid]
+    );
+    userIds = [currentUser.uid, ...sameUidRows.map(row => row.id)];
+  } else {
+    // 否则查询当前用户及其所有子用户
+    const [subUserRows] = await pool.execute(
+      'SELECT id FROM sub_admins WHERE uid = ?',
+      [userId]
+    );
+    userIds = [userId, ...subUserRows.map(row => row.id)];
+  }
+  
+  const placeholders = userIds.map(() => '?').join(',');
+  const queryParams = [...userIds, parseInt(pageSize), offset];
+  
   // 查询当前页的数据，只显示共享用户创建的产品编码
   const [rows] = await pool.execute(
-    'SELECT * FROM sub_products_code WHERE user_id IN (?) AND is_delete = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [sharedUserIds, parseInt(pageSize), offset]
+    `SELECT spc.*, sa.username, sa.name, sa.company, sa.avatar_url 
+     FROM sub_products_code spc
+     JOIN sub_admins sa ON spc.user_id = sa.id
+     WHERE spc.user_id IN (${placeholders}) AND spc.is_delete = 0 
+     ORDER BY spc.created_at DESC LIMIT ? OFFSET ?`,
+    queryParams
   );
+  
+  // 格式化数据，将用户信息提取到单独的对象中
+  const formattedData = rows.map(row => {
+    const { username, name, company, avatar_url, ...productData } = row;
+    return {
+      ...productData,
+      user: {
+        id: productData.user_id,
+        username,
+        name,
+        company,
+        avatar_url
+      }
+    };
+  });
 
+  // 为总记录数查询创建参数
+  const countParams = [...userIds];
+  
   // 查询总记录数
   const [countRows] = await pool.execute(
-    'SELECT COUNT(*) as total FROM sub_products_code WHERE user_id IN (?) AND is_delete = 0',
-    [sharedUserIds]
+    `SELECT COUNT(*) as total FROM sub_products_code WHERE user_id IN (${placeholders}) AND is_delete = 0`,
+    countParams
   );
   const total = countRows[0].total;
 
   // 计算总页数
   const totalPages = Math.ceil(total / pageSize);
-
+  
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rows), 
+    data: formatArrayTime(formattedData), 
     total, 
     totalPages, 
     currentPage: parseInt(page), 

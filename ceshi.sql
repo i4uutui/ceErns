@@ -1,17 +1,17 @@
 /*
- Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
- Source Server         : thinkphp_demo
+ Source Server         : ceshi
  Source Server Type    : MySQL
- Source Server Version : 50722 (5.7.22)
+ Source Server Version : 50740
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50722 (5.7.22)
+ Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 29/06/2025 23:55:32
+ Date: 01/07/2025 19:35:17
 */
 
 SET NAMES utf8mb4;
@@ -32,23 +32,19 @@ CREATE TABLE `sub_admins`  (
   `power` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '权限信息',
   `uid` int(10) NULL DEFAULT NULL COMMENT '有数据时是子用户，null时父用户',
   `status` int(1) NULL DEFAULT NULL COMMENT '用户状态：1开启，0关闭',
-  `deleted_at` timestamp NULL DEFAULT NULL COMMENT 'NULL：未删除，时间戳：已删除',
+  `is_delete` int(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '0：未删除；1：已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_admins
 -- ----------------------------
-INSERT INTO `sub_admins` VALUES (10, 'admin', '$2b$10$G3yPVQgoqXAifoAIcWFRzuv3hhDTDIf4gnSrfmfwigyVzeT4FZoSS', NULL, 'e21e111', NULL, 1, NULL, NULL, 1, NULL, '2025-06-19 15:58:28', '2025-06-20 00:53:41');
-INSERT INTO `sub_admins` VALUES (21, 'ceshi', '$2b$10$9uGbQKPrrHR8FuU0taa4uuoZkNeGa12rNWSWWKFEk0MtdSFPnbQXm', '111', '222', NULL, 1, NULL, NULL, 1, NULL, '2025-06-20 01:24:30', '2025-06-21 12:19:51');
-INSERT INTO `sub_admins` VALUES (22, '222', '$2b$10$GbtIvFCjujdZrtaWYLOnvu77/MN6d5l2jx8GcoSfC5EST4HuhuPqC', '122121', '222', NULL, 2, '[[\"系统管理\",\"UserManagement\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"]]', 21, 0, NULL, '2025-06-20 01:24:50', '2025-06-21 12:29:45');
-INSERT INTO `sub_admins` VALUES (23, '4444', '$2b$10$J.B012OwzkBDuqByYMwWU.FkrxUAhCilLycDBt2C3vDbts448oX8e', '6666', '222', NULL, 2, '[]', 21, 0, '2025-06-20 01:30:08', '2025-06-20 01:25:18', '2025-06-21 12:19:35');
-INSERT INTO `sub_admins` VALUES (26, '111', '$2b$10$33Oi82xypGlcTj.1Ir48Z.h2mKIDKggOOiO3AloVh8Cbh/fIxA3HG', '', 'e21e111', NULL, 2, '[[\"系统管理\",\"UserManagement\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"]]', 10, 0, NULL, '2025-06-21 11:30:54', '2025-06-21 11:30:54');
-INSERT INTO `sub_admins` VALUES (29, '2121', '$2b$10$806yH52mrmMVwDyfvSAtaOLqur/VkUom7mrjk6yUIUZ9HQl2tycNe', '212', '12121', NULL, 1, NULL, NULL, 0, NULL, '2025-06-21 15:38:22', '2025-06-21 15:38:22');
-INSERT INTO `sub_admins` VALUES (30, '5645', '$2b$10$fczrEstRfK2Z.oa8x8oeGO/0Ac2EjkNEA2.WbbBtdLuZrzuwCF4D2', '', 'e21e111', NULL, 2, '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"ProductDelivery\"]]', 10, 1, NULL, '2025-06-21 16:11:42', '2025-06-21 16:11:42');
+INSERT INTO `sub_admins` VALUES (34, 'admin1', '$2b$10$BGGtcKLhRyzjdI5RLG16Ze/eLzMylKAH1YY/mSSc6ofAM086R.IU2', 'admin333', '21212121', NULL, 1, NULL, NULL, 1, 0, '2025-07-01 11:22:36', '2025-07-01 11:22:36');
+INSERT INTO `sub_admins` VALUES (37, 'admin22', '$2b$10$C6yDOk6bs0KzYb5EXUB9PuhVhg8wsaY33un4/rbfBaUdJGiSKSYH6', '2121', '21212121', NULL, 2, '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"ProductDelivery\"],[\"首页\",\"Home\"]]', 34, 1, 0, '2025-07-01 13:10:10', '2025-07-01 13:10:10');
+INSERT INTO `sub_admins` VALUES (38, 'admin23', '$2b$10$7JwdkpHsFPvXAEEofoui6urxdw/p7eFBCZCjHDMkammwrgaX8gxoC', '2121', '21212121', NULL, 2, '[[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"ProductDelivery\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"首页\",\"Home\"]]', 34, 1, 0, '2025-07-01 13:10:40', '2025-07-01 13:10:40');
 
 -- ----------------------------
 -- Table structure for sub_customer_info
@@ -68,7 +64,7 @@ CREATE TABLE `sub_customer_info`  (
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '其它交易条件',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_customer_info
@@ -88,7 +84,7 @@ CREATE TABLE `sub_employee_info`  (
   `salary_attribute` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '工资属性',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '员工信息基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '员工信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_employee_info
@@ -110,7 +106,7 @@ CREATE TABLE `sub_equipment_code`  (
   `equipment_status` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '设备状态',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '设备信息基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '设备信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_equipment_code
@@ -135,7 +131,7 @@ CREATE TABLE `sub_material_code`  (
   `currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '币别',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_code
@@ -159,7 +155,7 @@ CREATE TABLE `sub_part_code`  (
   `production_requirements` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '生产要求',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部件编码基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部件编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_part_code
@@ -182,7 +178,7 @@ CREATE TABLE `sub_process_code`  (
   `total_processing_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '加工总价',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺编码基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_code
@@ -206,16 +202,18 @@ CREATE TABLE `sub_products_code`  (
   `unit_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '产品的单价',
   `currency` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品价格的币别',
   `production_requirements` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '产品的生产要求',
+  `user_id` int(5) NULL DEFAULT NULL COMMENT '用户id',
+  `is_delete` int(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '0：未删除；1：已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品编码基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_products_code
 -- ----------------------------
-INSERT INTO `sub_products_code` VALUES (1, '编码1', '产品1', '型号1', '规格1', '特性1', '结构1', 'KG', 12.00, '￥', '要求啊', '2025-06-29 10:23:34', '2025-06-29 10:24:12');
-INSERT INTO `sub_products_code` VALUES (2, '编码1', '产品1', '型号2', '规格22', '特性2', '结构2', 'KG', 12.00, '$', '要求啊', '2025-06-29 10:24:59', '2025-06-29 11:09:57');
+INSERT INTO `sub_products_code` VALUES (7, '1121', '212', '3131', '3131', '31', '2121', '3131', 12121.00, '2121', '3131', 34, 0, '2025-07-01 12:56:36', '2025-07-01 12:56:36');
+INSERT INTO `sub_products_code` VALUES (8, '222', '23323', '332', '323', '232', '323', '323232', 3232.00, '323', '2323', 38, 0, '2025-07-01 13:57:44', '2025-07-01 13:57:44');
 
 -- ----------------------------
 -- Table structure for super_admin
@@ -228,7 +226,7 @@ CREATE TABLE `super_admin`  (
   `deleted_at` timestamp NULL DEFAULT NULL COMMENT 'NULL：未删除，时间戳：已删除',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of super_admin
