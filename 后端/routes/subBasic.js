@@ -8,17 +8,27 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 router.get('/products_code', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
-  
-  // 查询当前页的数据
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_products_code WHERE is_delete = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [parseInt(pageSize), offset]
+  const userId = req.user.id;
+
+  const [sharedUserRows] = await pool.execute(
+    'SELECT id FROM sub_admins WHERE id = ? OR uid = ?',
+    [userId, userId]
   );
-  
+  const sharedUserIds = sharedUserRows.map(row => row.id);
+
+  // 查询当前页的数据，只显示共享用户创建的产品编码
+  const [rows] = await pool.execute(
+    'SELECT * FROM sub_products_code WHERE user_id IN (?) AND is_delete = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?',
+    [sharedUserIds, parseInt(pageSize), offset]
+  );
+
   // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_products_code');
+  const [countRows] = await pool.execute(
+    'SELECT COUNT(*) as total FROM sub_products_code WHERE user_id IN (?) AND is_delete = 0',
+    [sharedUserIds]
+  );
   const total = countRows[0].total;
-  
+
   // 计算总页数
   const totalPages = Math.ceil(total / pageSize);
 
@@ -36,52 +46,35 @@ router.get('/products_code', authMiddleware, async (req, res) => {
 // 添加产品编码
 router.post('/products_code', authMiddleware, async (req, res) => {
   const { product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements } = req.body;
-
-  try {
-    const [result] = await pool.execute(
-      'INSERT INTO sub_products_code (product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements]
-    );
-    
-    // 查询包含时间字段的完整信息
-    const [rows] = await pool.execute(
-      'SELECT * FROM sub_products_code WHERE id = ?',
-      [result.insertId]
-    );
-
-    res.json({ data: rows[0], code: 200 });
-  } catch(error){
-    console.error(error);
-    res.status(500).json({ message: '服务器错误', code: 500 });
-  }
+  
+  const userId = req.user.id;
+  
+  const [result] = await pool.execute(
+    'INSERT INTO sub_products_code (product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, userId]
+  );
+  
+  res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新产品编码接口
 router.put('/products_code', authMiddleware, async (req, res) => {
   const { product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, id } = req.body;
   
+  const userId = req.user.id;
+  
   try {
     // 更新产品编码信息
     const [updateResult] = await pool.execute(
-      'UPDATE sub_products_code SET product_code = ?, product_name = ?, model = ?, specification = ?, other_features = ?, component_structure = ?, unit = ?, unit_price = ?, currency = ?, production_requirements = ? WHERE id = ?',
-      [product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, id]
+      'UPDATE sub_products_code SET product_code = ?, product_name = ?, model = ?, specification = ?, other_features = ?, component_structure = ?, unit = ?, unit_price = ?, currency = ?, production_requirements = ?, user_id = ? WHERE id = ?',
+      [product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, userId, id]
     );
     
     if (updateResult.affectedRows === 0) {
       return res.status(404).json({ message: '未找到该产品编码', code: 404 });
     }
     
-    // 查询更新后的完整信息
-    const [rows] = await pool.execute(
-      'SELECT * FROM sub_products_code WHERE id = ?',
-      [id]
-    );
-    
-    if (rows.length === 0) {
-      return res.status(404).json({ message: '未找到该产品编码', code: 404 });
-    }
-    
-    res.json({ data: formatObjectTime(rows[0]), code: 200 });
+    res.json({ msg: "修改成功", code: 200 });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: '服务器错误', code: 500 });
