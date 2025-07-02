@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 01/07/2025 19:35:17
+ Date: 02/07/2025 20:20:02
 */
 
 SET NAMES utf8mb4;
@@ -37,7 +37,7 @@ CREATE TABLE `sub_admins`  (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_admins
@@ -45,6 +45,7 @@ CREATE TABLE `sub_admins`  (
 INSERT INTO `sub_admins` VALUES (34, 'admin1', '$2b$10$BGGtcKLhRyzjdI5RLG16Ze/eLzMylKAH1YY/mSSc6ofAM086R.IU2', 'admin333', '21212121', NULL, 1, NULL, NULL, 1, 0, '2025-07-01 11:22:36', '2025-07-01 11:22:36');
 INSERT INTO `sub_admins` VALUES (37, 'admin22', '$2b$10$C6yDOk6bs0KzYb5EXUB9PuhVhg8wsaY33un4/rbfBaUdJGiSKSYH6', '2121', '21212121', NULL, 2, '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"ProductDelivery\"],[\"首页\",\"Home\"]]', 34, 1, 0, '2025-07-01 13:10:10', '2025-07-01 13:10:10');
 INSERT INTO `sub_admins` VALUES (38, 'admin23', '$2b$10$7JwdkpHsFPvXAEEofoui6urxdw/p7eFBCZCjHDMkammwrgaX8gxoC', '2121', '21212121', NULL, 2, '[[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"ProductDelivery\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"首页\",\"Home\"]]', 34, 1, 0, '2025-07-01 13:10:40', '2025-07-01 13:10:40');
+INSERT INTO `sub_admins` VALUES (39, 'admin9', '$2b$10$qlHcFVkAl.Iy8od/XaVNXu3ofXGvugz2L15QSN.dVkNY2XtwHr8UG', 'admin123', 'admin123', NULL, 1, NULL, NULL, 1, 0, '2025-07-02 10:57:31', '2025-07-02 10:57:31');
 
 -- ----------------------------
 -- Table structure for sub_customer_info
@@ -63,13 +64,17 @@ CREATE TABLE `sub_customer_info`  (
   `transaction_method` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易方式',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '其它交易条件',
+  `user_id` int(5) NULL DEFAULT NULL COMMENT '用户id',
+  `is_delete` int(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '0：未删除；1：已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_customer_info
 -- ----------------------------
-INSERT INTO `sub_customer_info` VALUES (1, '客户编码111', '客户简称111', '联系人111', '13800138000', '东莞公司有限公司', '东莞市寮步镇', '东莞市茶山镇', '112233445566778899', '线上交易', '￥', '1221');
+INSERT INTO `sub_customer_info` VALUES (1, '客户编码111', '客户简称111', '联系人111', '13800138000', '东莞公司有限公司', '东莞市寮步镇', '东莞市茶山镇', '112233445566778899', '线上交易', '￥', '1221', NULL, 0, '2025-07-02 11:06:31', '2025-07-02 11:06:31');
 
 -- ----------------------------
 -- Table structure for sub_employee_info
@@ -83,13 +88,17 @@ CREATE TABLE `sub_employee_info`  (
   `production_position` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生产岗位',
   `salary_attribute` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '工资属性',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `user_id` int(5) NULL DEFAULT NULL COMMENT '用户id',
+  `is_delete` int(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '0：未删除；1：已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '员工信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_employee_info
 -- ----------------------------
-INSERT INTO `sub_employee_info` VALUES (1, 'K10', '当坐飞机', '客服', '朱伙', '工具', '火雨1');
+INSERT INTO `sub_employee_info` VALUES (1, 'K10', '当坐飞机', '客服', '朱伙', '工具', '火雨1', NULL, 0, '2025-07-02 11:05:42', '2025-07-02 11:05:42');
 
 -- ----------------------------
 -- Table structure for sub_equipment_code
@@ -105,14 +114,18 @@ CREATE TABLE `sub_equipment_code`  (
   `equipment_efficiency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '设备效能',
   `equipment_status` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '设备状态',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `user_id` int(5) NULL DEFAULT NULL COMMENT '用户id',
+  `is_delete` int(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '0：未删除；1：已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '设备信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_equipment_code
 -- ----------------------------
-INSERT INTO `sub_equipment_code` VALUES (1, '设备1', '设备名1', 22, '开发', '2', '09fe8', 'idsie', '');
-INSERT INTO `sub_equipment_code` VALUES (2, '设备2', '设备名1', 32, '211', '213', '212', '231', '21');
+INSERT INTO `sub_equipment_code` VALUES (1, '设备1', '设备名1', 22, '开发', '2', '09fe8', 'idsie', '', NULL, 0, '2025-07-02 11:05:16', '2025-07-02 11:05:16');
+INSERT INTO `sub_equipment_code` VALUES (2, '设备2', '设备名1', 32, '211', '213', '212', '231', '21', NULL, 0, '2025-07-02 11:05:16', '2025-07-02 11:05:16');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -130,13 +143,17 @@ CREATE TABLE `sub_material_code`  (
   `unit_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '单价',
   `currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '币别',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `user_id` int(5) NULL DEFAULT NULL COMMENT '用户id',
+  `is_delete` int(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '0：未删除；1：已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_code
 -- ----------------------------
-INSERT INTO `sub_material_code` VALUES (1, '材料1', '材料名1', '型号1', '规格1', '特性1', '公司单位', '采购单位', 12.00, '￥', '3321');
+INSERT INTO `sub_material_code` VALUES (1, '材料1', '材料名1', '型号1', '规格1', '特性1', '公司单位', '采购单位', 12.00, '￥', '3321', NULL, 0, '2025-07-02 11:03:42', '2025-07-02 11:03:42');
 
 -- ----------------------------
 -- Table structure for sub_part_code
@@ -154,14 +171,20 @@ CREATE TABLE `sub_part_code`  (
   `currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '币别',
   `production_requirements` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '生产要求',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `user_id` int(5) NULL DEFAULT NULL COMMENT '用户id',
+  `is_delete` int(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '0：未删除；1：已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部件编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部件编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_part_code
 -- ----------------------------
-INSERT INTO `sub_part_code` VALUES (1, '部件1', '部件1', '型号1', '规格1', '特性1', 'KG', 122.00, '￥', '电光石火', '');
-INSERT INTO `sub_part_code` VALUES (2, '部件1', '部件1', '型号2', '规格2', '特性2', 'KG', 12.00, '￥', '咴', '吕21');
+INSERT INTO `sub_part_code` VALUES (1, '部件1', '部件1', '型号1', '规格1', '特性1', 'KG', 122.00, '￥', '电光石火', '', NULL, 0, '2025-07-02 10:54:48', '2025-07-02 10:54:48');
+INSERT INTO `sub_part_code` VALUES (2, '部件1', '部件1', '型号2', '规格2', '特性2', 'KG', 12.00, '￥', '咴', '吕21', NULL, 0, '2025-07-02 10:54:48', '2025-07-02 10:54:48');
+INSERT INTO `sub_part_code` VALUES (3, '2121', '31', '313', '3131', '12121', '2121', 2121.00, '2121', '212', '12121', 34, 0, '2025-07-02 10:55:27', '2025-07-02 10:55:27');
+INSERT INTO `sub_part_code` VALUES (4, 'e21e21', 'e21e', 'e21', '21e21', 'e21e21', 'e21e2', 21.00, '21e21', '21e21e21', 'e21e21', 37, 1, '2025-07-02 10:55:52', '2025-07-02 11:09:35');
 
 -- ----------------------------
 -- Table structure for sub_process_code
@@ -177,14 +200,18 @@ CREATE TABLE `sub_process_code`  (
   `section_points` int(11) NULL DEFAULT NULL COMMENT '段数点数',
   `total_processing_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '加工总价',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `user_id` int(5) NULL DEFAULT NULL COMMENT '用户id',
+  `is_delete` int(1) UNSIGNED ZEROFILL NULL DEFAULT 0 COMMENT '0：未删除；1：已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_code
 -- ----------------------------
-INSERT INTO `sub_process_code` VALUES (1, '工艺', '名称1', '设备1', '33', 12.00, 32, 121.00, '2');
-INSERT INTO `sub_process_code` VALUES (2, '工艺', '工艺1', '设备1', '33', 12.00, 212, 2112.00, '');
+INSERT INTO `sub_process_code` VALUES (1, '工艺', '名称1', '设备1', '33', 12.00, 32, 121.00, '2', NULL, 0, '2025-07-02 11:04:28', '2025-07-02 11:04:28');
+INSERT INTO `sub_process_code` VALUES (2, '工艺', '工艺1', '设备1', '33', 12.00, 212, 2112.00, '', NULL, 0, '2025-07-02 11:04:28', '2025-07-02 11:04:28');
 
 -- ----------------------------
 -- Table structure for sub_products_code
@@ -212,7 +239,7 @@ CREATE TABLE `sub_products_code`  (
 -- ----------------------------
 -- Records of sub_products_code
 -- ----------------------------
-INSERT INTO `sub_products_code` VALUES (7, '1121', '212', '3131', '3131', '31', '2121', '3131', 12121.00, '2121', '3131', 34, 0, '2025-07-01 12:56:36', '2025-07-01 12:56:36');
+INSERT INTO `sub_products_code` VALUES (7, '1121', '212', '3131', '3131', '31', '2121', '3131', 12121.00, '2121', '3131', 34, 1, '2025-07-01 12:56:36', '2025-07-02 10:41:17');
 INSERT INTO `sub_products_code` VALUES (8, '222', '23323', '332', '323', '232', '323', '323232', 3232.00, '323', '2323', 38, 0, '2025-07-01 13:57:44', '2025-07-01 13:57:44');
 
 -- ----------------------------

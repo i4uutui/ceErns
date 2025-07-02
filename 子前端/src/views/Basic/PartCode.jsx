@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request';
 
 export default defineComponent({
@@ -95,6 +95,23 @@ export default defineComponent({
         }
       })
     }
+    const handleDelete = (row) => {
+      ElMessageBox.confirm(
+        "是否确认删除？",
+        "提示",
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(async () => {
+        const res = await request.delete('/api/part_code/' + row.id);
+        if(res && res.code == 200){
+          ElMessage.success('删除成功');
+          fetchProductList();
+        }
+      }).catch(() => {})
+    }
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
@@ -150,10 +167,11 @@ export default defineComponent({
                 <ElTableColumn prop="currency" label="币别" width="100" />
                 <ElTableColumn prop="production_requirements" label="生产要求" />
                 <ElTableColumn prop="remarks" label="备注" />
-                <ElTableColumn label="操作">
+                <ElTableColumn label="操作" width="140">
                   {(scope) => (
                     <>
                       <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                      <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                     </>
                   )}
                 </ElTableColumn>
