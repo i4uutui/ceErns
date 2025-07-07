@@ -47,7 +47,8 @@
     <el-dialog v-model="dialogVisible" title="添加子管理员">
       <el-form :model="form" ref="formRef" label-width="80px">
         <el-form-item label="公司名称" prop="company_id">
-          <el-input v-model="form.company_id" />
+          <!-- <el-input v-model="form.company_id" /> -->
+           <el-cascader v-model="form.company_id" :options="options" :props="propsCascader" filterable :show-all-levels="false" placeholder="请选择企业" />
         </el-form-item>
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" />
@@ -71,7 +72,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage, ElDialog, ElButton, ElCard, ElPagination, ElTable, ElTableColumn, ElInput, ElFormItem, ElForm, ElSwitch } from 'element-plus';
+import { ElMessage, ElDialog, ElButton, ElCard, ElPagination, ElTable, ElTableColumn, ElInput, ElFormItem, ElForm, ElSwitch, ElCascader } from 'element-plus';
 import request from '@/utils/request';
 import config from '@/utils/config'
 
@@ -87,6 +88,12 @@ const adminList = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+let options = ref([])
+let propsCascader = ref({
+  label: 'name',
+  value: 'id',
+  emitPath: false
+})
 let edit = ref(0)
 
 
@@ -101,6 +108,15 @@ const fetchAdminList = async () => {
   adminList.value = res.data;
   total.value = res.totalPages;
 };
+const getCompanyList= async () => {
+  const res = await request.get('/admin/company', {
+    params: {
+      page: 1,
+      pageSize: 10,
+    },
+  })
+  options.value = res.data
+}
 const handleUplate = async (admin) => {
   edit.value = admin.id;
   dialogVisible.value = true;
@@ -165,6 +181,7 @@ function currentPageChange(val) {
 
 onMounted(() => {
   fetchAdminList();
+  getCompanyList()
 });
 </script>
 

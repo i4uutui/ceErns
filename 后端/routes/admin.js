@@ -26,18 +26,39 @@ router.post('/login', async (req, res) => {
 
 // 获取企业列表
 router.get('/company', async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query
+  const { page = 1, pageSize = 10, name = '' } = req.query;
   const offset = (page - 1) * pageSize;
   
-  const [rows] = await pool.execute(
-    'select * from ad_company_info order by created_at desc limit ? offset ?',
-    [parseInt(pageSize), offset]
-  )
+  // 基础SQL和参数
+  let querySql = 'select * from ad_company_info';
+  let countSql = 'select count(*) as total from ad_company_info';
+  const params = [];
   
+  // 如果提供了name参数，添加模糊搜索条件
+  if (name) {
+    querySql += ' where name like ?';
+    countSql += ' where name like ?';
+    params.push(`%${name}%`); // 模糊匹配前后都加%
+  }
+  
+  // 添加排序和分页
+  querySql += ' order by created_at desc limit ? offset ?';
+  params.push(parseInt(pageSize), offset);
+  
+  // 执行查询
+  const [rows] = await pool.execute(
+    querySql,
+    params
+  );
+  
+  // 获取总数（注意这里的参数需要排除分页参数）
+  const countParams = name ? [`%${name}%`] : [];
   const [countRows] = await pool.execute(
-    'select count(*) as total from ad_company_info'
-  )
-  const total = countRows[0].total
+    countSql,
+    countParams
+  );
+  
+  const total = countRows[0].total;
   const totalPages = Math.ceil(total / pageSize);
   
   // 返回所需信息
