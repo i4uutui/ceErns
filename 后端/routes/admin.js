@@ -1,4 +1,3 @@
-// ceErns/后端/routes/admin.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
@@ -11,7 +10,7 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const [rows] = await pool.execute(
-    'SELECT * FROM super_admin WHERE username = ?',
+    'SELECT * FROM ad_admin WHERE username = ?',
     [username]
   );
   if (rows.length === 0) {
@@ -25,22 +24,22 @@ router.post('/login', async (req, res) => {
   res.json({ token, code: 200 });
 });
 
-// 获取子后台用户列表（分页）
-router.get('/sub-admins', async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+// 获取企业列表
+router.get('/company', async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query
   const offset = (page - 1) * pageSize;
-  // 查询当前页的数据
+  
   const [rows] = await pool.execute(
-    'SELECT * FROM sub_admins WHERE attr = 1 AND is_delete = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?',
+    'select * from ad_company_info order by created_at desc limit ? offset ?',
     [parseInt(pageSize), offset]
-  );
-
-  // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE attr = 1 AND is_delete = 0');
-  const total = countRows[0].total;
-  // 计算总页数
+  )
+  
+  const [countRows] = await pool.execute(
+    'select count(*) as total from ad_company_info'
+  )
+  const total = countRows[0].total
   const totalPages = Math.ceil(total / pageSize);
-
+  
   // 返回所需信息
   res.json({ 
     data: formatArrayTime(rows), 
@@ -50,95 +49,144 @@ router.get('/sub-admins', async (req, res) => {
     pageSize: parseInt(pageSize),
     code: 200 
   });
+})
+// 添加企业信息
+router.post('/company', async (req, res) => {
+  const { name, person, contact, address } = req.body
+  
+  const [rows] = await pool.execute(
+    'select id from ad_company_info where name = ?',
+    [name]
+  )
+  if(rows.length != 0){
+    return res.json({ message: '该企业已被注册', code: 401 })
+  }
+  
+  await pool.execute(
+    'insert into ad_company_info (name, person, contact, address) values (?, ?, ?, ?)',
+    [name, person, contact, address]
+  )
+  
+  res.json({ message: '添加成功', code: 200 })
+})
+// 更新企业信息
+router.put('/company', async (req, res) => {
+  const { name, person, contact, address, id } = req.body
+  
+  const [rows] = await pool.execute(
+    'select id from ad_company_info where name = ? and id != ?',
+    [name, id]
+  )
+  if(rows.length != 0){
+    return res.json({ message: '该企业已被注册', code: 401 })
+  }
+  
+  await pool.execute(
+    'update ad_company_info set name = ?, person = ?, contact = ?, address = ? WHERE id = ?',
+    [name, person, contact, address, id]
+  );
+  
+  res.json({ message: '修改成功', code: 200 })
+})
+
+// 获取子后台用户列表（分页）
+router.get('/user', async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
+  const offset = (page - 1) * pageSize;
+  // 查询当前页的数据
+  const [rows] = await pool.execute(
+    `
+    select
+    u.id, u.username, u.status, u.company_id, u.created_at, u.updated_at,
+    c.id as company_id, c.name as company_name, c.address, c.person, c.contact
+    from ad_user u
+    left join ad_company_info c on u.company_id = c.id
+    order by u.created_at desc
+    limit ? offset ?
+    `,
+    [parseInt(pageSize), offset]
+  );
+  
+  // 查询总记录数
+  const [countRows] = await pool.execute('select count(*) as total from ad_user');
+  const total = countRows[0].total;
+  // 计算总页数
+  const totalPages = Math.ceil(total / pageSize);
+  
+  const formattedData = rows.map(row => {
+    const company = row.company_id ? {
+      id: row.company_id,
+      name: row.company_name,
+      address: row.address,
+      person: row.person,
+      contact: row.contact
+    } : null
+    const { company_name, address, person, contact, ...userData } = row;
+    return { company, ...userData }
+  })
+
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(formattedData), 
+    total, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
 });
 
 // 添加子后台用户
-router.post('/sub-admins', async (req, res) => {
-  const { username, password, name, company, attr, status } = req.body;
-
-  const [count] = await pool.execute(
-    "select id from sub_admins WHERE username = ?", [username]
+router.post('/user', async (req, res) => {
+  const { username, password, status, company_id } = req.body;
+  
+  const [rows] = await pool.execute(
+    "SELECT id FROM ad_user WHERE username = ?", 
+    [username]
   )
-  if(count.length != 0){
-    return res.json({message: '用户名已被使用', code: 401})
+  if (rows.length > 0) {
+    return res.json({ message: '用户名不能重复', code: 401 });
   }
   // 对密码进行加密
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const [result] = await pool.execute(
-    'INSERT INTO sub_admins (username, password, name, company, attr, status) VALUES (?, ?, ?, ?, ?, ?)',
-    [username, hashedPassword, name, company, attr, status]
-  );
-  
-  // 查询包含时间字段的完整信息
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_admins WHERE id = ?',
-    [result.insertId]
+    'INSERT INTO ad_user (username, password, status, company_id) VALUES (?, ?, ?, ?)',
+    [username, password, status, company_id]
   );
 
-  res.json({ data: rows[0], code: 200 });
+  res.json({ data: '添加成功', code: 200 });
 });
 
 // 更新子管理员接口
-router.put('/sub-admins', async (req, res) => {
-  const { username, password, name, company, attr, status, id } = req.body;
-  // 如果关闭掉，那么子用户也同步关闭，但是如果开启了，那么就需要管理员手动开启其他用户
-  if(status == 0){
-    await pool.execute(
-      'UPDATE sub_admins SET status = 0 WHERE uid = ?',
-      [id]
-    );
-  }
+router.put('/user', async (req, res) => {
+  const { username, password, status, company_id, id } = req.body;
+  
   const [count] = await pool.execute(
-    "select id from sub_admins WHERE username = ? and id != ?", [username, id]
+    "select id from ad_user WHERE username = ? and id != ?", [username, id]
   )
   if(count.length != 0){
     return res.json({message: '用户名已被使用', code: 401})
   }
   // 先查询原始密码
-  const [adminRows] = await pool.execute(
-    'SELECT password FROM sub_admins WHERE id = ?',
+  const [rows] = await pool.execute(
+    'SELECT password FROM ad_user WHERE id = ?',
     [id]
   );
   
-  if (adminRows.length === 0) {
-    return res.status(404).json({ message: '管理员不存在', code: 404 });
+  if (rows.length === 0) {
+    return res.json({ message: '管理员不存在', code: 401 });
   }
   
-  // 如果密码字段存在且不为空，则加密新密码
-  // 否则使用原始密码
-  const passwordToUpdate = password ? await bcrypt.hash(password, 10) : adminRows[0].password;
+  const passwordToUpdate = password ? await bcrypt.hash(password, 10) : rows[0].password;
 
   // 更新管理员信息（updated_at 会自动更新）
   await pool.execute(
-    'UPDATE sub_admins SET username = ?, password = ?, name = ?, company = ?, attr = ?, status = ? WHERE id = ?',
-    [username, passwordToUpdate, name, company, attr, status, id]
+    'UPDATE ad_user SET username = ?, password = ?, status = ?, company_id = ? WHERE id = ?',
+    [username, password, status, company_id, id]
   );
   
-  // 查询更新后的完整信息
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_admins WHERE id = ?',
-    [id]
-  );
-  
-  res.json({ data: rows[0], code: 200 });
-});
-
-// 删除子后台用户
-router.delete('/sub-admins/:id', async (req, res) => {
-  const { id } = req.params;
-  // 更新 deleted_at 为当前时间
-  await pool.execute(
-    'UPDATE sub_admins SET is_delete = 1 WHERE id = ?',
-    [id]
-  );
-  // 软删除同一张表中所有uid = id的数据
-  await pool.execute(
-    'UPDATE sub_admins SET is_delete = 1 WHERE uid = ?',
-    [id]
-  );
-  
-  res.json({ message: '删除成功', code: 200 });
+  res.json({ message: '修改成功', code: 200 });
 });
 
 module.exports = router;
