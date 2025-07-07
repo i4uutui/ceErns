@@ -24,7 +24,7 @@ router.post('/image', upload.single('image'), (req, res) => {
     return res.status(400).json({ message: '未上传图片', code: 400 });
   }
   // 返回图片的路径
-  const imagePath = `/public/uploads/${req.file.filename}`;
+  const imagePath = `public/uploads/${req.file.filename}`;
   res.json({ message: '图片上传成功', imagePath, code: 200 });
 });
 

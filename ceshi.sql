@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 07/07/2025 14:21:31
+ Date: 07/07/2025 20:28:53
 */
 
 SET NAMES utf8mb4;
@@ -42,6 +42,7 @@ INSERT INTO `ad_admin` VALUES (1, 'admin', '$2b$10$K7.4Gl6jHarcam6M5hGmSefgqtPOQ
 DROP TABLE IF EXISTS `ad_company_info`;
 CREATE TABLE `ad_company_info`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `logo` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '企业logo',
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公司名称',
   `person` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '联系人',
   `contact` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '联系方式',
@@ -54,8 +55,8 @@ CREATE TABLE `ad_company_info`  (
 -- ----------------------------
 -- Records of ad_company_info
 -- ----------------------------
-INSERT INTO `ad_company_info` VALUES (1, '东莞企业', '梁工', '13800138000', '东莞市寮步镇', '2025-07-07 11:54:18', '2025-07-07 11:55:10');
-INSERT INTO `ad_company_info` VALUES (2, '东坑企业', '刘工', '13800138000', '东坑镇', '2025-07-07 13:59:43', '2025-07-07 13:59:43');
+INSERT INTO `ad_company_info` VALUES (1, NULL, '东莞企业', '梁工', '13800138000', '东莞市寮步镇', '2025-07-07 11:54:18', '2025-07-07 11:55:10');
+INSERT INTO `ad_company_info` VALUES (2, NULL, '东坑企业', '刘工', '13800138000', '东坑镇', '2025-07-07 13:59:43', '2025-07-07 13:59:43');
 
 -- ----------------------------
 -- Table structure for ad_user
