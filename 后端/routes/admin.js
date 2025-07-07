@@ -50,7 +50,6 @@ router.get('/company', async (req, res) => {
     querySql,
     params
   );
-  
   // 获取总数（注意这里的参数需要排除分页参数）
   const countParams = name ? [`%${name}%`] : [];
   const [countRows] = await pool.execute(
@@ -171,9 +170,9 @@ router.post('/user', async (req, res) => {
   // 对密码进行加密
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const [result] = await pool.execute(
+  await pool.execute(
     'INSERT INTO ad_user (username, password, status, company_id) VALUES (?, ?, ?, ?)',
-    [username, password, status, company_id]
+    [username, hashedPassword, status, company_id]
   );
 
   res.json({ data: '添加成功', code: 200 });
@@ -204,7 +203,7 @@ router.put('/user', async (req, res) => {
   // 更新管理员信息（updated_at 会自动更新）
   await pool.execute(
     'UPDATE ad_user SET username = ?, password = ?, status = ?, company_id = ? WHERE id = ?',
-    [username, password, status, company_id, id]
+    [username, passwordToUpdate, status, company_id, id]
   );
   
   res.json({ message: '修改成功', code: 200 });

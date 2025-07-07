@@ -112,7 +112,7 @@ const getCompanyList= async () => {
   const res = await request.get('/admin/company', {
     params: {
       page: 1,
-      pageSize: 10,
+      pageSize: 100,
     },
   })
   options.value = res.data

@@ -30,6 +30,7 @@ export default defineComponent({
           console.log(res);
           setItem('token', res.token);
           setItem('user', res.user)
+          setItem('company', res.company)
           ElMessage.success('登录成功');
           router.push('/');
         })

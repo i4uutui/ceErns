@@ -9,15 +9,15 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 router.get('/user', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
-  
-  const userId = req.user.id;
+
+  const { id: userId, company_id } = req.user;
   // 查询当前页的数据，排除当前登录用户，只显示其创建的用户
   const [rows] = await pool.execute(
-    'SELECT id, username, name, company, avatar_url, attr, power, uid, status, created_at, updated_at FROM sub_admins WHERE uid = ? AND is_delete = 0 ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [userId, parseInt(pageSize), offset]
+    'SELECT * FROM sub_user WHERE is_deleted = 0 and company_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
+    [company_id, parseInt(pageSize), offset]
   );
   // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_admins WHERE uid = ? AND is_delete = 0', [userId]);
+  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_user WHERE is_deleted = 0 and company_id = ?', [company_id]);
   const total = countRows[0].total;
   // 计算总页数
   const totalPages = Math.ceil(total / pageSize);
