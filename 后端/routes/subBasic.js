@@ -61,8 +61,8 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   const [rows] = await pool.execute(
-    'select * from sub_products_code where product_code = ? and company_id = ?',
-    [product_code, company_id]
+    'select * from sub_products_code where product_code = ? and company_id = ? and id != ?',
+    [product_code, company_id, id]
   )
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
@@ -157,8 +157,8 @@ router.put('/part_code', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   const [rows] = await pool.execute(
-    'select * from sub_part_code where part_code = ? and company_id = ?',
-    [part_code, company_id]
+    'select * from sub_part_code where part_code = ? and company_id = ? and id != ?',
+    [part_code, company_id, id]
   )
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
@@ -255,8 +255,8 @@ router.put('/material_code', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   const [rows] = await pool.execute(
-    'select * from sub_material_code where material_code = ? and company_id = ?',
-    [material_code, company_id]
+    'select * from sub_material_code where material_code = ? and company_id = ? and id != ?',
+    [material_code, company_id, id]
   )
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
@@ -353,8 +353,8 @@ router.put('/process_code', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   const [rows] = await pool.execute(
-    'select * from sub_process_code where process_code = ? and company_id = ?',
-    [process_code, company_id]
+    'select * from sub_process_code where process_code = ? and company_id = ? and id != ?',
+    [process_code, company_id, id]
   )
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
@@ -451,8 +451,8 @@ router.put('/equipment_code', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   const [rows] = await pool.execute(
-    'select * from sub_equipment_code where process_code = ? and company_id = ?',
-    [process_code, company_id]
+    'select * from sub_equipment_code where equipment_code = ? and company_id = ? and id != ?',
+    [equipment_code, company_id, id]
   )
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
@@ -548,8 +548,8 @@ router.put('/employee_info', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   const [rows] = await pool.execute(
-    'select * from sub_employee_info where employee_id = ? and company_id = ?',
-    [employee_id, company_id]
+    'select * from sub_employee_info where employee_id = ? and company_id = ? and id != ?',
+    [employee_id, company_id, id]
   )
   if(rows.length != 0){
     return res.json({ message: '员工工号不能重复', code: 401 })

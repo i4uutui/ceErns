@@ -1,17 +1,17 @@
 /*
- Navicat Premium Data Transfer
+ Navicat MySQL Data Transfer
 
- Source Server         : ceshi
+ Source Server         : thinkphp_demo
  Source Server Type    : MySQL
- Source Server Version : 50740
+ Source Server Version : 50722 (5.7.22)
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50740
+ Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 08/07/2025 19:30:23
+ Date: 09/07/2025 01:14:28
 */
 
 SET NAMES utf8mb4;
@@ -29,7 +29,7 @@ CREATE TABLE `ad_admin`  (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ad_admin
@@ -50,7 +50,7 @@ CREATE TABLE `ad_company_info`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户企业信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户企业信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ad_company_info
@@ -77,7 +77,7 @@ CREATE TABLE `ad_user`  (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ad_user
@@ -111,12 +111,13 @@ CREATE TABLE `sub_customer_info`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_customer_info
 -- ----------------------------
-INSERT INTO `sub_customer_info` VALUES (1, 1, 1, '123', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', 1, '2025-07-08 19:29:21', '2025-07-08 19:29:21');
+INSERT INTO `sub_customer_info` VALUES (1, 1, 1, '123', '我是客户哦', '1', '1', '1', '1', '1', '1', '1', '1', '1', 1, '2025-07-08 19:29:21', '2025-07-09 00:56:31');
+INSERT INTO `sub_customer_info` VALUES (2, 1, 1, '1234', '2121', '212', '121', '21', '121', '2121', '21', '21', '2121', '2121', 1, '2025-07-09 00:58:19', '2025-07-09 00:58:19');
 
 -- ----------------------------
 -- Table structure for sub_employee_info
@@ -136,7 +137,7 @@ CREATE TABLE `sub_employee_info`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '员工信息基础信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '员工信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_employee_info
@@ -256,6 +257,36 @@ CREATE TABLE `sub_process_code`  (
 -- Records of sub_process_code
 -- ----------------------------
 INSERT INTO `sub_process_code` VALUES (3, 1, 1, '123', '212', '121', '21', 2121.00, 21, 21.00, '212', 1, '2025-07-08 15:56:54', '2025-07-08 16:00:17');
+
+-- ----------------------------
+-- Table structure for sub_product_quotation
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_product_quotation`;
+CREATE TABLE `sub_product_quotation`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `customer_id` int(11) NOT NULL COMMENT '客户id',
+  `product_id` int(11) NOT NULL COMMENT '产品编码id',
+  `model` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '型号',
+  `spec` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '规格',
+  `order_char` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他特性',
+  `customer_order` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户订单',
+  `order_number` int(20) NULL DEFAULT NULL COMMENT '订单数量',
+  `product_unit` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品单位',
+  `product_price` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品单价',
+  `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
+  `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
+  `is_deleted` tinyint(3) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_product_quotation
+-- ----------------------------
+INSERT INTO `sub_product_quotation` VALUES (1, 1, 1, 1, 10, '212', '121', '21', '2121', 121, '2121', '121', '212', '21', 1, '2025-07-09 01:04:37', '2025-07-09 01:04:37');
 
 -- ----------------------------
 -- Table structure for sub_products_code
