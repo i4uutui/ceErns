@@ -26,7 +26,7 @@ service.interceptors.response.use(response => {
 		const res = response.data;
 		if (res.code == 200) {
 			return res;
-		}else if (res.code == 401) {
+		}else if (res.code == 402) {
 			ElMessage({
 				message: res.message || "Error",
 				type: "error",
@@ -43,7 +43,7 @@ service.interceptors.response.use(response => {
 		}
 	}, error => {
 		const { status } = error.response || {};
-		if (status === 401) {
+		if (status === 402) {
 			ElMessage.error("登录状态已过期，请重新登录");
 			localStorage.clear();
 			$router.push("/");

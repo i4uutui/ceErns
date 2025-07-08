@@ -121,6 +121,7 @@ router.get('/user', async (req, res) => {
     c.id as company_id, c.name as company_name, c.address, c.person, c.contact
     from ad_user u
     left join ad_company_info c on u.company_id = c.id
+    where type = 1 and parent_id = 0
     order by u.created_at desc
     limit ? offset ?
     `,
@@ -169,10 +170,12 @@ router.post('/user', async (req, res) => {
   }
   // 对密码进行加密
   const hashedPassword = await bcrypt.hash(password, 10);
-
+  
+  const type = 1
+  const parent_id = 0
   await pool.execute(
-    'INSERT INTO ad_user (username, password, status, company_id) VALUES (?, ?, ?, ?)',
-    [username, hashedPassword, status, company_id]
+    'INSERT INTO ad_user (username, password, status, company_id, type, parent_id) VALUES (?, ?, ?, ?, ?, ?)',
+    [username, hashedPassword, status, company_id, type, parent_id]
   );
 
   res.json({ data: '添加成功', code: 200 });
@@ -200,11 +203,21 @@ router.put('/user', async (req, res) => {
   
   const passwordToUpdate = password ? await bcrypt.hash(password, 10) : rows[0].password;
 
+  const type = 1
+  const parent_id = 0
   // 更新管理员信息（updated_at 会自动更新）
   await pool.execute(
-    'UPDATE ad_user SET username = ?, password = ?, status = ?, company_id = ? WHERE id = ?',
-    [username, passwordToUpdate, status, company_id, id]
+    'UPDATE ad_user SET username = ?, password = ?, status = ?, company_id = ?, type = ?, parent_id = ? WHERE id = ?',
+    [username, passwordToUpdate, status, company_id, type, parent_id, id]
   );
+  
+  // 如果status等于0的话,同步修改其他parent_id一致的数据
+  if(status == 0){
+    await pool.execute(
+      'UPDATE ad_user SET status = 0 WHERE parent_id = ?',
+      [id]
+    );
+  }
   
   res.json({ message: '修改成功', code: 200 });
 });

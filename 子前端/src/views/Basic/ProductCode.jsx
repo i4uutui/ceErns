@@ -79,6 +79,8 @@ export default defineComponent({
             const res = await request.post('/api/products_code', form.value);
             if(res && res.code == 200){
               ElMessage.success('添加成功');
+              dialogVisible.value = false;
+              fetchProductList();
             }
             
           }else{
@@ -90,11 +92,10 @@ export default defineComponent({
             const res = await request.put('/api/products_code', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
+              dialogVisible.value = false;
+              fetchProductList();
             }
           }
-          
-          dialogVisible.value = false;
-          fetchProductList();
         }
       })
     }

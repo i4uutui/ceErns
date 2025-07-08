@@ -40,7 +40,7 @@ service.interceptors.response.use(
   },
   (error) => {
     const { status } = error.response || {};
-    if (status === 401) {
+    if (status === 402) {
       ElMessage.error('登录状态已过期，请重新登录');
       localStorage.removeItem('token');
       localStorage.removeItem('user');

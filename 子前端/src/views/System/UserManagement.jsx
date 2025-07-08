@@ -107,12 +107,16 @@ export default defineComponent({
         }
       }).catch(() => {})
     }
-    const closeUser = (row) => {
+    const closeUser = async (row) => {
       form.value = row;
       const power = JSON.parse(row.power)
       form.value.power = power
       edit.value = row.id;
-      handleSubmit()
+      const { password, ...newData } = form.value
+      const res = await request.put('/api/user', newData);
+      if(res && res.code == 200){
+        ElMessage.success('修改成功');
+      }
     }
     const handleUplate = (row) => {
       edit.value = row.id;

@@ -53,7 +53,7 @@
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" />
         </el-form-item>
-        <el-form-item label="密码" prop="password"  v-if="!edit">
+        <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" type="password" />
         </el-form-item>
         <el-form-item label="是否开启" prop="status">
