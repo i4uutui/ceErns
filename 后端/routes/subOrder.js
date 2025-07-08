@@ -9,90 +9,93 @@ router.get('/customer_info', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
   
-  try {
-    // 查询当前页的数据
-    const [rows] = await pool.execute(
-      'SELECT * FROM sub_customer_info LIMIT ? OFFSET ?',
-      [parseInt(pageSize), offset]
-    );
-    
-    // 查询总记录数
-    const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_customer_info');
-    const total = countRows[0].total;
-    
-    // 计算总页数
-    const totalPages = Math.ceil(total / pageSize);
-
-    // 返回所需信息
-    res.json({ 
-      data: formatArrayTime(rows), 
-      total, 
-      totalPages, 
-      currentPage: parseInt(page), 
-      pageSize: parseInt(pageSize),
-      code: 200 
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: '服务器错误', code: 500 });
-  }
+  const { company_id } = req.user;
+  
+  const [rows] = await pool.execute(
+    'SELECT * FROM sub_customer_info WHERE is_deleted = 1 and company_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
+    [company_id, parseInt(pageSize), offset]
+  );
+  // 查询总记录数
+  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_customer_info WHERE is_deleted = 1 and company_id = ?', [company_id]);
+  const total = countRows[0].total;
+  // 计算总页数
+  const totalPages = Math.ceil(total / pageSize);
+  
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(rows), 
+    total, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
 });
 
 // 添加客户信息
 router.post('/customer_info', authMiddleware, async (req, res) => {
   const { customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms } = req.body;
+  
+  const { id: userId, company_id } = req.user;
+  
+  const [rows] = await pool.execute(
+    'select * from sub_customer_info where customer_code = ? and company_id = ?',
+    [customer_code, company_id]
+  )
+  if(rows.length != 0){
+    return res.json({ message: '编码不能重复', code: 401 })
+  }
 
-  try {
     const [result] = await pool.execute(
-      'INSERT INTO sub_customer_info (customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms]
+      'INSERT INTO sub_customer_info (customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, userId, company_id]
     );
     
-    // 查询包含时间字段的完整信息
-    const [rows] = await pool.execute(
-      'SELECT * FROM sub_customer_info WHERE id = ?',
-      [result.insertId]
-    );
-
-    res.json({ data: rows[0], code: 200 });
-  } catch(error){
-    console.error(error);
-    res.status(500).json({ message: '服务器错误', code: 500 });
-  }
+    res.json({ message: "添加成功", code: 200 });
 });
 
 // 更新客户信息接口
 router.put('/customer_info', authMiddleware, async (req, res) => {
   const { customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, id } = req.body;
   
-  try {
+  const { id: userId, company_id } = req.user;
+  
+  const [rows] = await pool.execute(
+    'select * from sub_customer_info where customer_info = ? and company_id = ?',
+    [customer_info, company_id]
+  )
+  if(rows.length != 0){
+    return res.json({ message: '编码不能重复', code: 401 })
+  }
+  
     // 更新客户信息
     const [updateResult] = await pool.execute(
-      'UPDATE sub_customer_info SET customer_code = ?, customer_abbreviation = ?, contact_person = ?, contact_information = ?, company_full_name = ?, company_address = ?, delivery_address = ?, tax_registration_number = ?, transaction_method = ?, transaction_currency = ?, other_transaction_terms = ? WHERE id = ?',
-      [customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, id]
+      'UPDATE sub_customer_info SET customer_code = ?, customer_abbreviation = ?, contact_person = ?, contact_information = ?, company_full_name = ?, company_address = ?, delivery_address = ?, tax_registration_number = ?, transaction_method = ?, transaction_currency = ?, other_transaction_terms = ?, user_id = ?, company_id = ? WHERE id = ?',
+      [customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, userId, company_id, id]
     );
     
     if (updateResult.affectedRows === 0) {
       return res.status(404).json({ message: '未找到该客户信息', code: 404 });
     }
     
-    // 查询更新后的完整信息
-    const [rows] = await pool.execute(
-      'SELECT * FROM sub_customer_info WHERE id = ?',
-      [id]
-    );
-    
-    if (rows.length === 0) {
-      return res.status(404).json({ message: '未找到该客户信息', code: 404 });
-    }
-    
-    res.json({ data: formatObjectTime(rows[0]), code: 200 });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: '服务器错误', code: 500 });
-  }
+    res.json({ message: "修改成功", code: 200 });
 });
-
+// 删除客户信息
+router.delete('/customer_info/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const { company_id } = req.user
+  
+  const [result] = await pool.execute(
+    'UPDATE sub_customer_info SET is_deleted = 0 WHERE id = ? and is_deleted = 1 and company_id = ?',
+    [id, company_id]
+  );
+  
+  if (result.affectedRows === 0) {
+    return res.json({ message: '客户信息不存在或已被删除', code: 401 });
+  }
+  
+  res.json({ message: '删除成功', code: 200 });
+});
 
 
 

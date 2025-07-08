@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request';
 
 export default defineComponent({
@@ -80,6 +80,8 @@ export default defineComponent({
             const res = await request.post('/api/customer_info', form.value);
             if(res && res.code == 200){
               ElMessage.success('添加成功');
+              dialogVisible.value = false;
+              fetchProductList();
             }
             
           }else{
@@ -91,13 +93,29 @@ export default defineComponent({
             const res = await request.put('/api/customer_info', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
+              dialogVisible.value = false;
+              fetchProductList();
             }
           }
-          
-          dialogVisible.value = false;
-          fetchProductList();
         }
       })
+    }
+    const handleDelete = (row) => {
+      ElMessageBox.confirm(
+        "是否确认删除？",
+        "提示",
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(async () => {
+        const res = await request.delete('/api/customer_info/' + row.id);
+        if(res && res.code == 200){
+          ElMessage.success('删除成功');
+          fetchProductList();
+        }
+      }).catch(() => {})
     }
     const handleUplate = (row) => {
       edit.value = row.id;
@@ -156,10 +174,11 @@ export default defineComponent({
                 <ElTableColumn prop="transaction_method" label="交易方式" />
                 <ElTableColumn prop="transaction_currency" label="交易币别" />
                 <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />
-                <ElTableColumn label="操作">
+                <ElTableColumn label="操作" width="140">
                   {(scope) => (
                     <>
                       <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                      <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                     </>
                   )}
                 </ElTableColumn>
