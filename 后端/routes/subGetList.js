@@ -12,10 +12,9 @@ router.get('/getProductsCode', authMiddleware, async (req, res) => {
     [company_id]
   );
   const list = rows.map(item => {
-    const { product_name, id, ...rest } = item;
+    const { product_name, ...rest } = item;
     return {
       label: item.product_name,
-      value: item.id,
       ...rest
     }
   })
@@ -31,10 +30,9 @@ router.get('/getCustomerInfo', authMiddleware, async (req, res) => {
     [company_id]
   );
   const list = rows.map(item => {
-    const { customer_abbreviation, id, ...rest } = item;
+    const { customer_abbreviation, ...rest } = item;
     return {
       label: item.customer_abbreviation,
-      value: item.id,
       ...rest
     }
   })

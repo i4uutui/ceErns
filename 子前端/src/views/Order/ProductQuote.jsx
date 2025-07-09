@@ -59,7 +59,8 @@ export default defineComponent({
     let customer = ref([])
     let product = ref([])
     let propsCascader = ref({
-      emitPath: false
+      emitPath: false,
+      value: 'id'
     })
 
     onMounted(() => {
@@ -173,6 +174,7 @@ export default defineComponent({
                 <ElTableColumn prop="product_price" label="产品单价" />
                 <ElTableColumn prop="transaction_currency" label="交易币别" />
                 <ElTableColumn prop="other_transaction_terms" label="交易条件" />
+                <ElTableColumn prop="created_at" label="创建时间" />
                 <ElTableColumn label="操作" width="140">
                   {(scope) => (
                     <>
