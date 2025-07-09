@@ -1,17 +1,17 @@
 /*
- Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
- Source Server         : thinkphp_demo
+ Source Server         : ceshi
  Source Server Type    : MySQL
- Source Server Version : 50722 (5.7.22)
+ Source Server Version : 50740
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50722 (5.7.22)
+ Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 09/07/2025 01:14:28
+ Date: 09/07/2025 18:48:34
 */
 
 SET NAMES utf8mb4;
@@ -111,13 +111,14 @@ CREATE TABLE `sub_customer_info`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_customer_info
 -- ----------------------------
-INSERT INTO `sub_customer_info` VALUES (1, 1, 1, '123', '我是客户哦', '1', '1', '1', '1', '1', '1', '1', '1', '1', 1, '2025-07-08 19:29:21', '2025-07-09 00:56:31');
+INSERT INTO `sub_customer_info` VALUES (1, 1, 1, '123223', '我是客户哦', '1', '1', '1', '1', '1', '1', '1', '1', '1', 1, '2025-07-08 19:29:21', '2025-07-09 15:38:10');
 INSERT INTO `sub_customer_info` VALUES (2, 1, 1, '1234', '2121', '212', '121', '21', '121', '2121', '21', '21', '2121', '2121', 1, '2025-07-09 00:58:19', '2025-07-09 00:58:19');
+INSERT INTO `sub_customer_info` VALUES (3, 1, 1, '12311', '211', '12', '1', '15', '155', '15', '15', '1', '55', '11', 1, '2025-07-09 15:04:51', '2025-07-09 15:04:51');
 
 -- ----------------------------
 -- Table structure for sub_employee_info
@@ -280,13 +281,18 @@ CREATE TABLE `sub_product_quotation`  (
   `is_deleted` tinyint(3) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `fk_quotation_product`(`product_id`) USING BTREE,
+  INDEX `fc_quotation_product`(`customer_id`) USING BTREE,
+  CONSTRAINT `fc_quotation_product` FOREIGN KEY (`customer_id`) REFERENCES `sub_customer_info` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `fk_quotation_product` FOREIGN KEY (`product_id`) REFERENCES `sub_products_code` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_quotation
 -- ----------------------------
-INSERT INTO `sub_product_quotation` VALUES (1, 1, 1, 1, 10, '212', '121', '21', '2121', 121, '2121', '121', '212', '21', 1, '2025-07-09 01:04:37', '2025-07-09 01:04:37');
+INSERT INTO `sub_product_quotation` VALUES (1, 1, 1, 1, 10, '1112', '121', '21', '2121', 121, '2121', '121', '1', '21', 1, '2025-07-09 01:04:37', '2025-07-09 11:44:30');
+INSERT INTO `sub_product_quotation` VALUES (2, 1, 1, 2, 9, '12', '1222211', '12', '12', 1, '2', '12', '12', '12', 1, '2025-07-09 11:45:02', '2025-07-09 18:46:59');
 
 -- ----------------------------
 -- Table structure for sub_products_code

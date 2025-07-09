@@ -1,8 +1,7 @@
-const { DataTypes, Model } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-class SubProductsCode extends Model {}
-SubProductsCode.init({
+const SubProductsCode = sequelize.define('SubProductsCode', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -20,73 +19,69 @@ SubProductsCode.init({
     allowNull: false,
     comment: '发布的用户id'
   },
-  customer_id: {
-    type: DataTypes.INTEGER(11),
+  product_code: {
+    type: DataTypes.STRING(50),
     allowNull: false,
-    comment: '客户id'
+    comment: '产品的唯一标识编码',
   },
-  product_id: {
-    type: DataTypes.INTEGER(11),
+  product_name: {
+    type: DataTypes.STRING(100),
     allowNull: false,
-    comment: '产品编码id'
+    comment: '产品的名称',
   },
   model: {
     type: DataTypes.STRING(50),
     allowNull: true,
-    comment: '型号'
+    comment: '产品的型号',
   },
-  spec: {
-    type: DataTypes.STRING(50),
+  specification: {
+    type: DataTypes.STRING(100),
     allowNull: true,
-    comment: '规格'
+    comment: '产品的规格参数',
   },
-  order_char: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-    comment: '其他特性'
-  },
-  customer_order: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-    comment: '客户订单'
-  },
-  order_number: {
-    type: DataTypes.INTEGER(20),
-    allowNull: true,
-    comment: '订单数量'
-  },
-  product_unit: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: '产品单位'
-  },
-  product_price: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: '产品单价'
-  },
-  transaction_currency: {
-    type: DataTypes.STRING(10),
-    allowNull: true,
-    comment: '交易币别'
-  },
-  other_transaction_terms: {
+  other_features: {
     type: DataTypes.TEXT,
     allowNull: true,
-    comment: '交易条件'
+    comment: '产品的其他特性描述',
+  },
+  component_structure: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    comment: '产品的部件结构说明',
+  },
+  unit: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: '产品的计量单位',
+  },
+  unit_price: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+    comment: '产品的单价',
+  },
+  currency: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    comment: '产品价格的币别',
+  },
+  production_requirements: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    comment: '产品的生产要求',
   },
   is_deleted: {
-    type: DataTypes.TINYINT(3),
+    type: DataTypes.INTEGER(1).UNSIGNED.ZEROFILL,
     allowNull: true,
     defaultValue: 1,
-    comment: '是否删除：1-未删除，0-已删除'
-  },
+    comment: '1：未删除；0：已删除',
+  }
 }, {
   sequelize,
   modelName: 'sub_products_code',
   tableName: 'sub_products_code',
   timestamps: true,
-  underscored: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '产品编码信息表'
 })
 

@@ -1,8 +1,7 @@
-const { DataTypes, Model } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-class SubProductQuotation extends Model {}
-SubProductQuotation.init({
+const SubProductQuotation = sequelize.define('SubProductQuotation', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -19,16 +18,6 @@ SubProductQuotation.init({
     type: DataTypes.INTEGER(11),
     allowNull: false,
     comment: '发布的用户id'
-  },
-  customer_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: '客户id'
-  },
-  product_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: '产品编码id'
   },
   model: {
     type: DataTypes.STRING(50),
@@ -80,14 +69,16 @@ SubProductQuotation.init({
     allowNull: true,
     defaultValue: 1,
     comment: '是否删除：1-未删除，0-已删除'
-  },
+  }
 }, {
   sequelize,
   modelName: 'sub_product_quotation',
   tableName: 'sub_product_quotation',
   timestamps: true,
-  underscored: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '产品报价信息表'
 })
+
 
 module.exports = SubProductQuotation;
