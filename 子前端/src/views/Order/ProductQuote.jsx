@@ -1,4 +1,4 @@
-import { ElButton, ElCard, ElCascader, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElTable, ElTableColumn } from 'element-plus'
+import { ElButton, ElCard, ElCascader, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn } from 'element-plus'
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 
@@ -52,9 +52,9 @@ export default defineComponent({
       other_transaction_terms: ''
     })
     let tableData = ref([])
-    const currentPage = ref(1);
-    const pageSize = ref(10);
-    const total = ref(0);
+    let currentPage = ref(1);
+    let pageSize = ref(10);
+    let total = ref(0);
     let edit = ref(0)
     let customer = ref([])
     let product = ref([])
@@ -78,7 +78,7 @@ export default defineComponent({
         },
       });
       tableData.value = res.data;
-      total.value = res.totalPages;
+      total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
       if (!formEl) return
@@ -148,6 +148,16 @@ export default defineComponent({
         other_transaction_terms: '',
       }
     }
+    // 分页相关
+    function pageSizeChange(val) {
+      currentPage.value = 1;
+      pageSize.value = val;
+      fetchProductList()
+    }
+    function currentPageChange(val) {
+      currentPage.value = val;
+      fetchProductList();
+    }
 
     return() => (
       <>
@@ -161,28 +171,31 @@ export default defineComponent({
               </div>
             ),
             default: () => (
-              <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" />
-                <ElTableColumn prop="product.product_code" label="产品编码" />
-                <ElTableColumn prop="product.product_name" label="产品名称" />
-                <ElTableColumn prop="model" label="型号" />
-                <ElTableColumn prop="spec" label="规格" />
-                <ElTableColumn prop="order_char" label="其他特性" />
-                <ElTableColumn prop="customer_order" label="客户订单" />
-                <ElTableColumn prop="order_number" label="订单数量" />
-                <ElTableColumn prop="product_unit" label="产品单位" />
-                <ElTableColumn prop="product_price" label="产品单价" />
-                <ElTableColumn prop="transaction_currency" label="交易币别" />
-                <ElTableColumn prop="other_transaction_terms" label="交易条件" />
-                <ElTableColumn prop="created_at" label="创建时间" />
-                <ElTableColumn label="操作" width="140">
-                  {(scope) => (
-                    <>
-                      <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                    </>
-                  )}
-                </ElTableColumn>
-              </ElTable>
+              <>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                  <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" />
+                  <ElTableColumn prop="product.product_name" label="产品名称" />
+                  <ElTableColumn prop="model" label="型号" />
+                  <ElTableColumn prop="spec" label="规格" />
+                  <ElTableColumn prop="order_char" label="其他特性" />
+                  <ElTableColumn prop="customer_order" label="客户订单" />
+                  <ElTableColumn prop="order_number" label="订单数量" />
+                  <ElTableColumn prop="product_unit" label="产品单位" />
+                  <ElTableColumn prop="product_price" label="产品单价" />
+                  <ElTableColumn prop="transaction_currency" label="交易币别" />
+                  <ElTableColumn prop="other_transaction_terms" label="交易条件" />
+                  <ElTableColumn prop="created_at" label="创建时间" />
+                  <ElTableColumn label="操作" width="140">
+                    {(scope) => (
+                      <>
+                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                      </>
+                    )}
+                  </ElTableColumn>
+                </ElTable>
+                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+              </>
             )
           }}
         </ElCard>

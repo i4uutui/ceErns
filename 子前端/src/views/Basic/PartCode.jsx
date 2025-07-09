@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox, ElPagination } from 'element-plus'
 import request from '@/utils/request';
 
 export default defineComponent({
@@ -48,9 +48,9 @@ export default defineComponent({
       remarks: '',
     })
     let tableData = ref([])
-    const currentPage = ref(1);
-    const pageSize = ref(10);
-    const total = ref(0);
+    let currentPage = ref(1);
+    let pageSize = ref(10);
+    let total = ref(0);
     let edit = ref(0)
 
     onMounted(() => {
@@ -66,7 +66,7 @@ export default defineComponent({
         },
       });
       tableData.value = res.data;
-      total.value = res.totalPages;
+      total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
       if (!formEl) return
@@ -144,6 +144,16 @@ export default defineComponent({
         remarks: '',
       }
     }
+    // 分页相关
+    function pageSizeChange(val) {
+      currentPage.value = 1;
+      pageSize.value = val;
+      fetchProductList()
+    }
+    function currentPageChange(val) {
+      currentPage.value = val;
+      fetchProductList();
+    }
 
     return() => (
       <>
@@ -157,26 +167,29 @@ export default defineComponent({
               </div>
             ),
             default: () => (
-              <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                <ElTableColumn prop="part_code" label="部件编码" />
-                <ElTableColumn prop="part_name" label="部件名称" />
-                <ElTableColumn prop="model" label="型号" />
-                <ElTableColumn prop="specification" label="规格" />
-                <ElTableColumn prop="other_features" label="其它特性" />
-                <ElTableColumn prop="unit" label="单位" width="100" />
-                <ElTableColumn prop="unit_price" label="单价" width="100" />
-                <ElTableColumn prop="currency" label="币别" width="100" />
-                <ElTableColumn prop="production_requirements" label="生产要求" />
-                <ElTableColumn prop="remarks" label="备注" />
-                <ElTableColumn label="操作" width="140">
-                  {(scope) => (
-                    <>
-                      <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                      <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
-                    </>
-                  )}
-                </ElTableColumn>
-              </ElTable>
+              <>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                  <ElTableColumn prop="part_code" label="部件编码" />
+                  <ElTableColumn prop="part_name" label="部件名称" />
+                  <ElTableColumn prop="model" label="型号" />
+                  <ElTableColumn prop="specification" label="规格" />
+                  <ElTableColumn prop="other_features" label="其它特性" />
+                  <ElTableColumn prop="unit" label="单位" width="100" />
+                  <ElTableColumn prop="unit_price" label="单价" width="100" />
+                  <ElTableColumn prop="currency" label="币别" width="100" />
+                  <ElTableColumn prop="production_requirements" label="生产要求" />
+                  <ElTableColumn prop="remarks" label="备注" />
+                  <ElTableColumn label="操作" width="140">
+                    {(scope) => (
+                      <>
+                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                      </>
+                    )}
+                  </ElTableColumn>
+                </ElTable>
+                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+              </>
             )
           }}
         </ElCard>

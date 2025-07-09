@@ -13,6 +13,7 @@ app.use('/api', require('./routes/subAdmin'));
 app.use('/api', require('./routes/subUser')); // 用户管理
 app.use('/api', require('./routes/subBasic')); // 基础资料
 app.use('/api', require('./routes/subOrder')); // 订单管理
+app.use('/api', require('./routes/subPurchase')); // 采购管理
 app.use('/api', require('./routes/subGetList')); // 获取其他列表相关的接口
 app.use('/upload', require('./routes/upload'));
 

@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox, ElPagination } from 'element-plus'
 import request from '@/utils/request';
 
 export default defineComponent({
@@ -40,9 +40,9 @@ export default defineComponent({
       remarks: '',
     })
     let tableData = ref([])
-    const currentPage = ref(1);
-    const pageSize = ref(10);
-    const total = ref(0);
+    let currentPage = ref(1);
+    let pageSize = ref(10);
+    let total = ref(0);
     let edit = ref(0)
 
     onMounted(() => {
@@ -58,7 +58,7 @@ export default defineComponent({
         },
       });
       tableData.value = res.data;
-      total.value = res.totalPages;
+      total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
       if (!formEl) return
@@ -134,6 +134,16 @@ export default defineComponent({
         remarks: '',
       }
     }
+    // 分页相关
+    function pageSizeChange(val) {
+      currentPage.value = 1;
+      pageSize.value = val;
+      fetchProductList()
+    }
+    function currentPageChange(val) {
+      currentPage.value = val;
+      fetchProductList();
+    }
 
     return() => (
       <>
@@ -147,24 +157,27 @@ export default defineComponent({
               </div>
             ),
             default: () => (
-              <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                <ElTableColumn prop="equipment_code" label="设备编码" />
-                <ElTableColumn prop="equipment_name" label="设备名称" />
-                <ElTableColumn prop="equipment_quantity" label="设备数量" />
-                <ElTableColumn prop="department" label="所属部门" />
-                <ElTableColumn prop="working_hours" label="工作时长(时)" />
-                <ElTableColumn prop="equipment_efficiency" label="设备效能" />
-                <ElTableColumn prop="equipment_status" label="设备状态" />
-                <ElTableColumn prop="remarks" label="备注" />
-                <ElTableColumn label="操作" width='140'>
-                  {(scope) => (
-                    <>
-                      <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                      <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
-                    </>
-                  )}
-                </ElTableColumn>
-              </ElTable>
+              <>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                  <ElTableColumn prop="equipment_code" label="设备编码" />
+                  <ElTableColumn prop="equipment_name" label="设备名称" />
+                  <ElTableColumn prop="equipment_quantity" label="设备数量" />
+                  <ElTableColumn prop="department" label="所属部门" />
+                  <ElTableColumn prop="working_hours" label="工作时长(时)" />
+                  <ElTableColumn prop="equipment_efficiency" label="设备效能" />
+                  <ElTableColumn prop="equipment_status" label="设备状态" />
+                  <ElTableColumn prop="remarks" label="备注" />
+                  <ElTableColumn label="操作" width='140'>
+                    {(scope) => (
+                      <>
+                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                      </>
+                    )}
+                  </ElTableColumn>
+                </ElTable>
+                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+              </>
             )
           }}
         </ElCard>

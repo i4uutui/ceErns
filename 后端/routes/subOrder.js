@@ -21,7 +21,7 @@ router.get('/customer_info', authMiddleware, async (req, res) => {
     limit: parseInt(pageSize),
     offset
   })
-  const totalPages = Math.ceil(total / pageSize)
+  const totalPages = Math.ceil(count / pageSize)
   
   const fromData = rows.map(item => item.dataValues)
   

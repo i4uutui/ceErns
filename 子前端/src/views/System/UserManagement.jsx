@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElSwitch, ElCascader, ElMessageBox } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElSwitch, ElCascader, ElMessageBox, ElPagination } from 'element-plus'
 import request from '@/utils/request';
 import router from '@/router';
 import { getItem } from '@/assets/js/storage';
@@ -27,9 +27,9 @@ export default defineComponent({
       power: [] // 添加权限字段
     })
     let tableData = ref([])
-    const currentPage = ref(1);
-    const pageSize = ref(10);
-    const total = ref(0);
+    let currentPage = ref(1);
+    let pageSize = ref(10);
+    let total = ref(0);
     let edit = ref(0)
     let options = ref([])
     let placeholder = ref('')
@@ -48,7 +48,7 @@ export default defineComponent({
         },
       });
       tableData.value = res.data;
-      total.value = res.totalPages;
+      total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
       if (!formEl) return
@@ -194,6 +194,16 @@ export default defineComponent({
       form.value.name = '';
       form.value.power = []; // 清空权限选择
     }
+    // 分页相关
+    function pageSizeChange(val) {
+      currentPage.value = 1;
+      pageSize.value = val;
+      fetchAdminList()
+    }
+    function currentPageChange(val) {
+      currentPage.value = val;
+      fetchAdminList();
+    }
 
     return() => (
       <>
@@ -207,22 +217,25 @@ export default defineComponent({
               </div>
             ),
             default: () => (
-              <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                <ElTableColumn prop="username" label="用户名" width="180" />
-                <ElTableColumn prop="name" label="姓名" width="180" />
-                <ElTableColumn prop="status" label="是否开启" width="180">
-                  {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } onChange={ () => closeUser(scope.row) } />}
-                </ElTableColumn>
-                <ElTableColumn prop="created_at" label="创建时间" width="180" />
-                <ElTableColumn label="操作">
-                  {(scope) => (
-                    <>
-                      <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                      <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
-                    </>
-                  )}
-                </ElTableColumn>
-              </ElTable>
+              <>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                  <ElTableColumn prop="username" label="用户名" width="180" />
+                  <ElTableColumn prop="name" label="姓名" width="180" />
+                  <ElTableColumn prop="status" label="是否开启" width="180">
+                    {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } onChange={ () => closeUser(scope.row) } />}
+                  </ElTableColumn>
+                  <ElTableColumn prop="created_at" label="创建时间" width="180" />
+                  <ElTableColumn label="操作">
+                    {(scope) => (
+                      <>
+                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                      </>
+                    )}
+                  </ElTableColumn>
+                </ElTable>
+                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+              </>
             )
           }}
         </ElCard>

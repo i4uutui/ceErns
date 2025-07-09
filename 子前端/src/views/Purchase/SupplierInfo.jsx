@@ -6,11 +6,11 @@ export default defineComponent({
   setup(){
     const formRef = ref(null);
     const rules = reactive({
-      customer_code: [
-        { required: true, message: '请输入客户编码', trigger: 'blur' },
+      supplier_code: [
+        { required: true, message: '请输入供应商编码', trigger: 'blur' },
       ],
-      customer_abbreviation: [
-        { required: true, message: '请输入客户简称', trigger: 'blur' },
+      supplier_abbreviation: [
+        { required: true, message: '请输入供应商简称', trigger: 'blur' },
       ],
       contact_person: [
         { required: true, message: '请输入联系人', trigger: 'blur' },
@@ -18,17 +18,17 @@ export default defineComponent({
       contact_information: [
         { required: true, message: '请输入联系方式', trigger: 'blur' },
       ],
-      company_full_name: [
-        { required: true, message: '请输入公司全名', trigger: 'blur' },
+      supplier_full_name: [
+        { required: true, message: '请输入供应商全名', trigger: 'blur' },
       ],
-      company_address: [
-        { required: true, message: '请输入公司地址', trigger: 'blur' },
+      supplier_address: [
+        { required: true, message: '请输入供应商地址', trigger: 'blur' },
       ],
-      delivery_address: [
-        { required: true, message: '请输入交货地址', trigger: 'blur' },
+      supplier_category: [
+        { required: true, message: '请输入供应商类别', trigger: 'blur' },
       ],
-      tax_registration_number: [
-        { required: true, message: '请输入税务登记号', trigger: 'blur' },
+      supply_method: [
+        { required: true, message: '请输入供货方式', trigger: 'blur' },
       ],
       transaction_method: [
         { required: true, message: '请输入交易方式', trigger: 'blur' },
@@ -39,14 +39,14 @@ export default defineComponent({
     })
     let dialogVisible = ref(false)
     let form = ref({
-      customer_code: '',
-      customer_abbreviation: '',
+      supplier_code: '',
+      supplier_abbreviation: '',
       contact_person: '',
       contact_information: '',
-      company_full_name: '',
-      company_address: '',
-      delivery_address: '',
-      tax_registration_number: '',
+      supplier_full_name: '',
+      supplier_address: '',
+      supplier_category: '',
+      supply_method: '',
       transaction_method: '',
       transaction_currency: '',
       other_transaction_terms: '',
@@ -63,7 +63,7 @@ export default defineComponent({
 
     // 获取列表
     const fetchProductList = async () => {
-      const res = await request.get('/api/customer_info', {
+      const res = await request.get('/api/supplier_info', {
         params: {
           page: currentPage.value,
           pageSize: pageSize.value
@@ -77,7 +77,7 @@ export default defineComponent({
       await formEl.validate(async (valid, fields) => {
         if (valid){
           if(!edit.value){
-            const res = await request.post('/api/customer_info', form.value);
+            const res = await request.post('/api/supplier_info', form.value);
             if(res && res.code == 200){
               ElMessage.success('添加成功');
               dialogVisible.value = false;
@@ -90,7 +90,7 @@ export default defineComponent({
               id: edit.value,
               ...form.value
             }
-            const res = await request.put('/api/customer_info', myForm);
+            const res = await request.put('/api/supplier_info', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
               dialogVisible.value = false;
@@ -99,23 +99,6 @@ export default defineComponent({
           }
         }
       })
-    }
-    const handleDelete = (row) => {
-      ElMessageBox.confirm(
-        "是否确认删除？",
-        "提示",
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      ).then(async () => {
-        const res = await request.delete('/api/customer_info/' + row.id);
-        if(res && res.code == 200){
-          ElMessage.success('删除成功');
-          fetchProductList();
-        }
-      }).catch(() => {})
     }
     const handleUplate = (row) => {
       edit.value = row.id;
@@ -136,14 +119,14 @@ export default defineComponent({
     }
     const resetForm = () => {
       form.value = {
-        customer_code: '',
-        customer_abbreviation: '',
+        supplier_code: '',
+        supplier_abbreviation: '',
         contact_person: '',
         contact_information: '',
-        company_full_name: '',
-        company_address: '',
-        delivery_address: '',
-        tax_registration_number: '',
+        supplier_full_name: '',
+        supplier_address: '',
+        supplier_category: '',
+        supply_method: '',
         transaction_method: '',
         transaction_currency: '',
         other_transaction_terms: '',
@@ -167,29 +150,29 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  添加客户
+                  添加供应商
                 </ElButton>
               </div>
             ),
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                  <ElTableColumn prop="customer_code" label="客户编码" />
-                  <ElTableColumn prop="customer_abbreviation" label="客户简称" />
+                  <ElTableColumn prop="supplier_code" label="供应商编码" />
+                  <ElTableColumn prop="supplier_abbreviation" label="供应商简称" />
                   <ElTableColumn prop="contact_person" label="联系人" />
                   <ElTableColumn prop="contact_information" label="联系方式" />
-                  <ElTableColumn prop="company_full_name" label="公司全名" />
-                  <ElTableColumn prop="company_address" label="公司地址" />
-                  <ElTableColumn prop="delivery_address" label="交货地址" />
-                  <ElTableColumn prop="tax_registration_number" label="税务登记号" />
+                  <ElTableColumn prop="supplier_full_name" label="供应商全名" />
+                  <ElTableColumn prop="supplier_address" label="供应商地址" />
+                  <ElTableColumn prop="supplier_category" label="供应商类别" />
+                  <ElTableColumn prop="supply_method" label="供货方式" />
                   <ElTableColumn prop="transaction_method" label="交易方式" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />
+                  <ElTableColumn prop="created_at" label="创建时间" />
                   <ElTableColumn label="操作" width="140">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -203,11 +186,11 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="客户编码" prop="customer_code">
-                  <ElInput v-model={ form.value.customer_code } placeholder="请输入客户编码" />
+                <ElFormItem label="供应商编码" prop="supplier_code">
+                  <ElInput v-model={ form.value.supplier_code } placeholder="请输入供应商编码" />
                 </ElFormItem>
-                <ElFormItem label="客户简称" prop="customer_abbreviation">
-                  <ElInput v-model={ form.value.customer_abbreviation } placeholder="请输入客户简称" />
+                <ElFormItem label="供应商简称" prop="supplier_abbreviation">
+                  <ElInput v-model={ form.value.supplier_abbreviation } placeholder="请输入供应商简称" />
                 </ElFormItem>
                 <ElFormItem label="联系人" prop="contact_person">
                   <ElInput v-model={ form.value.contact_person } placeholder="请输入联系人" />
@@ -215,17 +198,17 @@ export default defineComponent({
                 <ElFormItem label="联系方式" prop="contact_information">
                   <ElInput v-model={ form.value.contact_information } placeholder="请输入联系方式" />
                 </ElFormItem>
-                <ElFormItem label="公司全名" prop="company_full_name">
-                  <ElInput v-model={ form.value.company_full_name } placeholder="请输入公司全名" />
+                <ElFormItem label="供应商全名" prop="supplier_full_name">
+                  <ElInput v-model={ form.value.supplier_full_name } placeholder="请输入供应商全名" />
                 </ElFormItem>
-                <ElFormItem label="公司地址" prop="company_address">
-                  <ElInput v-model={ form.value.company_address } placeholder="请输入公司地址" />
+                <ElFormItem label="供应商地址" prop="supplier_address">
+                  <ElInput v-model={ form.value.supplier_address } placeholder="请输入供应商地址" />
                 </ElFormItem>
-                <ElFormItem label="交货地址" prop="delivery_address">
-                  <ElInput v-model={ form.value.delivery_address } placeholder="请输入交货地址" />
+                <ElFormItem label="供应商类别" prop="supplier_category">
+                  <ElInput v-model={ form.value.supplier_category } placeholder="请输入供应商类别" />
                 </ElFormItem>
-                <ElFormItem label="税务登记号" prop="tax_registration_number">
-                  <ElInput v-model={ form.value.tax_registration_number } placeholder="请输入税务登记号" />
+                <ElFormItem label="供货方式" prop="supply_method">
+                  <ElInput v-model={ form.value.supply_method } placeholder="请输入供货方式" />
                 </ElFormItem>
                 <ElFormItem label="交易方式" prop="transaction_method">
                   <ElInput v-model={ form.value.transaction_method } placeholder="请输入交易方式" />

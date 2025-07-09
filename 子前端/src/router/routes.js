@@ -146,33 +146,33 @@ const routes = [
       //   }
       // },
       // // 采购管理
-      // {
-      //   path: '/purchase/supplier-info',
-      //   name: 'SupplierInfo',
-      //   component: () => import('@/views/Purchase/SupplierInfo.vue'),
-      //   meta: {
-      //     title: '供应商资料',
-      //     parent: '采购管理'
-      //   }
-      // },
-      // {
-      //   path: '/purchase/material-quote',
-      //   name: 'MaterialQuote',
-      //   component: () => import('@/views/Purchase/MaterialQuote.vue'),
-      //   meta: {
-      //     title: '原材料报价',
-      //     parent: '采购管理'
-      //   }
-      // },
-      // {
-      //   path: '/purchase/purchase-order',
-      //   name: 'PurchaseOrder',
-      //   component: () => import('@/views/Purchase/PurchaseOrder.vue'),
-      //   meta: {
-      //     title: '采购单',
-      //     parent: '采购管理'
-      //   }
-      // },
+      {
+        path: '/purchase/supplier-info',
+        name: 'SupplierInfo',
+        component: () => import('@/views/Purchase/SupplierInfo.jsx'),
+        meta: {
+          title: '供应商资料',
+          parent: '采购管理'
+        }
+      },
+      {
+        path: '/purchase/material-quote',
+        name: 'MaterialQuote',
+        component: () => import('@/views/Purchase/MaterialQuote.jsx'),
+        meta: {
+          title: '原材料报价',
+          parent: '采购管理'
+        }
+      },
+      {
+        path: '/purchase/purchase-order',
+        name: 'PurchaseOrder',
+        component: () => import('@/views/Purchase/PurchaseOrder.jsx'),
+        meta: {
+          title: '采购单',
+          parent: '采购管理'
+        }
+      },
       // // 委外管理
       // {
       //   path: '/outsourcing/outsourcing-quote',
