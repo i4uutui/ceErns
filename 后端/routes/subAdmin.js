@@ -24,10 +24,9 @@ router.post('/login', async (req, res) => {
   }
 
   const companyRows = await AdCompanyInfo.findAll({ where: { id: rows[0].company_id } });
+  const token = jwt.sign({ ...rows[0].dataValues }, process.env.JWT_SECRET);
   
-  const token = jwt.sign({ ...rows[0] }, process.env.JWT_SECRET);
-  
-  const { password: _, ...user } = rows[0];
+  const { password: _, ...user } = rows[0].dataValues;
 
   res.json({ 
     token, 

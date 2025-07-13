@@ -176,9 +176,9 @@ export default defineComponent({
                   <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" />
                   <ElTableColumn prop="product.product_code" label="产品编码" />
                   <ElTableColumn prop="product.product_name" label="产品名称" />
-                  <ElTableColumn prop="model" label="型号" />
-                  <ElTableColumn prop="spec" label="规格" />
-                  <ElTableColumn prop="order_char" label="其他特性" />
+                  <ElTableColumn prop="product.model" label="型号" />
+                  <ElTableColumn prop="product.specification" label="规格" />
+                  <ElTableColumn prop="product.other_features" label="其他特性" />
                   <ElTableColumn prop="customer_order" label="客户订单" />
                   <ElTableColumn prop="order_number" label="订单数量" />
                   <ElTableColumn prop="product_unit" label="产品单位" />

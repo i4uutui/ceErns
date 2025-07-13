@@ -9,7 +9,6 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 router.get('/user', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
-
   const { id: userId, company_id } = req.user;
   // 查询当前页的数据，排除当前登录用户，只显示其创建的用户
   const [rows] = await pool.execute(
