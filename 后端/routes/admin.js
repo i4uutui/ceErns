@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/database');
+const { AdAdmin, AdCompanyInfo, AdUser, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -9,11 +9,11 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 // 总后台登录
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  const [rows] = await pool.execute(
-    'SELECT * FROM ad_admin WHERE username = ?',
-    [username]
-  );
-  if (rows.length === 0) {
+  
+  const rows = await AdAdmin.findAll({
+    where: { username }
+  })
+  if (rows.length == 0) {
     return res.json({ message: '账号或密码错误', code: 401 });
   }
   const isPasswordValid = await bcrypt.compare(password, rows[0].password);
@@ -29,41 +29,23 @@ router.get('/company', async (req, res) => {
   const { page = 1, pageSize = 10, name = '' } = req.query;
   const offset = (page - 1) * pageSize;
   
-  // 基础SQL和参数
-  let querySql = 'select * from ad_company_info';
-  let countSql = 'select count(*) as total from ad_company_info';
-  const params = [];
-  
-  // 如果提供了name参数，添加模糊搜索条件
-  if (name) {
-    querySql += ' where name like ?';
-    countSql += ' where name like ?';
-    params.push(`%${name}%`); // 模糊匹配前后都加%
-  }
-  
-  // 添加排序和分页
-  querySql += ' order by created_at desc limit ? offset ?';
-  params.push(parseInt(pageSize), offset);
-  
-  // 执行查询
-  const [rows] = await pool.execute(
-    querySql,
-    params
-  );
-  // 获取总数（注意这里的参数需要排除分页参数）
-  const countParams = name ? [`%${name}%`] : [];
-  const [countRows] = await pool.execute(
-    countSql,
-    countParams
-  );
-  
-  const total = countRows[0].total;
-  const totalPages = Math.ceil(total / pageSize);
+  const { count, rows } = await AdCompanyInfo.findAndCountAll({
+    where: {
+      name: {
+        [Op.like]: `%${name}%`
+      }
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize)  
+  const fromData = rows.map(item => item.dataValues)
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rows), 
-    total, 
+    data: formatArrayTime(fromData), 
+    total: count,
     totalPages, 
     currentPage: parseInt(page), 
     pageSize: parseInt(pageSize),
@@ -72,39 +54,24 @@ router.get('/company', async (req, res) => {
 })
 // 添加企业信息
 router.post('/company', async (req, res) => {
-  const { name, person, contact, address } = req.body
+  const { logo, name, person, contact, address } = req.body
   
-  const [rows] = await pool.execute(
-    'select id from ad_company_info where name = ?',
-    [name]
-  )
-  if(rows.length != 0){
-    return res.json({ message: '该企业已被注册', code: 401 })
-  }
-  
-  await pool.execute(
-    'insert into ad_company_info (name, person, contact, address) values (?, ?, ?, ?)',
-    [name, person, contact, address]
-  )
+  await AdCompanyInfo.create({
+    logo, name, person, contact, address
+  })
   
   res.json({ message: '添加成功', code: 200 })
 })
 // 更新企业信息
 router.put('/company', async (req, res) => {
-  const { name, person, contact, address, id } = req.body
+  const { logo, name, person, contact, address, id } = req.body
   
-  const [rows] = await pool.execute(
-    'select id from ad_company_info where name = ? and id != ?',
-    [name, id]
-  )
-  if(rows.length != 0){
-    return res.json({ message: '该企业已被注册', code: 401 })
-  }
-  
-  await pool.execute(
-    'update ad_company_info set name = ?, person = ?, contact = ?, address = ? WHERE id = ?',
-    [name, person, contact, address, id]
-  );
+  const updateResult = await AdCompanyInfo.update({
+    logo, name, person, contact, address
+  }, {
+    where: { id }
+  })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
   
   res.json({ message: '修改成功', code: 200 })
 })
@@ -113,43 +80,26 @@ router.put('/company', async (req, res) => {
 router.get('/user', async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
-  // 查询当前页的数据
-  const [rows] = await pool.execute(
-    `
-    select
-    u.id, u.username, u.status, u.company_id, u.created_at, u.updated_at,
-    c.id as company_id, c.name as company_name, c.address, c.person, c.contact
-    from ad_user u
-    left join ad_company_info c on u.company_id = c.id
-    where type = 1 and parent_id = 0
-    order by u.created_at desc
-    limit ? offset ?
-    `,
-    [parseInt(pageSize), offset]
-  );
   
-  // 查询总记录数
-  const [countRows] = await pool.execute('select count(*) as total from ad_user');
-  const total = countRows[0].total;
-  // 计算总页数
-  const totalPages = Math.ceil(total / pageSize);
-  
-  const formattedData = rows.map(row => {
-    const company = row.company_id ? {
-      id: row.company_id,
-      name: row.company_name,
-      address: row.address,
-      person: row.person,
-      contact: row.contact
-    } : null
-    const { company_name, address, person, contact, ...userData } = row;
-    return { company, ...userData }
+  const { count, rows } = await AdUser.findAndCountAll({
+    where: {
+      type: 1,
+      parent_id: 0
+    },
+    include: [
+      { model: AdCompanyInfo, as: 'company' },
+    ],
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
   })
-
+  const totalPages = Math.ceil(count / pageSize)  
+  const fromData = rows.map(item => item.dataValues)
+  
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(formattedData), 
-    total, 
+    data: formatArrayTime(fromData), 
+    total: count, 
     totalPages, 
     currentPage: parseInt(page), 
     pageSize: parseInt(pageSize),
@@ -161,23 +111,22 @@ router.get('/user', async (req, res) => {
 router.post('/user', async (req, res) => {
   const { username, password, status, company_id } = req.body;
   
-  const [rows] = await pool.execute(
-    "SELECT id FROM ad_user WHERE username = ?", 
-    [username]
-  )
+  const rows = await AdUser.findAll({
+    attributes: ['id'],
+    where: { username }
+  })
   if (rows.length > 0) {
     return res.json({ message: '用户名不能重复', code: 401 });
   }
+  
   // 对密码进行加密
   const hashedPassword = await bcrypt.hash(password, 10);
   
   const type = 1
   const parent_id = 0
-  await pool.execute(
-    'INSERT INTO ad_user (username, password, status, company_id, type, parent_id) VALUES (?, ?, ?, ?, ?, ?)',
-    [username, hashedPassword, status, company_id, type, parent_id]
-  );
-
+  
+  await AdUser.create({ username, password: hashedPassword, status, company_id, type, parent_id })
+  
   res.json({ data: '添加成功', code: 200 });
 });
 
@@ -185,38 +134,33 @@ router.post('/user', async (req, res) => {
 router.put('/user', async (req, res) => {
   const { username, password, status, company_id, id } = req.body;
   
-  const [count] = await pool.execute(
-    "select id from ad_user WHERE username = ? and id != ?", [username, id]
-  )
-  if(count.length != 0){
+  const rows = await AdUser.findAll({
+    attributes: ['id'],
+    where: {
+      username,
+      id: {
+        [Op.ne] : id
+      }
+    }
+  })
+  if(rows.length != 0){
     return res.json({message: '用户名已被使用', code: 401})
   }
-  // 先查询原始密码
-  const [rows] = await pool.execute(
-    'SELECT password FROM ad_user WHERE id = ?',
-    [id]
-  );
   
-  if (rows.length === 0) {
-    return res.json({ message: '管理员不存在', code: 401 });
-  }
-  
-  const passwordToUpdate = password ? await bcrypt.hash(password, 10) : rows[0].password;
-
+  const hashedPassword = password ? await bcrypt.hash(password, 10) : rows[0].password;
   const type = 1
   const parent_id = 0
-  // 更新管理员信息（updated_at 会自动更新）
-  await pool.execute(
-    'UPDATE ad_user SET username = ?, password = ?, status = ?, company_id = ?, type = ?, parent_id = ? WHERE id = ?',
-    [username, passwordToUpdate, status, company_id, type, parent_id, id]
-  );
   
+  await AdUser.update({
+    username, password: hashedPassword, status, company_id, type, parent_id
+  },{
+    where: { id }
+  })
   // 如果status等于0的话,同步修改其他parent_id一致的数据
   if(status == 0){
-    await pool.execute(
-      'UPDATE ad_user SET status = 0 WHERE parent_id = ?',
-      [id]
-    );
+    await AdUser.update({
+      status: 0
+    }, { where: { parent_id: id } })
   }
   
   res.json({ message: '修改成功', code: 200 });

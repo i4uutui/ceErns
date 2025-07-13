@@ -1,17 +1,17 @@
 /*
- Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
- Source Server         : thinkphp_demo
+ Source Server         : ceshi
  Source Server Type    : MySQL
- Source Server Version : 50722 (5.7.22)
+ Source Server Version : 50740
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50722 (5.7.22)
+ Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 10/07/2025 00:38:55
+ Date: 12/07/2025 16:30:05
 */
 
 SET NAMES utf8mb4;
@@ -56,7 +56,7 @@ CREATE TABLE `ad_company_info`  (
 -- Records of ad_company_info
 -- ----------------------------
 INSERT INTO `ad_company_info` VALUES (1, NULL, '东莞企业', '梁工', '13800138000', '东莞市寮步镇', '2025-07-07 11:54:18', '2025-07-07 11:55:10');
-INSERT INTO `ad_company_info` VALUES (2, NULL, '东坑企业', '刘工', '13800138000', '东坑镇', '2025-07-07 13:59:43', '2025-07-07 13:59:43');
+INSERT INTO `ad_company_info` VALUES (2, NULL, '东坑企业', '刘工1', '13800138000', '东坑镇', '2025-07-07 13:59:43', '2025-07-12 15:29:04');
 
 -- ----------------------------
 -- Table structure for ad_user
@@ -172,6 +172,35 @@ CREATE TABLE `sub_equipment_code`  (
 -- Records of sub_equipment_code
 -- ----------------------------
 INSERT INTO `sub_equipment_code` VALUES (3, 1, 1, '123', '2121', 12, '121', '121', '211', '21', '212', 1, '2025-07-08 16:06:29', '2025-07-08 16:08:21');
+
+-- ----------------------------
+-- Table structure for sub_material_bom
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_material_bom`;
+CREATE TABLE `sub_material_bom`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `part_id` int(11) NOT NULL COMMENT '部件编码id',
+  `material_id` int(11) NOT NULL COMMENT '材料编码id',
+  `number` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '序号',
+  `model_spec` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '型号&规格',
+  `other_features` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '其它特性',
+  `send_receiving_units` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '收发单位',
+  `purchasing_unit` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '采购单位',
+  `quantity_used` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '使用数量',
+  `loss_rate` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '损耗率',
+  `purchase_quantity` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '采购数量',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_material_bom
+-- ----------------------------
+INSERT INTO `sub_material_bom` VALUES (1, 1, 1, 6, 2, '1221', '21', '112112211', '3131', '2121', '21', '121', '212', 1, '2025-07-12 13:56:42', '2025-07-12 14:04:49');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -291,7 +320,7 @@ CREATE TABLE `sub_product_quotation`  (
 -- ----------------------------
 -- Records of sub_product_quotation
 -- ----------------------------
-INSERT INTO `sub_product_quotation` VALUES (1, 1, 1, 1, 10, '1112', '121', '21', '2121', 121, '2121', '121', '1', '21', 1, '2025-07-09 01:04:37', '2025-07-09 11:44:30');
+INSERT INTO `sub_product_quotation` VALUES (1, 1, 1, 1, 10, '1112', '121', '21', '2121', 121, '2121', '121', '1', '21', 1, '2025-07-09 01:04:37', '2025-07-12 14:02:00');
 INSERT INTO `sub_product_quotation` VALUES (2, 1, 1, 2, 9, '12', '1222211', '12', '12', 1, '2', '12', '12', '12', 1, '2025-07-09 11:45:02', '2025-07-09 18:46:59');
 
 -- ----------------------------
@@ -347,7 +376,7 @@ CREATE TABLE `sub_supplier_info`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '供应商信息信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '供应商信息信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_supplier_info

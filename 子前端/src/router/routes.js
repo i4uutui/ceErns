@@ -127,24 +127,24 @@ const routes = [
       //     parent: '产品信息'
       //   }
       // },
-      // {
-      //   path: '/product/material-bom',
-      //   name: 'MaterialBOM',
-      //   component: () => import('@/views/Product/MaterialBOM.vue'),
-      //   meta: {
-      //     title: '材料BOM',
-      //     parent: '产品信息'
-      //   }
-      // },
-      // {
-      //   path: '/product/process-bom',
-      //   name: 'ProcessBOM',
-      //   component: () => import('@/views/Product/ProcessBOM.vue'),
-      //   meta: {
-      //     title: '工艺BOM',
-      //     parent: '产品信息'
-      //   }
-      // },
+      {
+        path: '/product/material-bom',
+        name: 'MaterialBOM',
+        component: () => import('@/views/Product/MaterialBOM.jsx'),
+        meta: {
+          title: '材料BOM',
+          parent: '产品信息'
+        }
+      },
+      {
+        path: '/product/process-bom',
+        name: 'ProcessBOM',
+        component: () => import('@/views/Product/ProcessBOM.jsx'),
+        meta: {
+          title: '工艺BOM',
+          parent: '产品信息'
+        }
+      },
       // // 采购管理
       {
         path: '/purchase/supplier-info',

@@ -162,7 +162,7 @@ router.post('/product_quotation', authMiddleware, async (req, res) => {
     user_id: userId
   })
   
-  res.json({ msg: '添加成功', code: 200 });
+  res.json({ message: '添加成功', code: 200 });
 });
 // 更新产品报价
 router.put('/product_quotation', authMiddleware, async (req, res) => {
@@ -170,7 +170,7 @@ router.put('/product_quotation', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  await SubProductQuotation.update({
+  const updateResult = await SubProductQuotation.update({
     customer_id, product_id, model, spec, order_char, customer_order, order_number, product_unit, product_price, transaction_currency, other_transaction_terms, company_id,
     user_id: userId
   }, {
@@ -178,8 +178,9 @@ router.put('/product_quotation', authMiddleware, async (req, res) => {
       id
     }
   })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
   
-  res.json({ msg: '修改成功', code: 200 });
+  res.json({ message: '修改成功', code: 200 });
 });
 
 module.exports = router;
