@@ -91,20 +91,20 @@ const routes = [
         }
       },
       {
-        path: '/order/product-quote',
-        name: 'ProductQuote',
-        component: () => import('@/views/Order/ProductQuote.jsx'),
-        meta: {
-          title: '产品报价',
-          parent: '订单管理'
-        }
-      },
-      {
         path: '/order/sales-order',
         name: 'SalesOrder',
         component: () => import('@/views/Order/SalesOrder.jsx'),
         meta: {
           title: '销售订单',
+          parent: '订单管理'
+        }
+      },
+      {
+        path: '/order/product-quote',
+        name: 'ProductQuote',
+        component: () => import('@/views/Order/ProductQuote.jsx'),
+        meta: {
+          title: '产品报价',
           parent: '订单管理'
         }
       },

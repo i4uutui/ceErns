@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { SubCustomerInfo, SubProductQuotation, SubProductsCode, Op } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductsCode, SubSaleOrder, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -116,6 +116,80 @@ router.delete('/customer_info/:id', authMiddleware, async (req, res) => {
 
 
 
+
+// 获取销售订单列表（分页）
+router.get('/sale_order', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
+  const offset = (page - 1) * pageSize;
+  
+  const { company_id } = req.user;
+  
+  const { count, rows } = await SubSaleOrder.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+    },
+    include: [
+      { model: SubProductsCode, as: 'product' },
+      { model: SubCustomerInfo, as: 'customer'}
+    ],
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  
+  const totalPages = Math.ceil(count / pageSize);
+  
+  row = rows.map(e => e.toJSON())
+  
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(row), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
+});
+
+// 添加销售订单
+router.post('/sale_order', authMiddleware, async (req, res) => {
+  const { customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address } = req.body;
+  
+  const { id: userId, company_id } = req.user;
+  
+  await SubSaleOrder.create({
+    customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, company_id,
+    user_id: userId
+  })
+  
+  res.json({ message: '添加成功', code: 200 });
+});
+
+// 更新产品报价
+router.put('/sale_order', authMiddleware, async (req, res) => {
+  const { customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, id } = req.body;
+  
+  const { id: userId, company_id } = req.user;
+  
+  const updateResult = await SubSaleOrder.update({
+    customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, company_id,
+    user_id: userId
+  }, {
+    where: {
+      id
+    }
+  })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  
+  res.json({ message: '修改成功', code: 200 });
+});
+
+
+
+
+
 // 获取产品报价列表（分页）
 router.get('/product_quotation', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
@@ -129,10 +203,19 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
       company_id,
     },
     include: [
-      { model: SubProductsCode, as: 'product' },
-      { model: SubCustomerInfo, as: 'customer'}
+      {
+        model: SubSaleOrder,
+        as: 'sale',
+        include: [
+          { model: SubCustomerInfo, as: 'customer' },
+          { model: SubProductsCode, as: 'product' }
+        ]
+      }
     ],
-    order: [['created_at', 'DESC']],
+    order: [
+      [{ model: SubSaleOrder, as: 'sale' }, { model: SubProductsCode, as: 'product' }, 'product_name', 'DESC'],
+      ['created_at', 'DESC']
+    ],
     limit: parseInt(pageSize),
     offset
   })
@@ -153,12 +236,12 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
 });
 // 添加产品报价
 router.post('/product_quotation', authMiddleware, async (req, res) => {
-  const { customer_id, product_id, model, spec, order_char, customer_order, order_number, product_unit, product_price, transaction_currency, other_transaction_terms } = req.body;
+  const { sale_id, product_price, transaction_currency, other_transaction_terms } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   await SubProductQuotation.create({
-    customer_id, product_id, model, spec, order_char, customer_order, order_number, product_unit, product_price, transaction_currency, other_transaction_terms, company_id,
+    sale_id, product_price, transaction_currency, other_transaction_terms, company_id,
     user_id: userId
   })
   
@@ -166,12 +249,12 @@ router.post('/product_quotation', authMiddleware, async (req, res) => {
 });
 // 更新产品报价
 router.put('/product_quotation', authMiddleware, async (req, res) => {
-  const { customer_id, product_id, model, spec, order_char, customer_order, order_number, product_unit, product_price, transaction_currency, other_transaction_terms, id } = req.body;
+  const { sale_id, product_price, transaction_currency, other_transaction_terms, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubProductQuotation.update({
-    customer_id, product_id, model, spec, order_char, customer_order, order_number, product_unit, product_price, transaction_currency, other_transaction_terms, company_id,
+    sale_id, product_price, transaction_currency, other_transaction_terms, company_id,
     user_id: userId
   }, {
     where: {

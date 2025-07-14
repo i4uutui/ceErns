@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 12/07/2025 16:30:05
+ Date: 14/07/2025 19:33:12
 */
 
 SET NAMES utf8mb4;
@@ -224,7 +224,7 @@ CREATE TABLE `sub_material_code`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_code
@@ -296,32 +296,20 @@ CREATE TABLE `sub_product_quotation`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
   `company_id` int(11) NOT NULL COMMENT '企业id',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
-  `customer_id` int(11) NOT NULL COMMENT '客户id',
-  `product_id` int(11) NOT NULL COMMENT '产品编码id',
-  `model` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '型号',
-  `spec` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '规格',
-  `order_char` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他特性',
-  `customer_order` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户订单',
-  `order_number` int(20) NULL DEFAULT NULL COMMENT '订单数量',
-  `product_unit` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品单位',
+  `sale_id` int(11) NOT NULL COMMENT '销售订单id',
   `product_price` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品单价',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
   `is_deleted` tinyint(3) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `fk_quotation_product`(`product_id`) USING BTREE,
-  INDEX `fc_quotation_product`(`customer_id`) USING BTREE,
-  CONSTRAINT `fc_quotation_product` FOREIGN KEY (`customer_id`) REFERENCES `sub_customer_info` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `fk_quotation_product` FOREIGN KEY (`product_id`) REFERENCES `sub_products_code` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_quotation
 -- ----------------------------
-INSERT INTO `sub_product_quotation` VALUES (1, 1, 1, 1, 10, '1112', '121', '21', '2121', 121, '2121', '121', '1', '21', 1, '2025-07-09 01:04:37', '2025-07-12 14:02:00');
-INSERT INTO `sub_product_quotation` VALUES (2, 1, 1, 2, 9, '12', '1222211', '12', '12', 1, '2', '12', '12', '12', 1, '2025-07-09 11:45:02', '2025-07-09 18:46:59');
+INSERT INTO `sub_product_quotation` VALUES (3, 1, 1, 2, '12', '￥', '2121', 1, '2025-07-14 19:16:48', '2025-07-14 19:16:48');
 
 -- ----------------------------
 -- Table structure for sub_products_code
@@ -333,6 +321,7 @@ CREATE TABLE `sub_products_code`  (
   `user_id` int(5) NULL DEFAULT NULL COMMENT '发布的用户id',
   `product_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '产品的唯一标识编码',
   `product_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '产品的名称',
+  `drawing` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '工程图号',
   `model` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品的型号',
   `specification` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品的规格参数',
   `other_features` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '产品的其他特性描述',
@@ -350,8 +339,38 @@ CREATE TABLE `sub_products_code`  (
 -- ----------------------------
 -- Records of sub_products_code
 -- ----------------------------
-INSERT INTO `sub_products_code` VALUES (9, 1, 1, '123', '113', '21', '2131', '3131', '1313', '212', 1212.00, '121', '21', 1, '2025-07-08 15:02:27', '2025-07-08 15:09:53');
-INSERT INTO `sub_products_code` VALUES (10, 1, 1, '1233', '212', '121', '2121', '2121', '21', '212', 121.00, '21', '2121', 1, '2025-07-08 15:12:29', '2025-07-08 15:12:29');
+INSERT INTO `sub_products_code` VALUES (9, 1, 1, '123', '113', '图只可以', '21', '2131', '3131', '1313', '212', 1212.00, '121', '21', 1, '2025-07-08 15:02:27', '2025-07-14 10:04:36');
+INSERT INTO `sub_products_code` VALUES (10, 1, 1, '1233', '212', '月1', '121', '2121', '2121', '21', '212', 121.00, '21', '2121', 1, '2025-07-08 15:12:29', '2025-07-14 10:04:29');
+
+-- ----------------------------
+-- Table structure for sub_sales_order
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_sales_order`;
+CREATE TABLE `sub_sales_order`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `rece_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '接单日期',
+  `customer_id` int(11) NOT NULL COMMENT '客户id',
+  `customer_order` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户订单号',
+  `product_id` int(11) NOT NULL COMMENT '产品编码id',
+  `product_req` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '产品要求',
+  `order_number` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单数量',
+  `unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单位',
+  `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交货日期',
+  `goods_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货日期',
+  `goods_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货地点',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '销售订单表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_sales_order
+-- ----------------------------
+INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07 00:00:00', 1, '31232131', 10, '我的要求', '311', '车1', '2025-07-07 00:00:00', '2025-07-27 00:00:00', '2123121', 1, '2025-07-14 13:55:51', '2025-07-14 19:27:49');
+INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 1, '31232131', 9, '21', '2121', '2121', '2025-07-14 00:00:00', '2025-07-14T10:47:29.000Z', '3131', 1, '2025-07-14 18:47:31', '2025-07-14 19:27:45');
 
 -- ----------------------------
 -- Table structure for sub_supplier_info

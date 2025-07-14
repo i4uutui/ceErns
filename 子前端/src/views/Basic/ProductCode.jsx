@@ -12,6 +12,9 @@ export default defineComponent({
       product_name: [
         { required: true, message: '请输入产品名称', trigger: 'blur' },
       ],
+      drawing: [
+        { required: true, message: '请输入工程图号', trigger: 'blur' },
+      ],
       model: [
         { required: true, message: '请输入型号', trigger: 'blur' },
       ],
@@ -41,6 +44,7 @@ export default defineComponent({
     let form = ref({
       product_code: '',
       product_name: '',
+      drawing: '',
       model: '',
       specification: '',
       other_features: '',
@@ -137,6 +141,7 @@ export default defineComponent({
       form.value = {
         product_code: '',
         product_name: '',
+        drawing: '',
         model: '',
         specification: '',
         other_features: '',
@@ -174,6 +179,7 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="product_code" label="产品编码" />
                   <ElTableColumn prop="product_name" label="产品名称" />
+                  <ElTableColumn prop="drawing" label="工程图号" />
                   <ElTableColumn prop="model" label="型号" />
                   <ElTableColumn prop="specification" label="规格" />
                   <ElTableColumn prop="other_features" label="其它特性" />
@@ -205,6 +211,9 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="产品名称" prop="product_name">
                   <ElInput v-model={ form.value.product_name } placeholder="请输入产品名称" />
+                </ElFormItem>
+                <ElFormItem label="工程图号" prop="drawing">
+                  <ElInput v-model={ form.value.drawing } placeholder="请输入工程图号" />
                 </ElFormItem>
                 <ElFormItem label="型号" prop="model">
                   <ElInput v-model={ form.value.model } placeholder="请输入型号" />

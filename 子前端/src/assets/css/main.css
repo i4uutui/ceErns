@@ -4,3 +4,7 @@
 .el-cascader{
   width: 100%;
 }
+
+.el-table__cell{
+  text-align: center !important;
+}

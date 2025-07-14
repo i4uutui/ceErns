@@ -8,14 +8,20 @@ const formatTime = (time) => {
 // 格式化对象中的时间字段
 const formatObjectTime = (obj) => {
   if (!obj) return obj;
+  const timeStr = [ 'rece_time', 'delivery_time', 'updated_at', 'created_at' ]
   
-  return {
-    ...obj,
-    created_at: formatTime(obj.created_at),
-    updated_at: formatTime(obj.updated_at),
-    // 如果有其他时间字段，也可以在这里添加
-  };
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if(timeStr.includes(key)){
+      result[key] = formatTime(value);
+    }else{
+      result[key] = value;
+    }
+  }
+  
+  return result;
 };
+
 
 // 格式化数组中的时间字段
 const formatArrayTime = (arr) => {

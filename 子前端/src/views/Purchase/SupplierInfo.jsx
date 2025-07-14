@@ -169,7 +169,7 @@ export default defineComponent({
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />
                   <ElTableColumn prop="created_at" label="创建时间" />
-                  <ElTableColumn label="操作" width="140">
+                  <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>

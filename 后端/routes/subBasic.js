@@ -34,7 +34,7 @@ router.get('/products_code', authMiddleware, async (req, res) => {
 
 // 添加产品编码
 router.post('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -47,8 +47,8 @@ router.post('/products_code', authMiddleware, async (req, res) => {
   }
   
   const [result] = await pool.execute(
-    'INSERT INTO sub_products_code (product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, userId, company_id]
+    'INSERT INTO sub_products_code (product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, userId, company_id]
   );
   
   res.json({ msg: '添加成功', code: 200 });
@@ -56,7 +56,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
 
 // 更新产品编码接口
 router.put('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, id } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -70,8 +70,8 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   
   // 更新产品编码信息
   const [updateResult] = await pool.execute(
-    'UPDATE sub_products_code SET product_code = ?, product_name = ?, model = ?, specification = ?, other_features = ?, component_structure = ?, unit = ?, unit_price = ?, currency = ?, production_requirements = ?, user_id = ?, company_id = ? WHERE id = ?',
-    [product_code, product_name, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, userId, company_id, id]
+    'UPDATE sub_products_code SET product_code = ?, product_name = ?, drawing = ?, model = ?, specification = ?, other_features = ?, component_structure = ?, unit = ?, unit_price = ?, currency = ?, production_requirements = ?, user_id = ?, company_id = ? WHERE id = ?',
+    [product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, userId, company_id, id]
   );
   
   if (updateResult.affectedRows === 0) {

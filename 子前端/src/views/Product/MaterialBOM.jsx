@@ -183,7 +183,7 @@ export default defineComponent({
                   <ElTableColumn prop="loss_rate" label="损耗率" />
                   <ElTableColumn prop="purchase_quantity" label="采购数量" />
                   <ElTableColumn prop="created_at" label="创建时间" />
-                  <ElTableColumn label="操作" width="140">
+                  <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>

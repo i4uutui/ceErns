@@ -14,19 +14,20 @@ router.post('/login', async (req, res) => {
   if (rows.length === 0) {
     return res.json({ message: '账号或密码错误', code: 401 });
   }
-  if(rows[0].status == 0){
+  row = rows.map(e => e.toJSON())
+  if(row[0].status == 0){
     return res.json({ message: '账号已被禁用，请联系管理员', code: 401 });
   }
-  
-  const isPasswordValid = await bcrypt.compare(password, rows[0].password);
+  const isPasswordValid = await bcrypt.compare(password, row[0].password);
   if (!isPasswordValid) {
     return res.json({ message: '账号或密码错误', code: 401 });
   }
 
-  const companyRows = await AdCompanyInfo.findAll({ where: { id: rows[0].company_id } });
-  const token = jwt.sign({ ...rows[0].dataValues }, process.env.JWT_SECRET);
+  const companyRows = await AdCompanyInfo.findAll({ where: { id: row[0].company_id }, raw: true });
   
-  const { password: _, ...user } = rows[0].dataValues;
+  const token = jwt.sign({ ...row[0] }, process.env.JWT_SECRET);
+  
+  const { password: _, ...user } = row[0];
 
   res.json({ 
     token, 

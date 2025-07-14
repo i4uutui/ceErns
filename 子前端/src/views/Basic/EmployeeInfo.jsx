@@ -153,7 +153,7 @@ export default defineComponent({
                   <ElTableColumn prop="production_position" label="生产岗位" />
                   <ElTableColumn prop="salary_attribute" label="工资属性" />
                   <ElTableColumn prop="remarks" label="备注" />
-                  <ElTableColumn label="操作" width="140">
+                  <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>

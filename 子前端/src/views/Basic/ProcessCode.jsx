@@ -167,7 +167,7 @@ export default defineComponent({
                   <ElTableColumn prop="section_points" label="段数点数" />
                   <ElTableColumn prop="total_processing_price" label="加工总价" />
                   <ElTableColumn prop="remarks" label="备注" />
-                  <ElTableColumn label="操作" width="140">
+                  <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>

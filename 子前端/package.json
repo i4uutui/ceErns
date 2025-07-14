@@ -11,7 +11,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.9.0",
-    "element-plus": "^2.10.1",
+    "element-plus": "^2.10.4",
     "pinia": "^3.0.1",
     "sass": "^1.89.1",
     "vue": "^3.5.13",

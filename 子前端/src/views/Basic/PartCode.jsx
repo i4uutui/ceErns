@@ -179,7 +179,7 @@ export default defineComponent({
                   <ElTableColumn prop="currency" label="币别" width="100" />
                   <ElTableColumn prop="production_requirements" label="生产要求" />
                   <ElTableColumn prop="remarks" label="备注" />
-                  <ElTableColumn label="操作" width="140">
+                  <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>

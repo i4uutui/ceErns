@@ -1,4 +1,4 @@
-import { ElButton, ElCard, ElCascader, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn } from 'element-plus'
+import { ElButton, ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElOption, ElPagination, ElSelect, ElTable, ElTableColumn } from 'element-plus'
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 
@@ -6,29 +6,8 @@ export default defineComponent({
   setup(){
     const formRef = ref(null);
     const rules = reactive({
-      customer_id: [
-        { required: true, message: '请输入客户名称', trigger: 'blur' },
-      ],
-      product_id: [
-        { required: true, message: '请输入产品名称', trigger: 'blur' },
-      ],
-      model: [
-        { required: true, message: '请输入型号', trigger: 'blur' },
-      ],
-      spec: [
-        { required: true, message: '请输入规格', trigger: 'blur' },
-      ],
-      order_char: [
-        { required: true, message: '请输入其他特性', trigger: 'blur' },
-      ],
-      customer_order: [
-        { required: true, message: '请输入客户订单', trigger: 'blur' },
-      ],
-      order_number: [
-        { required: true, message: '请输入订单数量', trigger: 'blur' },
-      ],
-      product_unit: [
-        { required: true, message: '请输入产品单位', trigger: 'blur' },
+      sale_id: [
+        { required: true, message: '请选择销售订单', trigger: 'blur' },
       ],
       product_price: [
         { required: true, message: '请输入产品单价', trigger: 'blur' },
@@ -39,14 +18,7 @@ export default defineComponent({
     })
     let dialogVisible = ref(false)
     let form = ref({
-      customer_id: '',
-      product_id: '',
-      model: '',
-      spec: '',
-      order_char: '',
-      customer_order: '',
-      order_number: '',
-      product_unit: '',
+      sale_id: '',
       product_price: '',
       transaction_currency: '',
       other_transaction_terms: ''
@@ -56,16 +28,10 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
-    let customer = ref([])
-    let product = ref([])
-    let propsCascader = ref({
-      emitPath: false,
-      value: 'id'
-    })
+    let saleOrder = ref([])
+    let loading = ref(false)
 
     onMounted(() => {
-      getProducts()
-      getCustomerInfo()
       fetchProductList()
     })
 
@@ -108,13 +74,31 @@ export default defineComponent({
         }
       })
     }
-    const getProducts = async () => {
-      const res = await request.get('/api/getProductsCode');
-      product.value = res.data
+    let timeout = null
+    const remoteMethod = (query) => {
+      if(timeout){
+        clearTimeout(timeout)
+        timeout = null
+      }
+      timeout = setTimeout(async () => {
+        if(query){
+          loading.value = true
+          const res = await request.get('/api/getSaleOrder', {
+            params: {
+              customer_order: query
+            },
+          });
+          saleOrder.value = res.data
+          loading.value = false
+        }else{
+          saleOrder.value = []
+        }
+        clearTimeout(timeout)
+        timeout = null
+      }, 500)
     }
-    const getCustomerInfo = async () => {
-      const res = await request.get('/api/getCustomerInfo');
-      customer.value = res.data
+    const changeSelect = (value) => {
+      saleOrder.value = []
     }
     const handleUplate = (row) => {
       edit.value = row.id;
@@ -135,14 +119,7 @@ export default defineComponent({
     }
     const resetForm = () => {
       form.value = {
-        customer_id: '',
-        product_id: '',
-        model: '',
-        spec: '',
-        order_char: '',
-        customer_order: '',
-        order_number: '',
-        product_unit: '',
+        sale_id: '',
         product_price: '',
         transaction_currency: '',
         other_transaction_terms: '',
@@ -173,20 +150,20 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                  <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" />
-                  <ElTableColumn prop="product.product_code" label="产品编码" />
-                  <ElTableColumn prop="product.product_name" label="产品名称" />
-                  <ElTableColumn prop="product.model" label="型号" />
-                  <ElTableColumn prop="product.specification" label="规格" />
-                  <ElTableColumn prop="product.other_features" label="其他特性" />
-                  <ElTableColumn prop="customer_order" label="客户订单" />
-                  <ElTableColumn prop="order_number" label="订单数量" />
-                  <ElTableColumn prop="product_unit" label="产品单位" />
-                  <ElTableColumn prop="product_price" label="产品单价" />
-                  <ElTableColumn prop="transaction_currency" label="交易币别" />
-                  <ElTableColumn prop="other_transaction_terms" label="交易条件" />
-                  <ElTableColumn prop="created_at" label="创建时间" />
-                  <ElTableColumn label="操作" width="140">
+                  <ElTableColumn prop="sale.product.product_code" label="产品编码" width="100" />
+                  <ElTableColumn prop="sale.customer.customer_abbreviation" label="客户名称" width="120" />
+                  <ElTableColumn prop="sale.product.product_name" label="产品名称" width="100" />
+                  <ElTableColumn prop="sale.product.model" label="型号" width="100" />
+                  <ElTableColumn prop="sale.product.specification" label="规格" width="100" />
+                  <ElTableColumn prop="sale.product.other_features" label="其他特性" width="100" />
+                  <ElTableColumn prop="sale.customer_order" label="客户订单号" width="120" />
+                  <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
+                  <ElTableColumn prop="sale.unit" label="单位" width="100" />
+                  <ElTableColumn prop="product_price" label="产品单价" width="100" />
+                  <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
+                  <ElTableColumn prop="other_transaction_terms" label="交易条件" width="120" />
+                  <ElTableColumn prop="created_at" label="创建时间" width="170" />
+                  <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
@@ -199,33 +176,18 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改客户信息' : '添加客户信息' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品报价' : '添加产品报价' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="客户名称" prop="customer_id">
-                  <ElCascader v-model={ form.value.customer_id } placeholder="请选择客户名称" options={ customer.value } filterable props={ propsCascader.value } />
-                </ElFormItem>
-                <ElFormItem label="产品名称" prop="product_id">
-                  <ElCascader v-model={ form.value.product_id } placeholder="请选择产品名称" options={ product.value } filterable props={ propsCascader.value } />
-                </ElFormItem>
-                <ElFormItem label="型号" prop="model">
-                  <ElInput v-model={ form.value.model } placeholder="请输入型号" />
-                </ElFormItem>
-                <ElFormItem label="规格" prop="spec">
-                  <ElInput v-model={ form.value.spec } placeholder="请输入规格" />
-                </ElFormItem>
-                <ElFormItem label="其他特性" prop="order_char">
-                  <ElInput v-model={ form.value.order_char } placeholder="请输入其他特性" />
-                </ElFormItem>
-                <ElFormItem label="客户订单" prop="customer_order">
-                  <ElInput v-model={ form.value.customer_order } placeholder="请输入客户订单" />
-                </ElFormItem>
-                <ElFormItem label="订单数量" prop="order_number">
-                  <ElInput v-model={ form.value.order_number } placeholder="请输入订单数量" />
-                </ElFormItem>
-                <ElFormItem label="产品单位" prop="product_unit">
-                  <ElInput v-model={ form.value.product_unit } placeholder="请输入产品单位" />
+                <ElFormItem label="销售订单" prop="sale_id">
+                  <ElSelect v-model={ form.value.sale_id } filterable remote loading={ loading.value } remote-method={ remoteMethod } value-key="id" placeholder="请选择销售订单" onChange={ changeSelect }>
+                    {
+                      saleOrder.value.map((o, index) => (
+                        <ElOption value={ o.id } label={ `${o.customer_order}:${o.product.drawing}` } />
+                      ))
+                    }
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="产品单价" prop="product_price">
                   <ElInput v-model={ form.value.product_price } placeholder="请输入产品单价" />

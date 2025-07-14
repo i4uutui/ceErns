@@ -29,6 +29,11 @@ const SubProductsCode = sequelize.define('SubProductsCode', {
     allowNull: false,
     comment: '产品的名称',
   },
+  drawing: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    comment: '产品的工程图号',
+  },
   model: {
     type: DataTypes.STRING(50),
     allowNull: true,
