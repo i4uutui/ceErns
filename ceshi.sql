@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 14/07/2025 19:33:12
+ Date: 16/07/2025 19:21:34
 */
 
 SET NAMES utf8mb4;
@@ -143,7 +143,7 @@ CREATE TABLE `sub_employee_info`  (
 -- ----------------------------
 -- Records of sub_employee_info
 -- ----------------------------
-INSERT INTO `sub_employee_info` VALUES (1, 1, 1, '1', '1', '1', '1', '1', '1', 1, '2025-07-08 16:39:58', '2025-07-08 16:39:58');
+INSERT INTO `sub_employee_info` VALUES (1, 1, 1, '1', '1', '1', '1', '1', '1', 1, '2025-07-08 16:39:58', '2025-07-16 19:18:16');
 INSERT INTO `sub_employee_info` VALUES (2, 1, 1, '2', '2', '3', '23', '32', '3', 1, '2025-07-08 16:40:09', '2025-07-08 16:42:06');
 
 -- ----------------------------
@@ -171,7 +171,7 @@ CREATE TABLE `sub_equipment_code`  (
 -- ----------------------------
 -- Records of sub_equipment_code
 -- ----------------------------
-INSERT INTO `sub_equipment_code` VALUES (3, 1, 1, '123', '2121', 12, '121', '121', '211', '21', '212', 1, '2025-07-08 16:06:29', '2025-07-08 16:08:21');
+INSERT INTO `sub_equipment_code` VALUES (3, 1, 1, '123', '2121', 12, '121', '121', '211', '21', '212', 1, '2025-07-08 16:06:29', '2025-07-16 19:09:21');
 
 -- ----------------------------
 -- Table structure for sub_material_bom
@@ -304,12 +304,13 @@ CREATE TABLE `sub_product_quotation`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_quotation
 -- ----------------------------
-INSERT INTO `sub_product_quotation` VALUES (3, 1, 1, 2, '12', '￥', '2121', 1, '2025-07-14 19:16:48', '2025-07-14 19:16:48');
+INSERT INTO `sub_product_quotation` VALUES (3, 1, 1, 2, '12', '￥0', '2121', 1, '2025-07-14 19:16:48', '2025-07-15 10:51:42');
+INSERT INTO `sub_product_quotation` VALUES (4, 1, 1, 1, '21', '31', '12', 1, '2025-07-15 10:52:02', '2025-07-15 10:52:02');
 
 -- ----------------------------
 -- Table structure for sub_products_code
@@ -334,13 +335,14 @@ CREATE TABLE `sub_products_code`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_products_code
 -- ----------------------------
 INSERT INTO `sub_products_code` VALUES (9, 1, 1, '123', '113', '图只可以', '21', '2131', '3131', '1313', '212', 1212.00, '121', '21', 1, '2025-07-08 15:02:27', '2025-07-14 10:04:36');
 INSERT INTO `sub_products_code` VALUES (10, 1, 1, '1233', '212', '月1', '121', '2121', '2121', '21', '212', 121.00, '21', '2121', 1, '2025-07-08 15:12:29', '2025-07-14 10:04:29');
+INSERT INTO `sub_products_code` VALUES (11, 1, 1, '1234', '12', '121', '212', '21', '212', '211', '1212', 2212.00, '1212', '121', 1, '2025-07-15 11:04:40', '2025-07-15 11:12:37');
 
 -- ----------------------------
 -- Table structure for sub_sales_order

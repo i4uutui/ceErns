@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
+const { SubProductsCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -10,21 +11,23 @@ router.get('/products_code', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
-
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_products_code WHERE is_deleted = 1 and company_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [company_id, parseInt(pageSize), offset]
-  );
-  // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_products_code WHERE is_deleted = 1 and company_id = ?', [company_id]);
-  const total = countRows[0].total;
-  // 计算总页数
-  const totalPages = Math.ceil(total / pageSize);
+  
+  const { count, rows } = await SubProductsCode.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize);
+  row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rows), 
-    total, 
+    data: formatArrayTime(row), 
+    total: count, 
     totalPages, 
     currentPage: parseInt(page), 
     pageSize: parseInt(pageSize),
@@ -38,18 +41,20 @@ router.post('/products_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_products_code where product_code = ? and company_id = ?',
-    [product_code, company_id]
-  )
+  const rows = await SubProductsCode.findAll({
+    where: {
+      product_code,
+      company_id
+    }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  const [result] = await pool.execute(
-    'INSERT INTO sub_products_code (product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, userId, company_id]
-  );
+  SubProductsCode.create({
+    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
+    user_id: userId
+  })
   
   res.json({ msg: '添加成功', code: 200 });
 });
@@ -60,21 +65,18 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_products_code where product_code = ? and company_id = ? and id != ?',
-    [product_code, company_id, id]
-  )
+  const rows = await SubProductsCode.findAll({
+    where: { product_code, company_id, id: { [Op.ne]: id } }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  // 更新产品编码信息
-  const [updateResult] = await pool.execute(
-    'UPDATE sub_products_code SET product_code = ?, product_name = ?, drawing = ?, model = ?, specification = ?, other_features = ?, component_structure = ?, unit = ?, unit_price = ?, currency = ?, production_requirements = ?, user_id = ?, company_id = ? WHERE id = ?',
-    [product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, userId, company_id, id]
-  );
-  
-  if (updateResult.affectedRows === 0) {
+  const result = await SubProductsCode.update({
+    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
+    user_id: userId
+  }, { where: { id } })
+  if (result.length == 0) {
     return res.json({ message: '未找到该产品编码', code: 401 });
   }
   
@@ -85,13 +87,12 @@ router.put('/products_code', authMiddleware, async (req, res) => {
 router.delete('/products_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
-
-  const [result] = await pool.execute(
-    'UPDATE sub_products_code SET is_deleted = 0 WHERE id = ? AND is_deleted = 1 and company_id = ?',
-    [id, company_id]
-  );
   
-  if (result.affectedRows === 0) {
+  const result = await SubProductsCode.update({
+    is_deleted: 0
+  }, { where: { id, is_deleted: 1, company_id } })
+  
+  if (result.length == 0) {
     return res.json({ message: '产品编码不存在或已被删除', code: 401 });
   }
 
@@ -106,21 +107,24 @@ router.get('/part_code', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
+  
+  const { count, rows } = await SubPartCode.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
 
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_part_code WHERE is_deleted = 1 and company_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [company_id, parseInt(pageSize), offset]
-  );
-  // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_part_code WHERE is_deleted = 1 and company_id = ?', [company_id]);
-  const total = countRows[0].total;
-  // 计算总页数
-  const totalPages = Math.ceil(total / pageSize);
+  const totalPages = Math.ceil(count / pageSize);
+  row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rows), 
-    total, 
+    data: formatArrayTime(row), 
+    total: count, 
     totalPages, 
     currentPage: parseInt(page), 
     pageSize: parseInt(pageSize),
@@ -134,20 +138,22 @@ router.post('/part_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_part_code where part_code = ? and company_id = ?',
-    [part_code, company_id]
-  )
+  const rows = await SubPartCode.findAll({
+    where: {
+      part_code,
+      company_id
+    }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
-
-  const [result] = await pool.execute(
-    'INSERT INTO sub_part_code (part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, userId, company_id]
-  );
   
-  res.json({ message: '添加成功', code: 200 });
+  SubPartCode.create({
+    part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, company_id,
+    user_id: userId
+  })
+  
+  res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新部件编码接口
@@ -156,25 +162,22 @@ router.put('/part_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_part_code where part_code = ? and company_id = ? and id != ?',
-    [part_code, company_id, id]
-  )
+  const rows = await SubPartCode.findAll({
+    where: { part_code, company_id, id: { [Op.ne]: id } }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  // 更新部件编码信息
-  const [updateResult] = await pool.execute(
-    'UPDATE sub_part_code SET part_code = ?, part_name = ?, model = ?, specification = ?, other_features = ?, unit = ?, unit_price = ?, currency = ?, production_requirements = ?, remarks = ?, user_id = ?, company_id = ? WHERE id = ?',
-    [part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, userId, company_id, id]
-  );
-  
-  if (updateResult.affectedRows === 0) {
+  const result = await SubPartCode.update({
+    part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, company_id,
+    user_id: userId
+  }, { where: { id } })
+  if (result.length == 0) {
     return res.json({ message: '未找到该部件编码', code: 401 });
   }
   
-  res.json({ message: '更新成功', code: 200 });
+  res.json({ msg: "修改成功", code: 200 });
 });
 
 // 删除部件编码
@@ -182,12 +185,11 @@ router.delete('/part_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
   
-  const [result] = await pool.execute(
-    'UPDATE sub_part_code SET is_deleted = 0 where id = ? and is_deleted = 1 and company_id = ?',
-    [id, company_id]
-  );
+  const result = await SubPartCode.update({
+    is_deleted: 0
+  }, { where: { id, is_deleted: 1, company_id } })
   
-  if (result.affectedRows === 0) {
+  if (result.length == 0) {
     return res.json({ message: '部件编码不存在或已被删除', code: 401 });
   }
   
@@ -205,20 +207,23 @@ router.get('/material_code', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_material_code WHERE is_deleted = 1 and company_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [company_id, parseInt(pageSize), offset]
-  );
-  // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_material_code WHERE is_deleted = 1 and company_id = ?', [company_id]);
-  const total = countRows[0].total;
-  // 计算总页数
-  const totalPages = Math.ceil(total / pageSize);
+  const { count, rows } = await SubMaterialCode.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  
+  const totalPages = Math.ceil(count / pageSize);
+  row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rows), 
-    total, 
+    data: formatArrayTime(row), 
+    total: count, 
     totalPages, 
     currentPage: parseInt(page), 
     pageSize: parseInt(pageSize),
@@ -232,20 +237,22 @@ router.post('/material_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_material_code where material_code = ? and company_id = ?',
-    [material_code, company_id]
-  )
+  const rows = await SubMaterialCode.findAll({
+    where: {
+      material_code,
+      company_id
+    }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
-
-  const [result] = await pool.execute(
-    'INSERT INTO sub_material_code (material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, userId, company_id]
-  );
-
-  res.json({ message: '添加成功', code: 200 });
+  
+  SubMaterialCode.create({
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, company_id,
+    user_id: userId
+  })
+  
+  res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新材料编码接口
@@ -254,25 +261,22 @@ router.put('/material_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_material_code where material_code = ? and company_id = ? and id != ?',
-    [material_code, company_id, id]
-  )
+  const rows = await SubMaterialCode.findAll({
+    where: { material_code, company_id, id: { [Op.ne]: id } }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  // 更新材料编码信息
-  const [updateResult] = await pool.execute(
-    'UPDATE sub_material_code SET material_code = ?, material_name = ?, model = ?, specification = ?, other_features = ?, usage_unit = ?, purchase_unit = ?, unit_price = ?, currency = ?, remarks = ?, user_id = ?, company_id = ? WHERE id = ?',
-    [material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, userId, company_id, id]
-  );
-  
-  if (updateResult.affectedRows === 0) {
+  const result = await SubMaterialCode.update({
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, company_id,
+    user_id: userId
+  }, { where: { id } })
+  if (result.length == 0) {
     return res.json({ message: '未找到该材料编码', code: 401 });
   }
   
-  res.json({ message: "修改成功", code: 200 });
+  res.json({ msg: "修改成功", code: 200 });
 });
 
 // 删除材料编码
@@ -280,12 +284,11 @@ router.delete('/material_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
   
-  const [result] = await pool.execute(
-    'UPDATE sub_material_code SET is_deleted = 0 where id = ? and is_deleted = 1 and company_id = ?',
-    [id, company_id]
-  );
+  const result = await SubMaterialCode.update({
+    is_deleted: 0
+  }, { where: { id, is_deleted: 1, company_id } })
   
-  if (result.affectedRows === 0) {
+  if (result.length == 0) {
     return res.json({ message: '材料编码不存在或已被删除', code: 401 });
   }
   
@@ -303,20 +306,23 @@ router.get('/process_code', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_process_code WHERE is_deleted = 1 and company_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [company_id, parseInt(pageSize), offset]
-  );
-  // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_process_code WHERE is_deleted = 1 and company_id = ?', [company_id]);
-  const total = countRows[0].total;
-  // 计算总页数
-  const totalPages = Math.ceil(total / pageSize);
+  const { count, rows } = await SubProcessCode.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  
+  const totalPages = Math.ceil(count / pageSize);
+  row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rows), 
-    total, 
+    data: formatArrayTime(row), 
+    total: count, 
     totalPages, 
     currentPage: parseInt(page), 
     pageSize: parseInt(pageSize),
@@ -330,20 +336,22 @@ router.post('/process_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_process_code where process_code = ? and company_id = ?',
-    [process_code, company_id]
-  )
+  const rows = await SubProcessCode.findAll({
+    where: {
+      process_code,
+      company_id
+    }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
-
-  const [result] = await pool.execute(
-    'INSERT INTO sub_process_code (process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, userId, company_id]
-  );
   
-  res.json({ message: "添加成功", code: 200 });
+  SubProcessCode.create({
+    process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, company_id,
+    user_id: userId
+  })
+  
+  res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新工艺编码接口
@@ -352,25 +360,22 @@ router.put('/process_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_process_code where process_code = ? and company_id = ? and id != ?',
-    [process_code, company_id, id]
-  )
+  const rows = await SubProcessCode.findAll({
+    where: { process_code, company_id, id: { [Op.ne]: id } }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  // 更新工艺编码信息
-  const [updateResult] = await pool.execute(
-    'UPDATE sub_process_code SET process_code = ?, process_name = ?, equipment_used = ?, piece_working_hours = ?, processing_unit_price = ?, section_points = ?, total_processing_price = ?, remarks = ?, user_id = ?, company_id = ? WHERE id = ?',
-    [process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, userId, company_id, id]
-  );
-  
-  if (updateResult.affectedRows === 0) {
-    return res.json({ message: '未找到该工艺编码', code: 404 });
+  const result = await SubProcessCode.update({
+    process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, company_id,
+    user_id: userId
+  }, { where: { id } })
+  if (result.length == 0) {
+    return res.json({ message: '未找到该工艺编码', code: 401 });
   }
   
-  res.json({ message: '修改成功', code: 200 });
+  res.json({ msg: "修改成功", code: 200 });
 });
 
 // 删除工艺编码
@@ -378,15 +383,14 @@ router.delete('/process_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
   
-  const [result] = await pool.execute(
-    'UPDATE sub_process_code SET is_deleted = 0 WHERE id = ? and is_deleted = 1 and company_id = ?',
-    [id, company_id]
-  );
+  const result = await SubProcessCode.update({
+    is_deleted: 0
+  }, { where: { id, is_deleted: 1, company_id } })
   
-  if (result.affectedRows === 0) {
+  if (result.length == 0) {
     return res.json({ message: '工艺编码不存在或已被删除', code: 401 });
   }
-
+  
   res.json({ message: '删除成功', code: 200 });
 });
 
@@ -401,20 +405,23 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_equipment_code WHERE is_deleted = 1 and company_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [company_id, parseInt(pageSize), offset]
-  );
-  // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_equipment_code WHERE is_deleted = 1 and company_id = ?', [company_id]);
-  const total = countRows[0].total;
-  // 计算总页数
-  const totalPages = Math.ceil(total / pageSize);
+  const { count, rows } = await SubEquipmentCode.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  
+  const totalPages = Math.ceil(count / pageSize);
+  row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rows), 
-    total, 
+    data: formatArrayTime(row), 
+    total: count, 
     totalPages, 
     currentPage: parseInt(page), 
     pageSize: parseInt(pageSize),
@@ -428,20 +435,22 @@ router.post('/equipment_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_equipment_code where equipment_code = ? and company_id = ?',
-    [equipment_code, company_id]
-  )
+  const rows = await SubEquipmentCode.findAll({
+    where: {
+      equipment_code,
+      company_id
+    }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
-
-  const [result] = await pool.execute(
-    'INSERT INTO sub_equipment_code (equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks, userId, company_id]
-  );
   
-  res.json({ message: "添加成功", code: 200 });
+  SubEquipmentCode.create({
+    equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks, company_id,
+    user_id: userId
+  })
+  
+  res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新设备信息接口
@@ -450,25 +459,22 @@ router.put('/equipment_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_equipment_code where equipment_code = ? and company_id = ? and id != ?',
-    [equipment_code, company_id, id]
-  )
+  const rows = await SubEquipmentCode.findAll({
+    where: { equipment_code, company_id, id: { [Op.ne]: id } }
+  })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  // 更新设备信息
-  const [updateResult] = await pool.execute(
-    'UPDATE sub_equipment_code SET equipment_code = ?, equipment_name = ?, equipment_quantity = ?, department = ?, working_hours = ?, equipment_efficiency = ?, equipment_status = ?, remarks = ?, user_id = ?, company_id = ? WHERE id = ?',
-    [equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks, userId, company_id, id]
-  );
-  
-  if (updateResult.affectedRows === 0) {
+  const result = await SubEquipmentCode.update({
+    equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks, company_id,
+    user_id: userId
+  }, { where: { id } })
+  if (result.length == 0) {
     return res.json({ message: '未找到该设备信息', code: 401 });
   }
   
-  res.json({ message: '修改成功', code: 200 });
+  res.json({ msg: "修改成功", code: 200 });
 });
 
 // 删除设备信息
@@ -476,12 +482,11 @@ router.delete('/equipment_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
   
-  const [result] = await pool.execute(
-    'UPDATE sub_equipment_code SET is_deleted = 0 WHERE id = ? and is_deleted = 1 and company_id = ?',
-    [id, company_id]
-  );
+  const result = await SubEquipmentCode.update({
+    is_deleted: 0
+  }, { where: { id, is_deleted: 1, company_id } })
   
-  if (result.affectedRows === 0) {
+  if (result.length == 0) {
     return res.json({ message: '设备信息不存在或已被删除', code: 401 });
   }
   
@@ -500,20 +505,23 @@ router.get('/employee_info', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'SELECT * FROM sub_employee_info WHERE is_deleted = 1 and company_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    [company_id, parseInt(pageSize), offset]
-  );
-  // 查询总记录数
-  const [countRows] = await pool.execute('SELECT COUNT(*) as total FROM sub_employee_info WHERE is_deleted = 1 and company_id = ?', [company_id]);
-  const total = countRows[0].total;
-  // 计算总页数
-  const totalPages = Math.ceil(total / pageSize);
+  const { count, rows } = await SubEmployeeInfo.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  
+  const totalPages = Math.ceil(count / pageSize);
+  row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rows), 
-    total, 
+    data: formatArrayTime(row), 
+    total: count, 
     totalPages, 
     currentPage: parseInt(page), 
     pageSize: parseInt(pageSize),
@@ -526,20 +534,22 @@ router.post('/employee_info', authMiddleware, async (req, res) => {
   const { employee_id, name, department, production_position, salary_attribute, remarks } = req.body;
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_employee_info where employee_id = ? and company_id = ?',
-    [employee_id, company_id]
-  )
+  const rows = await SubEmployeeInfo.findAll({
+    where: {
+      employee_id,
+      company_id
+    }
+  })
   if(rows.length != 0){
-    return res.json({ message: '员工工号不能重复', code: 401 })
+    return res.json({ message: '编码不能重复', code: 401 })
   }
-
-  const [result] = await pool.execute(
-    'INSERT INTO sub_employee_info (employee_id, name, department, production_position, salary_attribute, remarks, user_id, company_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [employee_id, name, department, production_position, salary_attribute, remarks, userId, company_id]
-  );
   
-  res.json({ message: "添加成功", code: 200 });
+  SubEmployeeInfo.create({
+    employee_id, name, department, production_position, salary_attribute, remarks, company_id,
+    user_id: userId
+  })
+  
+  res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新员工信息接口
@@ -547,25 +557,22 @@ router.put('/employee_info', authMiddleware, async (req, res) => {
   const { employee_id, name, department, production_position, salary_attribute, remarks, id } = req.body;
   const { id: userId, company_id } = req.user;
   
-  const [rows] = await pool.execute(
-    'select * from sub_employee_info where employee_id = ? and company_id = ? and id != ?',
-    [employee_id, company_id, id]
-  )
+  const rows = await SubEmployeeInfo.findAll({
+    where: { employee_id, company_id, id: { [Op.ne]: id } }
+  })
   if(rows.length != 0){
-    return res.json({ message: '员工工号不能重复', code: 401 })
+    return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  // 更新员工信息
-  const [updateResult] = await pool.execute(
-    'UPDATE sub_employee_info SET employee_id = ?, name = ?, department = ?, production_position = ?, salary_attribute = ?, remarks = ?, user_id = ?, company_id = ? WHERE id = ?',
-    [employee_id, name, department, production_position, salary_attribute, remarks, userId, company_id, id]
-  );
-  
-  if (updateResult.affectedRows === 0) {
+  const result = await SubEmployeeInfo.update({
+    employee_id, name, department, production_position, salary_attribute, remarks, company_id,
+    user_id: userId
+  }, { where: { id } })
+  if (result.length == 0) {
     return res.json({ message: '未找到该员工信息', code: 401 });
   }
   
-  res.json({ message: "修改成功", code: 200 });
+  res.json({ msg: "修改成功", code: 200 });
 });
 
 // 删除员工信息
@@ -574,15 +581,14 @@ router.delete('/employee_info/:id', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user
   
-  const [result] = await pool.execute(
-    'UPDATE sub_employee_info SET is_deleted = 0 WHERE id = ? and is_deleted = 1 and company_id = ?',
-    [id, company_id]
-  );
+  const result = await SubEmployeeInfo.update({
+    is_deleted: 0
+  }, { where: { id, is_deleted: 1, company_id } })
   
-  if (result.affectedRows === 0) {
-    return res.json({ message: '员工不存在或已被删除', code: 401 });
+  if (result.length == 0) {
+    return res.json({ message: '员工信息不存在或已被删除', code: 401 });
   }
-
+  
   res.json({ message: '删除成功', code: 200 });
 });
 
