@@ -183,7 +183,7 @@ export default defineComponent({
                   <ElTableColumn prop="model" label="型号" />
                   <ElTableColumn prop="specification" label="规格" />
                   <ElTableColumn prop="other_features" label="其它特性" />
-                  <ElTableColumn prop="component_structure" label="部件结构" />
+                  <ElTableColumn prop="component_structure" label="产品结构" />
                   <ElTableColumn prop="unit" label="单位" width="100" />
                   <ElTableColumn prop="unit_price" label="单价" width="100" />
                   <ElTableColumn prop="currency" label="币别" width="100" />

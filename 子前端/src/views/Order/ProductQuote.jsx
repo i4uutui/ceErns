@@ -9,6 +9,9 @@ export default defineComponent({
       sale_id: [
         { required: true, message: '请选择销售订单', trigger: 'blur' },
       ],
+      notice: [
+        { required: true, message: '请输入报价单号', trigger: 'blur' },
+      ],
       product_price: [
         { required: true, message: '请输入产品单价', trigger: 'blur' },
       ],
@@ -19,6 +22,7 @@ export default defineComponent({
     let dialogVisible = ref(false)
     let form = ref({
       sale_id: '',
+      notice: '',
       product_price: '',
       transaction_currency: '',
       other_transaction_terms: ''
@@ -120,6 +124,7 @@ export default defineComponent({
     const resetForm = () => {
       form.value = {
         sale_id: '',
+        notice: '',
         product_price: '',
         transaction_currency: '',
         other_transaction_terms: '',
@@ -150,6 +155,7 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                  <ElTableColumn prop="notice" label="报价单号" width="100" />
                   <ElTableColumn prop="sale.product.product_code" label="产品编码" width="100" />
                   <ElTableColumn prop="sale.customer.customer_abbreviation" label="客户名称" width="120" />
                   <ElTableColumn prop="sale.product.product_name" label="产品名称" width="100" />
@@ -188,6 +194,9 @@ export default defineComponent({
                       ))
                     }
                   </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="报价单号" prop="notice">
+                  <ElInput v-model={ form.value.notice } placeholder="请输入报价单号" />
                 </ElFormItem>
                 <ElFormItem label="产品单价" prop="product_price">
                   <ElInput v-model={ form.value.product_price } placeholder="请输入产品单价" />

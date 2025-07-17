@@ -178,6 +178,7 @@ export default defineComponent({
                   <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
                   <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" width="100" />
+                  <ElTableColumn prop="product.component_structure" label="产品结构" width="100" />
                   <ElTableColumn prop="product.model" label="型号" width="100" />
                   <ElTableColumn prop="product.specification" label="规格" width="100" />
                   <ElTableColumn prop="product.other_features" label="其他特性" width="100" />

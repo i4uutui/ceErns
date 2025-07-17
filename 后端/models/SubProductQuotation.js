@@ -24,6 +24,11 @@ const SubProductQuotation = sequelize.define('SubProductQuotation', {
     allowNull: false,
     comment: '销售订单id'
   },
+  notice: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    comment: '报价单号'
+  },
   product_price: {
     type: DataTypes.STRING(50),
     allowNull: true,
