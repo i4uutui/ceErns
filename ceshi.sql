@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 16/07/2025 19:21:34
+ Date: 17/07/2025 19:29:15
 */
 
 SET NAMES utf8mb4;
@@ -289,6 +289,28 @@ CREATE TABLE `sub_process_code`  (
 INSERT INTO `sub_process_code` VALUES (3, 1, 1, '123', '212', '121', '21', 2121.00, 21, 21.00, '212', 1, '2025-07-08 15:56:54', '2025-07-08 16:00:17');
 
 -- ----------------------------
+-- Table structure for sub_product_notice
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_product_notice`;
+CREATE TABLE `sub_product_notice`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `notice` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '生产订单号',
+  `quote_id` int(11) NULL DEFAULT NULL COMMENT '报价单id',
+  `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交货日期',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产通知单信息表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_product_notice
+-- ----------------------------
+INSERT INTO `sub_product_notice` VALUES (1, 1, 1, '11112', 3, '2025-07-18 00:00:00', 1, '2025-07-17 11:11:40', '2025-07-17 11:34:11');
+
+-- ----------------------------
 -- Table structure for sub_product_quotation
 -- ----------------------------
 DROP TABLE IF EXISTS `sub_product_quotation`;
@@ -297,6 +319,7 @@ CREATE TABLE `sub_product_quotation`  (
   `company_id` int(11) NOT NULL COMMENT '企业id',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `sale_id` int(11) NOT NULL COMMENT '销售订单id',
+  `notice` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '报价单号',
   `product_price` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品单价',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
@@ -309,8 +332,8 @@ CREATE TABLE `sub_product_quotation`  (
 -- ----------------------------
 -- Records of sub_product_quotation
 -- ----------------------------
-INSERT INTO `sub_product_quotation` VALUES (3, 1, 1, 2, '12', '￥0', '2121', 1, '2025-07-14 19:16:48', '2025-07-15 10:51:42');
-INSERT INTO `sub_product_quotation` VALUES (4, 1, 1, 1, '21', '31', '12', 1, '2025-07-15 10:52:02', '2025-07-15 10:52:02');
+INSERT INTO `sub_product_quotation` VALUES (3, 1, 1, 2, '3333', '12', '￥0', '2121', 1, '2025-07-14 19:16:48', '2025-07-17 10:35:20');
+INSERT INTO `sub_product_quotation` VALUES (4, 1, 1, 1, '2121', '21', '31', '12', 1, '2025-07-15 10:52:02', '2025-07-17 10:35:16');
 
 -- ----------------------------
 -- Table structure for sub_products_code
