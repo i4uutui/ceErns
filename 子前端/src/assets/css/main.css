@@ -8,3 +8,6 @@
 .el-table__cell{
   text-align: center !important;
 }
+.headerScroll{
+  width: 140px;
+}
