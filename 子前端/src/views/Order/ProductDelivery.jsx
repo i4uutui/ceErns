@@ -1,127 +1,85 @@
-import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElOption, ElPagination, ElSelect, ElTable, ElTableColumn } from 'element-plus'
-import { defineComponent, onMounted, ref, reactive } from 'vue'
+import { ElButton, ElCard, ElInput, ElMessage, ElTable, ElTableColumn } from 'element-plus'
+import { defineComponent, ref, reactive, watch, onMounted } from 'vue'
+import { numberToChinese } from '@/utils/tool.js'
+import { getItem } from "@/assets/js/storage";
+import dayjs from "dayjs"
 import request from '@/utils/request';
+import "@/assets/css/print.scss"
 
 export default defineComponent({
   setup(){
-    const formRef = ref(null);
-    const rules = reactive({
-      quote_id: [
-        { required: true, message: '请选择报价单号', trigger: 'blur' },
-      ],
-      notice: [
-        { required: true, message: '请输入生产单号', trigger: 'blur' },
-      ],
-      delivery_time: [
-        { required: true, message: '请输入交货日期', trigger: 'blur' },
-      ],
+    const user = ref()
+    const nowDate = ref()
+    const printObj = ref({
+      id: "printTable", // 这里是要打印元素的ID
+      popTitle: "出货通知单", // 打印的标题
+      // preview: true, // 是否启动预览模式，默认是false
+      zIndex: 20003, // 预览窗口的z-index，默认是20002，最好比默认值更高
+      previewBeforeOpenCallback() { console.log('正在加载预览窗口！'); }, // 预览窗口打开之前的callback
+      previewOpenCallback() { console.log('已经加载完预览窗口，预览打开了！') }, // 预览窗口打开时的callback
+      beforeOpenCallback(vue) {
+        console.log('开始打印之前！')
+      }, // 开始打印之前的callback
+      openCallback(vue) {
+        console.log('监听到了打印窗户弹起了！')
+      }, // 调用打印时的callback
+      closeCallback() { console.log('关闭了打印工具！') }, // 关闭打印的callback(点击弹窗的取消和打印按钮都会触发)
+      clickMounted() { console.log('点击v-print绑定的按钮了！') },
     })
-    let dialogVisible = ref(false)
-    let form = ref({
-      quote_id: '',
-      notice: '',
-      delivery_time: '',
-    })
-    let tableData = ref([])
-    let currentPage = ref(1);
-    let pageSize = ref(10);
-    let total = ref(0);
-    let edit = ref(0)
-    let saleOrder = ref([])
-    let loading = ref(false)
     
+    let tableData = ref([])
+    let customer_abbreviation = ref('')
+    let customer_order = ref('')
+    let goods_address = ref('')
+    
+    watch(() => tableData.value, () => {
+      const tds = document.querySelectorAll('#printTable .el-table__footer-wrapper tr>td');
+      tds[1].colSpan = 6;
+      tds[1].style.textAlign = 'left';
+    })
     onMounted(() => {
-      fetchProductList()
+      user.value = getItem('user')
+      nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
     })
     
     // 获取列表
     const fetchProductList = async () => {
       const res = await request.get('/api/product_notice', {
         params: {
-          page: currentPage.value,
-          pageSize: pageSize.value
+          page: 1,
+          pageSize: 100,
+          customer_abbreviation: customer_abbreviation.value,
+          customer_order: customer_order.value,
+          goods_address: goods_address.value
         },
       });
       tableData.value = res.data;
-      total.value = res.total;
+      if(res.total == 0) return ElMessage.error('数据为空！')
     };
-    const handleSubmit = async (formEl) => {
-      if (!formEl) return
-      await formEl.validate(async (valid, fields) => {
-        if (valid){
-          if(!edit.value){
-            const res = await request.post('/api/product_notice', form.value);
-            if(res && res.code == 200){
-              ElMessage.success('添加成功');
-              dialogVisible.value = false;
-              fetchProductList();
-            }
-            
-          }else{
-            // 修改
-            const myForm = {
-              id: edit.value,
-              ...form.value
-            }
-            const res = await request.put('/api/product_notice', myForm);
-            if(res && res.code == 200){
-              ElMessage.success('修改成功');
-              dialogVisible.value = false;
-              fetchProductList();
-            }
-          }
+    // 统计合计
+    const getSummaries = ({ columns, data }) => {
+      const sums = [];
+      
+      // 计算product_price的总和
+      const totalPrice = data.reduce((sum, item) => {
+        return sum + Number(item.quote.product_price);
+      }, 0);
+      
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计';
+          return;
         }
-      })
-    }
-    let timeout = null
-    const remoteMethod = (query) => {
-      if(timeout){
-        clearTimeout(timeout)
-        timeout = null
-      }
-      timeout = setTimeout(async () => {
-        if(query){
-          loading.value = true
-          const res = await request.get('/api/getProductQuotation', {
-            params: {
-              notice: query
-            },
-          });
-          saleOrder.value = res.data
-          loading.value = false
-        }else{
-          saleOrder.value = []
+        if (index === 2) {
+          sums[index] = totalPrice;
+          return;
         }
-        clearTimeout(timeout)
-        timeout = null
-      }, 500)
-    }
-    const changeSelect = (value) => {
-      saleOrder.value = []
-    }
-    const handleUplate = (row) => {
-      edit.value = row.id;
-      dialogVisible.value = true;
-      form.value = { ...row };
-    }
-    // 添加
-    const handleAdd = () => {
-      edit.value = 0;
-      dialogVisible.value = true;
-      resetForm()
-    };
-    // 取消弹窗
-    const handleClose = () => {
-      edit.value = 0;
-      dialogVisible.value = false;
-      resetForm()
-    }
-    const resetForm = () => {
-      form.value = {
-        quote_id: '',
-        notice: '',
-        delivery_time: '',
-      }
+        if (index === 1) {
+          sums[index] = `人民币大写：${numberToChinese(totalPrice)}`;
+          return;
+        }
+      });
+      return sums;
     }
 
     return() => (
@@ -129,73 +87,70 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  添加生产单
-                </ElButton>
+              <div class="flex">
+                <div class="pr10 flex">
+                  <span>客户名称:</span>
+                  <ElInput v-model={ customer_abbreviation.value } style="width: 240px" placeholder="请输入"/>
+                </div>
+                <div class="pr10 flex">
+                  <span>客户订单号:</span>
+                  <ElInput v-model={ customer_order.value } style="width: 240px" placeholder="请输入"/>
+                </div>
+                <div class="pr10 flex">
+                  <span>交货地点:</span>
+                  <ElInput v-model={ goods_address.value } style="width: 240px" placeholder="请输入"/>
+                </div>
+                <div class="pr10">
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>
+                    查询
+                  </ElButton>
+                  <ElButton style="margin-top: -5px" type="primary">
+                    提交
+                  </ElButton>
+                  <ElButton style="margin-top: -5px" type="primary" v-print={ printObj.value }>
+                    打印
+                  </ElButton>
+                </div>
               </div>
             ),
             default: () => (
-              <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                  <ElTableColumn prop="notice" label="生产订单号" width="100" />
-                  <ElTableColumn prop="quote.sale.rece_time" label="接单日期" width="170" />
-                  <ElTableColumn prop="quote.sale.customer.customer_abbreviation" label="客户名称" width="100" />
-                  <ElTableColumn prop="quote.sale.customer_order" label="客户订单号" width="100" />
-                  <ElTableColumn prop="quote.sale.product.product_code" label="产品编码" width="100" />
-                  <ElTableColumn prop="quote.sale.product.product_name" label="产品名称" width="100" />
-                  <ElTableColumn prop="quote.sale.product.drawing" label="工程图号" width="120" />
-                  <ElTableColumn prop="quote.sale.product.component_structure" label="产品结构" width="100" />
-                  <ElTableColumn prop="quote.sale.product.model" label="型号" width="100" />
-                  <ElTableColumn prop="quote.sale.product.specification" label="规格" width="100" />
-                  <ElTableColumn prop="quote.sale.product.other_features" label="其它特性" width="100" />
-                  <ElTableColumn prop="quote.sale.product_req" label="产品要求" width="120" />
+              <div id="printTable">
+                <ElTable data={ tableData.value } border stripe style={{ width: "940px" }} summaryMethod={ getSummaries } show-summary>
+                  <ElTableColumn prop="quote.sale.product.product_code" label="产品编码" width="120" />
+                  <ElTableColumn prop="quote.sale.product.product_name" label="产品名称" width="120" />
+                  <ElTableColumn label="型号&规格" width="160">
+                    {{
+                      default: (scope) => {
+                        const model = scope.row.quote.sale.product.model
+                        const spec = scope.row.quote.sale.product.specification
+                        return `${model}&${spec}`;
+                      }
+                    }}
+                  </ElTableColumn>
+                  <ElTableColumn prop="quote.sale.product.other_features" label="其它特性" width="120" />
+                  <ElTableColumn prop="quote.sale.unit" label="单位" width="100" />
                   <ElTableColumn prop="quote.sale.order_number" label="订单数量" width="100" />
-                  <ElTableColumn prop="quote.sale.unit" label="单位" width="120" />
-                  <ElTableColumn prop="delivery_time" label="交货日期" width="170" />
-                  <ElTableColumn prop="created_at" label="创建时间" width="170" />
-                  <ElTableColumn label="操作" width="140" fixed="right">
-                    {(scope) => (
-                      <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                      </>
-                    )}
+                  <ElTableColumn prop="quote.product_price" label="单价" width="100" />
+                  <ElTableColumn label="金额" width="120">
+                    {{
+                      default: (scope) => {
+                        const order_number = Number(scope.row.quote.sale.order_number)
+                        const product_price = Number(scope.row.quote.product_price)
+                        return order_number * product_price
+                      }
+                    }}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
-              </>
+                <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 940px">
+                  <div>客户签收：</div>
+                  <div>审查：</div>
+                  <div>制表：{ user.value?.name }</div>
+                  <div>日期：{ nowDate.value }</div>
+                </div>
+              </div>
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改生产通知单' : '添加生产通知单' } onClose={ () => handleClose() }>
-          {{
-            default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="报价单" prop="quote_id">
-                  <ElSelect v-model={ form.value.quote_id } filterable remote loading={ loading.value } remote-method={ remoteMethod } value-key="id" placeholder="请选择报价单" onChange={ changeSelect }>
-                    {
-                      saleOrder.value.map((o, index) => (
-                        <ElOption value={ o.id } label={ o.notice } />
-                      ))
-                    }
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="生产订单号" prop="notice">
-                  <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />
-                </ElFormItem>
-                <ElFormItem label="交货日期" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } type="datetime" placeholder="请选择交货日期" />
-                </ElFormItem>
-              </ElForm>
-            ),
-            footer: () => (
-              <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
-                <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
-              </span>
-            )
-          }}
-        </ElDialog>
       </>
     )
   }

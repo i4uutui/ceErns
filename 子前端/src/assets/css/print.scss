@@ -1,0 +1,14 @@
+@media print {
+  @page {
+    margin-bottom: 0mm; //去掉页脚
+  }
+ .el-table{
+   max-width: 100%;
+   border: 1px solid #ebeef5;
+   border-right-width: 2px;
+ }
+ 
+ .el-tabel--mini .el-tabel__cell {
+    border: 1px solid #ebeef5;
+ }
+}

@@ -270,7 +270,7 @@ router.put('/product_quotation', authMiddleware, async (req, res) => {
 
 // 生产通知单
 router.get('/product_notice', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, customer_abbreviation, customer_order, goods_address } = req.query;
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
@@ -288,8 +288,12 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
           {
             model: SubSaleOrder,
             as: 'sale',
+            where: {
+              ...(customer_order && { customer_order: { [Op.like]: `%${customer_order}%` } }),
+              ...(goods_address && { goods_address: { [Op.like]: `%${goods_address}%` } }),
+            },
             include: [
-              { model: SubCustomerInfo, as: 'customer' },
+              { model: SubCustomerInfo, as: 'customer', where: { ...(customer_abbreviation && { customer_abbreviation: { [Op.like]: `%${customer_abbreviation}%` } }), } },
               { model: SubProductsCode, as: 'product' }
             ]
           },

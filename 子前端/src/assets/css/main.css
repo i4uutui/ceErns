@@ -5,8 +5,8 @@
   width: 100%;
 }
 
-.el-table__cell{
-  text-align: center !important;
+.el-table .el-table__cell{
+  text-align: center;
 }
 .headerScroll{
   width: 140px;

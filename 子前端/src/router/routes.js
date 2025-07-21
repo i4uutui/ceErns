@@ -109,6 +109,15 @@ const routes = [
         }
       },
       {
+        path: '/order/product-notice',
+        name: 'ProductNotice',
+        component: () => import('@/views/Order/ProductNotice.jsx'),
+        meta: {
+          title: '产品通知单',
+          parent: '订单管理'
+        }
+      },
+      {
         path: '/order/product-delivery',
         name: 'ProductDelivery',
         component: () => import('@/views/Order/ProductDelivery.jsx'),

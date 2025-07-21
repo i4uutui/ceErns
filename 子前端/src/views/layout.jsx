@@ -15,10 +15,8 @@ export default defineComponent({
         <ElHeader height='64px' style={{ borderBottom: "1px solid #eee", backgroundColor: '#FFF' }}>
           <Mhead />
         </ElHeader>
-        <ElContainer>
-          <ElScrollbar class='headerScroll'>
-            <LeftMenu></LeftMenu>
-          </ElScrollbar>
+        <ElContainer style={{ height: "calc(100vh - 104px)" }}>
+          <LeftMenu></LeftMenu>
           <ElMain><RouterView /></ElMain>
         </ElContainer>
         <ElFooter height='40px' style="backgroundColor: #FFF">
