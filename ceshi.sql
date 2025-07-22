@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 21/07/2025 19:58:39
+ Date: 22/07/2025 14:56:32
 */
 
 SET NAMES utf8mb4;
@@ -230,6 +230,30 @@ CREATE TABLE `sub_material_code`  (
 -- Records of sub_material_code
 -- ----------------------------
 INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', 122.00, '12', '21', 1, '2025-07-08 15:36:33', '2025-07-08 15:37:12');
+
+-- ----------------------------
+-- Table structure for sub_material_quote
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_material_quote`;
+CREATE TABLE `sub_material_quote`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `material_code_id` int(11) NOT NULL COMMENT '材料编码ID',
+  `delivery` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货方式',
+  `packaging` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '包装要求',
+  `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
+  `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
+  `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价信息表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_material_quote
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for sub_part_code
