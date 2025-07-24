@@ -1,6 +1,7 @@
-import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElOption, ElPagination, ElSelect, ElTable, ElTableColumn } from 'element-plus'
+import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn } from 'element-plus'
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
+import MySelect from '@/components/tables/mySelect.vue';
 
 export default defineComponent({
   setup(){
@@ -27,8 +28,6 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
-    let saleOrder = ref([])
-    let loading = ref(false)
     
     onMounted(() => {
       fetchProductList()
@@ -72,32 +71,6 @@ export default defineComponent({
           }
         }
       })
-    }
-    let timeout = null
-    const remoteMethod = (query) => {
-      if(timeout){
-        clearTimeout(timeout)
-        timeout = null
-      }
-      timeout = setTimeout(async () => {
-        if(query){
-          loading.value = true
-          const res = await request.get('/api/getProductQuotation', {
-            params: {
-              notice: query
-            },
-          });
-          saleOrder.value = res.data
-          loading.value = false
-        }else{
-          saleOrder.value = []
-        }
-        clearTimeout(timeout)
-        timeout = null
-      }, 500)
-    }
-    const changeSelect = (value) => {
-      saleOrder.value = []
     }
     const handleUplate = (row) => {
       edit.value = row.id;
@@ -172,13 +145,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="报价单" prop="quote_id">
-                  <ElSelect v-model={ form.value.quote_id } filterable remote loading={ loading.value } remote-method={ remoteMethod } value-key="id" placeholder="请选择报价单" onChange={ changeSelect }>
-                    {
-                      saleOrder.value.map((o, index) => (
-                        <ElOption value={ o.id } label={ o.notice } />
-                      ))
-                    }
-                  </ElSelect>
+                  <MySelect v-model={ form.value.quote_id } apiUrl="/api/getProductQuotation" query="notice" itemValue="notice" placeholder="请选择报价单" />
                 </ElFormItem>
                 <ElFormItem label="生产订单号" prop="notice">
                   <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />

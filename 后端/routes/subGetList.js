@@ -20,7 +20,7 @@ router.get('/getSaleOrder', authMiddleware, async (req, res) => {
     order: [['created_at', 'DESC']],
   }
   const { count, rows } = await SubSaleOrder.findAndCountAll(config);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   
   res.json({ data: formatArrayTime(row), code: 200 });
 });
@@ -36,7 +36,23 @@ router.get('/getProductQuotation', authMiddleware, async (req, res) => {
     order: [['created_at', 'DESC']],
   }
   const { count, rows } = await SubProductQuotation.findAndCountAll(config);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
+  
+  res.json({ data: formatArrayTime(row), code: 200 });
+});
+// 获取报价单列表
+router.get('/getCustomerInfo', authMiddleware, async (req, res) => {
+  const { customer_abbreviation } = req.query;
+  const { company_id } = req.user;
+  
+  const config = {
+    where: { is_deleted: 1, company_id, customer_abbreviation: {
+      [Op.like]: `%${customer_abbreviation}%`
+    } },
+    order: [['created_at', 'DESC']],
+  }
+  const { count, rows } = await SubCustomerInfo.findAndCountAll(config);
+  const row = rows.map(e => e.toJSON())
   
   res.json({ data: formatArrayTime(row), code: 200 });
 });
@@ -72,6 +88,5 @@ const createGetListHandler = (Model, labelField, where) => async (req, res) => {
 router.get('/getMaterialCode', authMiddleware, createGetListHandler(SubMaterialCode, 'material_name'));
 router.get('/getPartCode', authMiddleware, createGetListHandler(SubPartCode, 'part_name'));
 router.get('/getProductsCode', authMiddleware, createGetListHandler(SubProductsCode, 'product_name'));
-router.get('/getCustomerInfo', authMiddleware, createGetListHandler(SubCustomerInfo, 'customer_abbreviation'));
 
 module.exports = router;  

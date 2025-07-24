@@ -1,6 +1,7 @@
-import { ElButton, ElCard, ElCascader, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn } from 'element-plus'
+import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn } from 'element-plus'
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
+import MySelect from '@/components/tables/mySelect.vue';
 
 export default defineComponent({
   setup(){
@@ -55,16 +56,8 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
-    let customer = ref([])
-    let product = ref([])
-    let propsCascader = ref({
-      emitPath: false,
-      value: 'id'
-    })
 
     onMounted(() => {
-      getProducts()
-      getCustomerInfo()
       fetchProductList()
     })
 
@@ -106,14 +99,6 @@ export default defineComponent({
           }
         }
       })
-    }
-    const getProducts = async () => {
-      const res = await request.get('/api/getProductsCode');
-      product.value = res.data
-    }
-    const getCustomerInfo = async () => {
-      const res = await request.get('/api/getCustomerInfo');
-      customer.value = res.data
     }
     const handleUplate = (row) => {
       edit.value = row.id;
@@ -210,13 +195,13 @@ export default defineComponent({
                   <ElDatePicker v-model={ form.value.rece_time } type="datetime" placeholder="请选择接单日期" />
                 </ElFormItem>
                 <ElFormItem label="客户名称" prop="customer_id">
-                  <ElCascader v-model={ form.value.customer_id } placeholder="请选择客户名称" options={ customer.value } filterable props={ propsCascader.value } />
+                  <MySelect v-model={ form.value.customer_id } apiUrl="/api/getCustomerInfo" query="customer_abbreviation" itemValue="customer_abbreviation" placeholder="请选择客户名称" />
                 </ElFormItem>
                 <ElFormItem label="客户订单号" prop="customer_order">
                   <ElInput v-model={ form.value.customer_order } placeholder="请输入客户订单号" />
                 </ElFormItem>
                 <ElFormItem label="产品名称" prop="product_id">
-                  <ElCascader v-model={ form.value.product_id } placeholder="请选择产品名称" options={ product.value } filterable props={ propsCascader.value } />
+                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_name" itemValue="product_name" placeholder="请选择产品名称" />
                 </ElFormItem>
                 <ElFormItem label="产品要求" prop="product_req">
                   <ElInput v-model={ form.value.product_req } placeholder="请输入产品要求" />
