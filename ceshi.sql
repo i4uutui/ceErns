@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 22/07/2025 14:56:32
+ Date: 25/07/2025 20:02:50
 */
 
 SET NAMES utf8mb4;
@@ -333,7 +333,7 @@ CREATE TABLE `sub_product_notice`  (
 -- Records of sub_product_notice
 -- ----------------------------
 INSERT INTO `sub_product_notice` VALUES (1, 1, 1, '11112', 3, '2025-07-18 00:00:00', 1, '2025-07-17 11:11:40', '2025-07-17 11:34:11');
-INSERT INTO `sub_product_notice` VALUES (2, 1, 1, '2', 4, '2025-07-22T16:00:00.000Z', 1, '2025-07-21 15:33:19', '2025-07-21 15:33:19');
+INSERT INTO `sub_product_notice` VALUES (2, 1, 1, '2211', 4, '2025-07-22 00:00:00', 1, '2025-07-21 15:33:19', '2025-07-25 16:00:18');
 
 -- ----------------------------
 -- Table structure for sub_product_quotation
@@ -344,6 +344,7 @@ CREATE TABLE `sub_product_quotation`  (
   `company_id` int(11) NOT NULL COMMENT '企业id',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `sale_id` int(11) NOT NULL COMMENT '销售订单id',
+  `customer_id` int(11) NULL DEFAULT NULL COMMENT '客户id',
   `notice` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '报价单号',
   `product_price` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品单价',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
@@ -352,13 +353,15 @@ CREATE TABLE `sub_product_quotation`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_quotation
 -- ----------------------------
-INSERT INTO `sub_product_quotation` VALUES (3, 1, 1, 2, '3333', '12', '￥0', '2121', 1, '2025-07-14 19:16:48', '2025-07-17 10:35:20');
-INSERT INTO `sub_product_quotation` VALUES (4, 1, 1, 1, '2121', '21', '31', '12', 1, '2025-07-15 10:52:02', '2025-07-17 10:35:16');
+INSERT INTO `sub_product_quotation` VALUES (3, 1, 1, 2, NULL, '3333', '12', '￥0', '2121', 1, '2025-07-14 19:16:48', '2025-07-17 10:35:20');
+INSERT INTO `sub_product_quotation` VALUES (4, 1, 1, 1, NULL, '2121', '21', '31', '12', 1, '2025-07-15 10:52:02', '2025-07-17 10:35:16');
+INSERT INTO `sub_product_quotation` VALUES (5, 1, 1, 2, NULL, '221', '21', '2121', '2121', 1, '2025-07-25 19:00:10', '2025-07-25 19:00:10');
+INSERT INTO `sub_product_quotation` VALUES (6, 1, 1, 2, NULL, '311', '31', '2121', '212121', 1, '2025-07-25 19:43:59', '2025-07-25 19:43:59');
 
 -- ----------------------------
 -- Table structure for sub_products_code
@@ -419,8 +422,8 @@ CREATE TABLE `sub_sales_order`  (
 -- ----------------------------
 -- Records of sub_sales_order
 -- ----------------------------
-INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07 00:00:00', 1, '31232131', 10, '我的要求', '311', '车1', '2025-07-07 00:00:00', '2025-07-27 00:00:00', '2123121', 1, '2025-07-14 13:55:51', '2025-07-14 19:27:49');
-INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 1, '31232131', 9, '21', '2121', '2121', '2025-07-14 00:00:00', '2025-07-14T10:47:29.000Z', '3131', 1, '2025-07-14 18:47:31', '2025-07-14 19:27:45');
+INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07 00:00:00', 3, '31232131', 10, '我的要求', '311', '车1', '2025-07-07 00:00:00', '2025-07-27 00:00:00', '2123121', 1, '2025-07-14 13:55:51', '2025-07-25 19:51:48');
+INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 2, '31232131', 9, '21', '2121', '2121', '2025-07-14 00:00:00', '2025-07-14T10:47:29.000Z', '3131', 1, '2025-07-14 18:47:31', '2025-07-25 19:50:59');
 
 -- ----------------------------
 -- Table structure for sub_supplier_info

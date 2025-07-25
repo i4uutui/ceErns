@@ -208,9 +208,12 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
         model: SubSaleOrder,
         as: 'sale',
         include: [
-          { model: SubCustomerInfo, as: 'customer' },
           { model: SubProductsCode, as: 'product' }
         ]
+      },
+      {
+        model: SubCustomerInfo,
+        as: 'customer'
       }
     ],
     order: [
@@ -241,10 +244,24 @@ router.post('/product_quotation', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  await SubProductQuotation.create({
-    sale_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
-    user_id: userId
+  let customer_id = ''
+  const saleOrder = await SubSaleOrder.findOne({
+    where: { id: sale_id },
+    raw: true
   })
+  if(saleOrder){
+    customer_id = saleOrder.customer_id
+  }else{
+    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+  }
+  
+  const create = {
+    customer_id, sale_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
+    user_id: userId
+  }
+  console.log(create);
+  return
+  await SubProductQuotation.create(create)
   
   res.json({ message: '添加成功', code: 200 });
 });
@@ -258,9 +275,7 @@ router.put('/product_quotation', authMiddleware, async (req, res) => {
     sale_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
     user_id: userId
   }, {
-    where: {
-      id
-    }
+    where: { id }
   })
   if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
   
