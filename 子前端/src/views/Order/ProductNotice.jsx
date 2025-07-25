@@ -112,19 +112,19 @@ export default defineComponent({
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="notice" label="生产订单号" width="100" />
-                  <ElTableColumn prop="quote.sale.rece_time" label="接单日期" width="170" />
-                  <ElTableColumn prop="quote.sale.customer.customer_abbreviation" label="客户名称" width="100" />
-                  <ElTableColumn prop="quote.sale.customer_order" label="客户订单号" width="100" />
-                  <ElTableColumn prop="quote.sale.product.product_code" label="产品编码" width="100" />
-                  <ElTableColumn prop="quote.sale.product.product_name" label="产品名称" width="100" />
-                  <ElTableColumn prop="quote.sale.product.drawing" label="工程图号" width="120" />
-                  <ElTableColumn prop="quote.sale.product.component_structure" label="产品结构" width="100" />
-                  <ElTableColumn prop="quote.sale.product.model" label="型号" width="100" />
-                  <ElTableColumn prop="quote.sale.product.specification" label="规格" width="100" />
-                  <ElTableColumn prop="quote.sale.product.other_features" label="其它特性" width="100" />
-                  <ElTableColumn prop="quote.sale.product_req" label="产品要求" width="120" />
-                  <ElTableColumn prop="quote.sale.order_number" label="订单数量" width="100" />
-                  <ElTableColumn prop="quote.sale.unit" label="单位" width="120" />
+                  <ElTableColumn prop="sale.rece_time" label="接单日期" width="170" />
+                  <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="100" />
+                  <ElTableColumn prop="sale.customer_order" label="客户订单号" width="100" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
+                  <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
+                  <ElTableColumn prop="product.drawing" label="工程图号" width="120" />
+                  <ElTableColumn prop="product.component_structure" label="产品结构" width="100" />
+                  <ElTableColumn prop="product.model" label="型号" width="100" />
+                  <ElTableColumn prop="product.specification" label="规格" width="100" />
+                  <ElTableColumn prop="product.other_features" label="其它特性" width="100" />
+                  <ElTableColumn prop="sale.product_req" label="产品要求" width="120" />
+                  <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
+                  <ElTableColumn prop="sale.unit" label="单位" width="120" />
                   <ElTableColumn prop="delivery_time" label="交货日期" width="170" />
                   <ElTableColumn prop="created_at" label="创建时间" width="170" />
                   <ElTableColumn label="操作" width="140" fixed="right">

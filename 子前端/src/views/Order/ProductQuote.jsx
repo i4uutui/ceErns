@@ -129,12 +129,12 @@ export default defineComponent({
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="notice" label="报价单号" width="100" />
-                  <ElTableColumn prop="sale.product.product_code" label="产品编码" width="100" />
-                  <ElTableColumn prop="sale.customer.customer_abbreviation" label="客户名称" width="120" />
-                  <ElTableColumn prop="sale.product.product_name" label="产品名称" width="100" />
-                  <ElTableColumn prop="sale.product.model" label="型号" width="100" />
-                  <ElTableColumn prop="sale.product.specification" label="规格" width="100" />
-                  <ElTableColumn prop="sale.product.other_features" label="其他特性" width="100" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
+                  <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" />
+                  <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
+                  <ElTableColumn prop="product.model" label="型号" width="100" />
+                  <ElTableColumn prop="product.specification" label="规格" width="100" />
+                  <ElTableColumn prop="product.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="sale.customer_order" label="客户订单号" width="120" />
                   <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
                   <ElTableColumn prop="sale.unit" label="单位" width="100" />

@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const { Sequelize } = require('sequelize');
-const pool = require('../config/database');
 const { SubCustomerInfo, SubProductQuotation, SubProductsCode, SubSaleOrder, SubProductNotice, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -141,7 +139,7 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
   
   const totalPages = Math.ceil(count / pageSize);
   
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
@@ -204,20 +202,12 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
       company_id,
     },
     include: [
-      {
-        model: SubSaleOrder,
-        as: 'sale',
-        include: [
-          { model: SubProductsCode, as: 'product' }
-        ]
-      },
-      {
-        model: SubCustomerInfo,
-        as: 'customer'
-      }
+      { model: SubSaleOrder, as: 'sale' },
+      { model: SubCustomerInfo, as: 'customer' },
+      { model: SubProductsCode, as: 'product' }
     ],
     order: [
-      [{ model: SubSaleOrder, as: 'sale' }, { model: SubProductsCode, as: 'product' }, 'product_name', 'DESC'],
+      [{ model: SubProductsCode, as: 'product' }, 'product_name', 'DESC'],
       ['created_at', 'DESC']
     ],
     limit: parseInt(pageSize),
@@ -245,22 +235,21 @@ router.post('/product_quotation', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   let customer_id = ''
+  let product_id = ''
   const saleOrder = await SubSaleOrder.findOne({
     where: { id: sale_id },
     raw: true
   })
   if(saleOrder){
     customer_id = saleOrder.customer_id
+    product_id = saleOrder.product_id
   }else{
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
-  
   const create = {
-    customer_id, sale_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
+    sale_id, customer_id, product_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
     user_id: userId
   }
-  console.log(create);
-  return
   await SubProductQuotation.create(create)
   
   res.json({ message: '添加成功', code: 200 });
@@ -270,9 +259,22 @@ router.put('/product_quotation', authMiddleware, async (req, res) => {
   const { sale_id, notice, product_price, transaction_currency, other_transaction_terms, id } = req.body;
   
   const { id: userId, company_id } = req.user;
+
+  let customer_id = ''
+  let product_id = ''
+  const saleOrder = await SubSaleOrder.findOne({
+    where: { id: sale_id },
+    raw: true
+  })
+  if(saleOrder){
+    customer_id = saleOrder.customer_id
+    product_id = saleOrder.product_id
+  }else{
+    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+  }
   
   const updateResult = await SubProductQuotation.update({
-    sale_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
+    sale_id, customer_id, product_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
     user_id: userId
   }, {
     where: { id }
@@ -290,59 +292,22 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
-  
-  const saleOrderWhere = {}
+  let saleOrderWhere = {}
+  let customerInfoWhere = {}
   if(customer_order) saleOrderWhere.customer_order = { [Op.like]: `%${customer_order}%` }
-  if(goods_address) {
-    saleOrderWhere[Op.or] = [
-      { goods_address: { [Op.like]: `%${goods_address}%` } },
-      { id: Sequelize.col('quote.sale_id') }
-    ]
-  }
-  const customerInfoWhere = {}
-  if(customer_abbreviation) {
-    customerInfoWhere[Op.or] = [
-      { customer_abbreviation: { [Op.like]: `%${customer_abbreviation}%` } },
-      { id: Sequelize.col('quote->sale.customer_id') }
-    ];
-  }
+  if(goods_address) saleOrderWhere.goods_address = { [Op.like]: `%${goods_address}%` }
+  if(customer_abbreviation) customerInfoWhere.customer_abbreviation = { [Op.like]: `%${customer_abbreviation}%` }
+  
   const { count, rows } = await SubProductNotice.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id,
     },
-    attributes: ['id', 'quote_id', 'notice', 'delivery_time', 'created_at'],
     include: [
-      {
-        model: SubProductQuotation,
-        as: 'quote',
-        attributes: ['id','product_price'],
-        required: false,
-        include: [
-          {
-            model: SubSaleOrder,
-            as: 'sale',
-            attributes: ['id','order_number','unit','goods_address', 'customer_order', 'rece_time', 'product_req'],
-            where: saleOrderWhere,
-            required: false,
-            include: [
-              {
-                model: SubCustomerInfo, 
-                as: 'customer',
-                attributes: ['id', 'customer_code','customer_abbreviation'],
-                where: customerInfoWhere,
-                required: false,
-              },
-              {
-                model: SubProductsCode,
-                as: 'product',
-                attributes: ['id', 'product_code','product_name','model','specification', 'other_features', 'drawing', 'component_structure'],
-                required: false
-              }
-            ]
-          },
-        ]
-      }
+      { model: SubProductQuotation, as: 'quote' },
+      { model: SubSaleOrder, as: 'sale', where: saleOrderWhere },
+      { model: SubCustomerInfo, as: 'customer', where: customerInfoWhere },
+      { model: SubProductsCode, as: 'product' }
     ],
     order: [
       ['created_at', 'DESC']
@@ -368,9 +333,24 @@ router.post('/product_notice', authMiddleware, async (req, res) => {
   const { notice, quote_id, delivery_time } = req.body;
   
   const { id: userId, company_id } = req.user;
+
+  let customer_id = ''
+  let product_id = ''
+  let sale_id = ''
+  const quote = await SubProductQuotation.findOne({
+    where: { id: quote_id },
+    raw: true
+  })
+  if(quote){
+    customer_id = quote.customer_id
+    product_id = quote.product_id
+    sale_id = quote.sale_id
+  }else{
+    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+  }
   
   await SubProductNotice.create({
-    notice, quote_id, delivery_time, company_id,
+    notice, quote_id, customer_id, product_id, sale_id, delivery_time, company_id,
     user_id: userId
   })
   
@@ -380,9 +360,24 @@ router.put('/product_notice', authMiddleware, async (req, res) => {
   const { notice, quote_id, delivery_time, id } = req.body;
   
   const { id: userId, company_id } = req.user;
+
+  let customer_id = ''
+  let product_id = ''
+  let sale_id = ''
+  const quote = await SubProductQuotation.findOne({
+    where: { id: quote_id },
+    raw: true
+  })
+  if(quote){
+    customer_id = quote.customer_id
+    product_id = quote.product_id
+    sale_id = quote.sale_id
+  }else{
+    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+  }
   
   const updateResult = await SubProductNotice.update({
-    notice, quote_id, delivery_time, company_id,
+    notice, quote_id, customer_id, product_id, sale_id, delivery_time, company_id,
     user_id: userId
   }, {
     where: {

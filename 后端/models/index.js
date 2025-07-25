@@ -20,18 +20,17 @@ const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
 AdUser.hasOne(AdCompanyInfo, { foreignKey: 'id', sourceKey: 'company_id', as: 'company' })
 AdCompanyInfo.belongsTo(AdUser, { foreignKey: 'id', targetKey: 'company_id' })
 
-SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'id', sourceKey: 'customer_id', as: 'customer' })
-SubSaleOrder.hasOne(SubProductsCode, { foreignKey: 'id', sourceKey: 'product_id', as: 'product' })
-SubCustomerInfo.hasMany(SubSaleOrder, { foreignKey: 'id', targetKey: 'customer_id' })
-SubProductsCode.belongsTo(SubSaleOrder, { foreignKey: 'id', targetKey: 'product_id' })
+SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
+SubSaleOrder.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
 
-SubProductQuotation.hasOne(SubSaleOrder, { foreignKey: 'id', sourceKey: 'sale_id', as: 'sale' })
-SubProductQuotation.belongsTo(SubCustomerInfo, { foreignKey: 'id', sourceKey: 'customer_id', as: 'customer' })
-SubSaleOrder.belongsTo(SubProductQuotation, { foreignKey: 'id', targetKey: 'sale_id' })
-SubCustomerInfo.hasMany(SubProductQuotation, { foreignKey: 'id', targetKey: 'customer_id' })
+SubProductQuotation.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
+SubProductQuotation.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
+SubProductQuotation.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
 
-SubProductNotice.hasOne(SubProductQuotation, { foreignKey: 'id', sourceKey: 'quote_id', as: 'quote' })
-SubProductQuotation.belongsTo(SubProductNotice, { foreignKey: 'id', targetKey: 'quote_id' })
+SubProductNotice.belongsTo(SubProductQuotation, { foreignKey: 'quote_id', as: 'quote' })
+SubProductNotice.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
+SubProductNotice.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
+SubProductNotice.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
 
 module.exports = {
   Op,

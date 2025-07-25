@@ -121,26 +121,26 @@ export default defineComponent({
             default: () => (
               <div id="printTable">
                 <ElTable data={ tableData.value } border stripe style={{ width: "940px" }} summaryMethod={ getSummaries } show-summary>
-                  <ElTableColumn prop="quote.sale.product.product_code" label="产品编码" width="120" />
-                  <ElTableColumn prop="quote.sale.product.product_name" label="产品名称" width="120" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" width="120" />
+                  <ElTableColumn prop="product.product_name" label="产品名称" width="120" />
                   <ElTableColumn label="型号&规格" width="160">
                     {{
                       default: ({ row }) => {
                         console.log(row)
-                        const model = row.quote.sale.product.model
-                        const spec = row.quote.sale.product.specification
+                        const model = row.product.model
+                        const spec = row.product.specification
                         return `${model}&${spec}`;
                       }
                     }}
                   </ElTableColumn>
-                  <ElTableColumn prop="quote.sale.product.other_features" label="其它特性" width="120" />
-                  <ElTableColumn prop="quote.sale.unit" label="单位" width="100" />
-                  <ElTableColumn prop="quote.sale.order_number" label="订单数量" width="100" />
+                  <ElTableColumn prop="product.other_features" label="其它特性" width="120" />
+                  <ElTableColumn prop="sale.unit" label="单位" width="100" />
+                  <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
                   <ElTableColumn prop="quote.product_price" label="单价" width="100" />
                   <ElTableColumn label="金额" width="120">
                     {{
                       default: ({ row }) => {
-                        const order_number = Number(row.quote.sale.order_number)
+                        const order_number = Number(row.sale.order_number)
                         const product_price = Number(row.quote.product_price)
                         return order_number * product_price
                       }
