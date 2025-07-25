@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { Sequelize } = require('sequelize');
 const pool = require('../config/database');
 const { SubCustomerInfo, SubProductQuotation, SubProductsCode, SubSaleOrder, SubProductNotice, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
@@ -275,26 +276,54 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user;
   
+  const saleOrderWhere = {}
+  if(customer_order) saleOrderWhere.customer_order = { [Op.like]: `%${customer_order}%` }
+  if(goods_address) {
+    saleOrderWhere[Op.or] = [
+      { goods_address: { [Op.like]: `%${goods_address}%` } },
+      { id: Sequelize.col('quote.sale_id') }
+    ]
+  }
+  const customerInfoWhere = {}
+  if(customer_abbreviation) {
+    customerInfoWhere[Op.or] = [
+      { customer_abbreviation: { [Op.like]: `%${customer_abbreviation}%` } },
+      { id: Sequelize.col('quote->sale.customer_id') }
+    ];
+  }
   const { count, rows } = await SubProductNotice.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id,
     },
+    attributes: ['id', 'quote_id', 'notice', 'delivery_time', 'created_at'],
     include: [
       {
         model: SubProductQuotation,
         as: 'quote',
+        attributes: ['id','product_price'],
+        required: false,
         include: [
           {
             model: SubSaleOrder,
             as: 'sale',
-            where: {
-              ...(customer_order && { customer_order: { [Op.like]: `%${customer_order}%` } }),
-              ...(goods_address && { goods_address: { [Op.like]: `%${goods_address}%` } }),
-            },
+            attributes: ['id','order_number','unit','goods_address', 'customer_order', 'rece_time', 'product_req'],
+            where: saleOrderWhere,
+            required: false,
             include: [
-              { model: SubCustomerInfo, as: 'customer', where: { ...(customer_abbreviation && { customer_abbreviation: { [Op.like]: `%${customer_abbreviation}%` } }), } },
-              { model: SubProductsCode, as: 'product' }
+              {
+                model: SubCustomerInfo, 
+                as: 'customer',
+                attributes: ['id', 'customer_code','customer_abbreviation'],
+                where: customerInfoWhere,
+                required: false,
+              },
+              {
+                model: SubProductsCode,
+                as: 'product',
+                attributes: ['id', 'product_code','product_name','model','specification', 'other_features', 'drawing', 'component_structure'],
+                required: false
+              }
             ]
           },
         ]
@@ -304,7 +333,8 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
       ['created_at', 'DESC']
     ],
     limit: parseInt(pageSize),
-    offset
+    offset,
+    nest: true,
   })
   const totalPages = Math.ceil(count / pageSize);
   

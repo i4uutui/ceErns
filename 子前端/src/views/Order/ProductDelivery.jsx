@@ -10,6 +10,12 @@ export default defineComponent({
   setup(){
     const user = ref()
     const nowDate = ref()
+    let tableData = ref([])
+    let customer_abbreviation = ref('')
+    let customer_order = ref('')
+    let goods_address = ref('')
+    let isPrint = ref(false)
+    
     const printObj = ref({
       id: "printTable", // 这里是要打印元素的ID
       popTitle: "出货通知单", // 打印的标题
@@ -19,18 +25,17 @@ export default defineComponent({
       previewOpenCallback() { console.log('已经加载完预览窗口，预览打开了！') }, // 预览窗口打开时的callback
       beforeOpenCallback(vue) {
         console.log('开始打印之前！')
+        isPrint.value = true
       }, // 开始打印之前的callback
       openCallback(vue) {
         console.log('监听到了打印窗户弹起了！')
       }, // 调用打印时的callback
-      closeCallback() { console.log('关闭了打印工具！') }, // 关闭打印的callback(点击弹窗的取消和打印按钮都会触发)
+      closeCallback() {
+        console.log('关闭了打印工具！')
+        isPrint.value = false
+      }, // 关闭打印的callback(点击弹窗的取消和打印按钮都会触发)
       clickMounted() { console.log('点击v-print绑定的按钮了！') },
     })
-    
-    let tableData = ref([])
-    let customer_abbreviation = ref('')
-    let customer_order = ref('')
-    let goods_address = ref('')
     
     watch(() => tableData.value, () => {
       const tds = document.querySelectorAll('#printTable .el-table__footer-wrapper tr>td');
@@ -47,7 +52,7 @@ export default defineComponent({
       const res = await request.get('/api/product_notice', {
         params: {
           page: 1,
-          pageSize: 100,
+          pageSize: 10,
           customer_abbreviation: customer_abbreviation.value,
           customer_order: customer_order.value,
           goods_address: goods_address.value
@@ -120,9 +125,10 @@ export default defineComponent({
                   <ElTableColumn prop="quote.sale.product.product_name" label="产品名称" width="120" />
                   <ElTableColumn label="型号&规格" width="160">
                     {{
-                      default: (scope) => {
-                        const model = scope.row.quote.sale.product.model
-                        const spec = scope.row.quote.sale.product.specification
+                      default: ({ row }) => {
+                        console.log(row)
+                        const model = row.quote.sale.product.model
+                        const spec = row.quote.sale.product.specification
                         return `${model}&${spec}`;
                       }
                     }}
@@ -133,9 +139,9 @@ export default defineComponent({
                   <ElTableColumn prop="quote.product_price" label="单价" width="100" />
                   <ElTableColumn label="金额" width="120">
                     {{
-                      default: (scope) => {
-                        const order_number = Number(scope.row.quote.sale.order_number)
-                        const product_price = Number(scope.row.quote.product_price)
+                      default: ({ row }) => {
+                        const order_number = Number(row.quote.sale.order_number)
+                        const product_price = Number(row.quote.product_price)
                         return order_number * product_price
                       }
                     }}
