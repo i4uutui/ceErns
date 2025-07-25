@@ -1,17 +1,17 @@
 /*
- Navicat Premium Data Transfer
+ Navicat MySQL Data Transfer
 
- Source Server         : ceshi
+ Source Server         : thinkphp_demo
  Source Server Type    : MySQL
- Source Server Version : 50740
+ Source Server Version : 50722 (5.7.22)
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50740
+ Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 25/07/2025 20:02:50
+ Date: 26/07/2025 01:30:18
 */
 
 SET NAMES utf8mb4;
@@ -195,7 +195,7 @@ CREATE TABLE `sub_material_bom`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_bom
@@ -249,7 +249,7 @@ CREATE TABLE `sub_material_quote`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_quote
@@ -321,19 +321,22 @@ CREATE TABLE `sub_product_notice`  (
   `company_id` int(11) NOT NULL COMMENT '企业id',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `notice` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '生产订单号',
+  `customer_id` int(11) NULL DEFAULT NULL COMMENT '客户id',
+  `product_id` int(11) NULL DEFAULT NULL COMMENT '产品id',
+  `sale_id` int(11) NULL DEFAULT NULL COMMENT '销售id',
   `quote_id` int(11) NULL DEFAULT NULL COMMENT '报价单id',
   `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交货日期',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产通知单信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产通知单信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_notice
 -- ----------------------------
-INSERT INTO `sub_product_notice` VALUES (1, 1, 1, '11112', 3, '2025-07-18 00:00:00', 1, '2025-07-17 11:11:40', '2025-07-17 11:34:11');
-INSERT INTO `sub_product_notice` VALUES (2, 1, 1, '2211', 4, '2025-07-22 00:00:00', 1, '2025-07-21 15:33:19', '2025-07-25 16:00:18');
+INSERT INTO `sub_product_notice` VALUES (5, 1, 1, '1111', 2, 9, 2, 11, '2025-07-30T16:00:00.000Z', 1, '2025-07-25 22:56:01', '2025-07-25 22:56:01');
+INSERT INTO `sub_product_notice` VALUES (6, 1, 1, '2222', 3, 10, 1, 12, '2025-07-28 00:00:00', 1, '2025-07-25 22:56:09', '2025-07-25 22:58:37');
 
 -- ----------------------------
 -- Table structure for sub_product_quotation
@@ -345,6 +348,7 @@ CREATE TABLE `sub_product_quotation`  (
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `sale_id` int(11) NOT NULL COMMENT '销售订单id',
   `customer_id` int(11) NULL DEFAULT NULL COMMENT '客户id',
+  `product_id` int(11) NULL DEFAULT NULL COMMENT '产品id',
   `notice` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '报价单号',
   `product_price` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品单价',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
@@ -353,15 +357,13 @@ CREATE TABLE `sub_product_quotation`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_quotation
 -- ----------------------------
-INSERT INTO `sub_product_quotation` VALUES (3, 1, 1, 2, NULL, '3333', '12', '￥0', '2121', 1, '2025-07-14 19:16:48', '2025-07-17 10:35:20');
-INSERT INTO `sub_product_quotation` VALUES (4, 1, 1, 1, NULL, '2121', '21', '31', '12', 1, '2025-07-15 10:52:02', '2025-07-17 10:35:16');
-INSERT INTO `sub_product_quotation` VALUES (5, 1, 1, 2, NULL, '221', '21', '2121', '2121', 1, '2025-07-25 19:00:10', '2025-07-25 19:00:10');
-INSERT INTO `sub_product_quotation` VALUES (6, 1, 1, 2, NULL, '311', '31', '2121', '212121', 1, '2025-07-25 19:43:59', '2025-07-25 19:43:59');
+INSERT INTO `sub_product_quotation` VALUES (11, 1, 1, 2, 2, 9, '111', '111', '111', '111', 1, '2025-07-25 22:44:22', '2025-07-25 22:44:22');
+INSERT INTO `sub_product_quotation` VALUES (12, 1, 1, 1, 3, 10, '222', '222', '222', '222', 1, '2025-07-25 22:44:29', '2025-07-25 22:44:29');
 
 -- ----------------------------
 -- Table structure for sub_products_code
@@ -417,7 +419,7 @@ CREATE TABLE `sub_sales_order`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '销售订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '销售订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_sales_order
