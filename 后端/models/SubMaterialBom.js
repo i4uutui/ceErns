@@ -19,45 +19,20 @@ const SubMaterialBom = sequelize.define('SubMaterialBom', {
     allowNull: false,
     comment: '发布的用户id'
   },
-  number: {
-    type: DataTypes.STRING(100),
-    allowNull: true,
-    comment: '序号'
+  material_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '材料编码id'
   },
-  model_spec: {
-    type: DataTypes.STRING(100),
-    allowNull: true,
-    comment: '型号&规格'
+  part_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '部件编码id'
   },
-  other_features: {
+  textJson: {
     type: DataTypes.TEXT,
     allowNull: true,
-    comment: '其它特性'
-  },
-  send_receiving_units: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: '收发单位'
-  },
-  purchasing_unit: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: '采购单位'
-  },
-  quantity_used: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: '使用数量'
-  },
-  loss_rate: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: '损耗率'
-  },
-  purchase_quantity: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: '采购数量'
+    comment: 'BOM表的json字符串'
   },
   is_deleted: {
     type: DataTypes.TINYINT(1),

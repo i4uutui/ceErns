@@ -38,9 +38,12 @@ export default defineComponent({
     })
     
     watch(() => tableData.value, () => {
-      const tds = document.querySelectorAll('#printTable .el-table__footer-wrapper tr>td');
-      tds[1].colSpan = 6;
-      tds[1].style.textAlign = 'left';
+      const tds1 = document.querySelectorAll('#totalTable1 .el-table__footer-wrapper tr>td');
+      tds1[1].colSpan = 6;
+      tds1[1].style.textAlign = 'left';
+      const tds2 = document.querySelectorAll('#totalTable2 .el-table__footer-wrapper tr>td');
+      tds2[1].colSpan = 6;
+      tds2[1].style.textAlign = 'left';
     })
     onMounted(() => {
       user.value = getItem('user')
@@ -64,7 +67,6 @@ export default defineComponent({
     // 统计合计
     const getSummaries = ({ columns, data }) => {
       const sums = [];
-      
       // 计算product_price的总和
       const totalPrice = data.reduce((sum, item) => {
         return sum + Number(item.quote.product_price);
@@ -119,41 +121,91 @@ export default defineComponent({
               </div>
             ),
             default: () => (
-              <div id="printTable">
-                <ElTable data={ tableData.value } border stripe style={{ width: "940px" }} summaryMethod={ getSummaries } show-summary>
-                  <ElTableColumn prop="product.product_code" label="产品编码" width="120" />
-                  <ElTableColumn prop="product.product_name" label="产品名称" width="120" />
-                  <ElTableColumn label="型号&规格" width="160">
-                    {{
-                      default: ({ row }) => {
-                        console.log(row)
-                        const model = row.product.model
-                        const spec = row.product.specification
-                        return `${model}&${spec}`;
-                      }
-                    }}
-                  </ElTableColumn>
-                  <ElTableColumn prop="product.other_features" label="其它特性" width="120" />
-                  <ElTableColumn prop="sale.unit" label="单位" width="100" />
-                  <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
-                  <ElTableColumn prop="quote.product_price" label="单价" width="100" />
-                  <ElTableColumn label="金额" width="120">
-                    {{
-                      default: ({ row }) => {
-                        const order_number = Number(row.sale.order_number)
-                        const product_price = Number(row.quote.product_price)
-                        return order_number * product_price
-                      }
-                    }}
-                  </ElTableColumn>
-                </ElTable>
-                <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 940px">
-                  <div>客户签收：</div>
-                  <div>审查：</div>
-                  <div>制表：{ user.value?.name }</div>
-                  <div>日期：{ nowDate.value }</div>
+              <>
+                <div id="totalTable1">
+                  <ElTable data={ tableData.value } border stripe style={{ width: "940px" }} summaryMethod={ getSummaries } show-summary>
+                    <ElTableColumn prop="product.product_code" label="产品编码" width="120" />
+                    <ElTableColumn prop="product.product_name" label="产品名称" width="120" />
+                    <ElTableColumn label="型号&规格" width="160">
+                      {{
+                        default: ({ row }) => {
+                          console.log(row)
+                          const model = row.product.model
+                          const spec = row.product.specification
+                          return `${model}&${spec}`;
+                        }
+                      }}
+                    </ElTableColumn>
+                    <ElTableColumn prop="product.other_features" label="其它特性" width="120" />
+                    <ElTableColumn prop="sale.unit" label="单位" width="100" />
+                    <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
+                    <ElTableColumn prop="quote.product_price" label="单价" width="100" />
+                    <ElTableColumn label="金额" width="120">
+                      {{
+                        default: ({ row }) => {
+                          const order_number = Number(row.sale.order_number)
+                          const product_price = Number(row.quote.product_price)
+                          return order_number * product_price
+                        }
+                      }}
+                    </ElTableColumn>
+                  </ElTable>
+                  <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 940px">
+                    <div>客户签收：</div>
+                    <div>审查：</div>
+                    <div>制表：{ user.value?.name }</div>
+                    <div>日期：{ nowDate.value }</div>
+                  </div>
                 </div>
-              </div>
+                <div class="printTable" id='totalTable2'>
+                  <div id="printTable">
+                    <div class="flex row-between" style="padding: 20px;width: 640px;">
+                      <div>
+                        客户名称:{ customer_abbreviation.value }
+                      </div>
+                      <div>
+                        客户订单号:{ customer_order.value }
+                      </div>
+                      <div>
+                        交货地点:{ goods_address.value }
+                      </div>
+                    </div>
+                    <ElTable data={ tableData.value } border stripe style={{ width: "700px" }} summaryMethod={ getSummaries } show-summary>
+                      <ElTableColumn prop="product.product_code" label="产品编码" />
+                      <ElTableColumn prop="product.product_name" label="产品名称" />
+                      <ElTableColumn label="型号&规格">
+                        {{
+                          default: ({ row }) => {
+                            console.log(row)
+                            const model = row.product.model
+                            const spec = row.product.specification
+                            return `${model}&${spec}`;
+                          }
+                        }}
+                      </ElTableColumn>
+                      <ElTableColumn prop="product.other_features" label="其它特性" />
+                      <ElTableColumn prop="sale.unit" label="单位" />
+                      <ElTableColumn prop="sale.order_number" label="订单数量" />
+                      <ElTableColumn prop="quote.product_price" label="单价" />
+                      <ElTableColumn label="金额">
+                        {{
+                          default: ({ row }) => {
+                            const order_number = Number(row.sale.order_number)
+                            const product_price = Number(row.quote.product_price)
+                            return order_number * product_price
+                          }
+                        }}
+                      </ElTableColumn>
+                    </ElTable>
+                    <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 700px">
+                      <div>客户签收：</div>
+                      <div>审查：</div>
+                      <div>制表：{ user.value?.name }</div>
+                      <div>日期：{ nowDate.value }</div>
+                    </div>
+                  </div>
+                </div>
+              </>
             )
           }}
         </ElCard>
