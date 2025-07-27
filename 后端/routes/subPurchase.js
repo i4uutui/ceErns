@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubSupplierInfo, SubMaterialQuote, Op } = require('../models')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductsCode, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -94,22 +94,29 @@ router.put('/supplier_info', authMiddleware, async (req, res) => {
 
 
 
-// 材料报价
+// 材料报价 / 采购单
 router.get('/material_quote', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, supplier_abbreviation, product_code, product_name, notice } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
+  let supplierInfoWhere = {}
+  let productsCodeWhere = {}
+  let productNoticeWhere = {}
+  if(supplier_abbreviation) supplierInfoWhere.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` }
+  if(product_name) productsCodeWhere.product_name = { [Op.like]: `%${product_name}%` }
+  if(product_code) productsCodeWhere.product_code = { [Op.like]: `%${product_code}%` }
+  if(notice) productNoticeWhere.notice = { [Op.like]: `%${notice}%` }
   const { count, rows } = await SubMaterialQuote.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id,
     },
     include: [
-      {
-        model: SubMaterialCode,
-        as: 'materialCode',
-      }
+      { model: SubMaterialCode, as: 'material' },
+      { model: SubSupplierInfo, as: 'supplier', where: supplierInfoWhere },
+      { model: SubProductNotice, as: 'notice', where: productNoticeWhere },
+      { model: SubProductsCode, as: 'product', where: productsCodeWhere }
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -117,10 +124,14 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
   })
   const totalPages = Math.ceil(count / pageSize)
   const fromData = rows.map(item => item.dataValues)
+  const rs = fromData.map(item => {
+    item.notice = formatObjectTime(item.notice.dataValues)
+    return item
+  })
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(fromData), 
+    data: formatArrayTime(rs), 
     total: count, 
     totalPages, 
     currentPage: parseInt(page), 
@@ -129,25 +140,44 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
   });
 });
 router.post('/material_quote', authMiddleware, async (req, res) => {
-  const { material_code_id, delivery, packaging, transaction_currency, other_transaction_terms, remarks } = req.body;
+  const { supplier_id, notice_id, material_id, delivery, number, packaging, transaction_currency, other_transaction_terms, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
+  let product_id = ''
+  const quote = await SubProductNotice.findOne({
+    where: { id: notice_id },
+    raw: true
+  })
+  if(quote){
+    product_id = quote.product_id
+  }else{
+    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+  }
   const result = await SubMaterialQuote.create({
-    material_code_id, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
+    supplier_id, notice_id, material_id, product_id, delivery, number, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
     user_id: userId
   })
 
   res.json({ message: "添加成功", code: 200 });
 });
-// 更新供应商信息接口
 router.put('/material_quote', authMiddleware, async (req, res) => {
-  const { material_code_id, delivery, packaging, transaction_currency, other_transaction_terms, remarks, id } = req.body;
+  const { supplier_id, notice_id, material_id, delivery, number, packaging, transaction_currency, other_transaction_terms, remarks, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
+  let product_id = ''
+  const quote = await SubProductNotice.findOne({
+    where: { id: notice_id },
+    raw: true
+  })
+  if(quote){
+    product_id = quote.product_id
+  }else{
+    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+  }
   const updateResult = await SubMaterialQuote.update({
-    material_code_id, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
+    supplier_id, notice_id, material_id, product_id, delivery, number, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
     user_id: userId
   }, {
     where: { id }

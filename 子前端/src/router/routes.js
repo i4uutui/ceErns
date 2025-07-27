@@ -183,33 +183,33 @@ const routes = [
         }
       },
       // // 委外管理
-      // {
-      //   path: '/outsourcing/outsourcing-quote',
-      //   name: 'OutsourcingQuote',
-      //   component: () => import('@/views/Outsourcing/OutsourcingQuote.vue'),
-      //   meta: {
-      //     title: '委外报价',
-      //     parent: '委外管理'
-      //   }
-      // },
-      // {
-      //   path: '/outsourcing/outsourcing-order',
-      //   name: 'OutsourcingOrder',
-      //   component: () => import('@/views/Outsourcing/OutsourcingOrder.vue'),
-      //   meta: {
-      //     title: '委外加工单',
-      //     parent: '委外管理'
-      //   }
-      // },
-      // {
-      //   path: '/outsourcing/outsourcing-material',
-      //   name: 'OutsourcingMaterial',
-      //   component: () => import('@/views/Outsourcing/OutsourcingMaterial.vue'),
-      //   meta: {
-      //     title: '委外发料',
-      //     parent: '委外管理'
-      //   }
-      // },
+      {
+        path: '/outsourcing/outsourcing-quote',
+        name: 'OutsourcingQuote',
+        component: () => import('@/views/Outsourcing/OutsourcingQuote.jsx'),
+        meta: {
+          title: '委外报价',
+          parent: '委外管理'
+        }
+      },
+      {
+        path: '/outsourcing/outsourcing-order',
+        name: 'OutsourcingOrder',
+        component: () => import('@/views/Outsourcing/OutsourcingOrder.jsx'),
+        meta: {
+          title: '委外加工单',
+          parent: '委外管理'
+        }
+      },
+      {
+        path: '/outsourcing/outsourcing-material',
+        name: 'OutsourcingMaterial',
+        component: () => import('@/views/Outsourcing/OutsourcingMaterial.jsx'),
+        meta: {
+          title: '委外发料',
+          parent: '委外管理'
+        }
+      },
       // // 生产管理
       // {
       //   path: '/production/production-progress',

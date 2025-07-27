@@ -19,8 +19,23 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: false,
     comment: '发布的用户id'
   },
-  material_code_id: {
-    type: DataTypes.INTEGER,
+  supplier_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: ' 供应商编码 ID'
+  },
+  notice_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: ' 生产通知单 ID'
+  },
+  product_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: ' 产品编码 ID'
+  },
+  material_id: {
+    type: DataTypes.INTEGER(11),
     allowNull: false,
     comment: ' 材料编码 ID'
   },
@@ -28,6 +43,11 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     type: DataTypes.STRING(100),
     allowNull: true,
     comment: ' 送货方式 '
+  },
+  number: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: ' 交易数量 '
   },
   packaging: {
     type: DataTypes.STRING(100),
@@ -57,8 +77,8 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
   }
 }, {
   sequelize,
-  modelName: 'SubMaterialQuote',
-  tableName: 'SubMaterialQuote',
+  modelName: 'sub_material_quote',
+  tableName: 'sub_material_quote',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',

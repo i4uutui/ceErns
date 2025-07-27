@@ -1,16 +1,26 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox, ElPagination } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElPagination } from 'element-plus'
 import request from '@/utils/request';
+import MySelect from '@/components/tables/mySelect.vue';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
     const rules = reactive({
-      material_code_id: [
+      supplier_id: [
+        { required: true, message: '请选择供应商编码', trigger: 'blur' },
+      ],
+      notice_id: [
+        { required: true, message: '请选择生产订单号', trigger: 'blur' },
+      ],
+      material_id: [
         { required: true, message: '请选择材料编码', trigger: 'blur' },
       ],
       delivery: [
         { required: true, message: '请输入送货方式', trigger: 'blur' },
+      ],
+      number: [
+        { required: true, message: '请输入交易数量', trigger: 'blur' },
       ],
       packaging: [
         { required: true, message: '请输入包装要求', trigger: 'blur' },
@@ -24,8 +34,11 @@ export default defineComponent({
     })
     let dialogVisible = ref(false)
     let form = ref({
-      material_code_id: '', 
-      delivery: '', 
+      supplier_id: '',
+      notice_id: '',
+      material_id: '', 
+      delivery: '',
+      number: '',
       packaging: '', 
       transaction_currency: '', 
       other_transaction_terms: '', 
@@ -99,8 +112,11 @@ export default defineComponent({
     }
     const resetForm = () => {
       form.value = {
-        material_code_id: '',
+        supplier_id: '',
+        notice_id: '',
+        material_id: '',
         delivery: '', 
+        number: '',
         packaging: '', 
         transaction_currency: '', 
         other_transaction_terms: '', 
@@ -125,21 +141,25 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  添加供应商
+                  添加材料报价
                 </ElButton>
               </div>
             ),
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                  <ElTableColumn prop="materialCode.material_code" label="材料编码" />
-                  <ElTableColumn prop="materialCode.material_name" label="材料名称" />
-                  <ElTableColumn prop="materialCode.model" label="型号" />
-                  <ElTableColumn prop="materialCode.specification" label="规格" />
-                  <ElTableColumn prop="materialCode.other_features" label="其他特性" />
-                  <ElTableColumn prop="materialCode.purchase_unit" label="采购单位" />
-                  <ElTableColumn prop="materialCode.unit_price" label="采购单价" />
+                  <ElTableColumn prop="supplier.supplier_code" label="供应商编码" />
+                  <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" />
+                  <ElTableColumn prop="notice.notice" label="生产订单号" />
+                  <ElTableColumn prop="material.material_code" label="材料编码" />
+                  <ElTableColumn prop="material.material_name" label="材料名称" />
+                  <ElTableColumn prop="material.model" label="型号" />
+                  <ElTableColumn prop="material.specification" label="规格" />
+                  <ElTableColumn prop="material.other_features" label="其他特性" />
+                  <ElTableColumn prop="material.purchase_unit" label="采购单位" />
+                  <ElTableColumn prop="material.unit_price" label="采购单价" />
                   <ElTableColumn prop="delivery" label="送货方式" />
+                  <ElTableColumn prop="number" label="交易数量" />
                   <ElTableColumn prop="packaging" label="包装要求" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />
@@ -162,11 +182,20 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="供应商编码" prop="supplier_code">
-                  <ElInput v-model={ form.value.supplier_code } placeholder="请输入供应商编码" />
+                <ElFormItem label="供应商编码" prop="supplier_id">
+                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" />
+                </ElFormItem>
+                <ElFormItem label="生产订单号" prop="notice_id">
+                  <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单号" />
+                </ElFormItem>
+                <ElFormItem label="材料编码" prop="material_id">
+                  <MySelect v-model={ form.value.material_id } apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料编码" />
                 </ElFormItem>
                 <ElFormItem label="送货方式" prop="delivery">
                   <ElInput v-model={ form.value.delivery } placeholder="请输入送货方式" />
+                </ElFormItem>
+                <ElFormItem label="交易数量" prop="number">
+                  <ElInput v-model={ form.value.number } placeholder="请输入交易数量" />
                 </ElFormItem>
                 <ElFormItem label="包装要求" prop="packaging">
                   <ElInput v-model={ form.value.packaging } placeholder="请输入包装要求" />

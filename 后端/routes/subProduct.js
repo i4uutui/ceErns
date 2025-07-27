@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubMaterialBom, SubPartCode, SubMaterialCode, Op } = require('../models');
+const { SubMaterialBom, SubPartCode, SubProductsCode, SubProcessBom, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -18,7 +18,7 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
     },
     include: [
       { model: SubPartCode, as: 'part' },
-      { model: SubMaterialCode, as: 'material'}
+      { model: SubProductsCode, as: 'product'}
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -40,12 +40,12 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
 
 // 添加材料BOM
 router.post('/material_bom', authMiddleware, async (req, res) => {
-  const { number, part_id, material_id, model_spec, other_features, send_receiving_units, purchasing_unit, quantity_used, loss_rate, purchase_quantity } = req.body;
+  const { product_id, part_id, textJson } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   await SubMaterialBom.create({
-    number, part_id, material_id, model_spec, other_features, send_receiving_units, purchasing_unit, quantity_used, loss_rate, purchase_quantity, company_id,
+    product_id, part_id, textJson, company_id,
     user_id: userId
   })
   
@@ -54,12 +54,79 @@ router.post('/material_bom', authMiddleware, async (req, res) => {
 
 // 更新材料BOM
 router.put('/material_bom', authMiddleware, async (req, res) => {
-  const { number, part_id, material_id, model_spec, other_features, send_receiving_units, purchasing_unit, quantity_used, loss_rate, purchase_quantity, id } = req.body;
+  const { product_id, part_id, textJson, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubMaterialBom.update({
-    number, part_id, material_id, model_spec, other_features, send_receiving_units, purchasing_unit, quantity_used, loss_rate, purchase_quantity, company_id,
+    product_id, part_id, textJson, company_id,
+    user_id: userId
+  }, {
+    where: {
+      id
+    }
+  })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  
+  res.json({ message: '修改成功', code: 200 });
+});
+
+
+// 获取工艺BOM信息表
+router.get('/process_bom', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
+  const offset = (page - 1) * pageSize;
+  
+  const { company_id } = req.user;
+  
+  const { count, rows } = await SubProcessBom.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+    },
+    include: [
+      { model: SubPartCode, as: 'part' },
+      { model: SubProductsCode, as: 'product'}
+    ],
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize)
+  
+  const fromData = rows.map(item => item.dataValues)
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(fromData), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
+})
+// 添加工艺BOM
+router.post('/process_bom', authMiddleware, async (req, res) => {
+  const { product_id, part_id, make_time, textJson } = req.body;
+  
+  const { id: userId, company_id } = req.user;
+  
+  await SubProcessBom.create({
+    product_id, part_id, make_time, textJson, company_id,
+    user_id: userId
+  })
+  
+  res.json({ message: '添加成功', code: 200 });
+});
+
+// 更新工艺BOM
+router.put('/process_bom', authMiddleware, async (req, res) => {
+  const { product_id, part_id, make_time, textJson, id } = req.body;
+  
+  const { id: userId, company_id } = req.user;
+  
+  const updateResult = await SubProcessBom.update({
+    product_id, part_id, make_time, textJson, company_id,
     user_id: userId
   }, {
     where: {

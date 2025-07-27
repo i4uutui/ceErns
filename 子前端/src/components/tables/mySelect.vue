@@ -13,10 +13,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElSelect, ElOption } from 'element-plus'
 import request from '@/utils/request';
 
+const emit = defineEmits(['change'])
 const props = defineProps({
   itemValue: {
     type: String,
@@ -77,7 +78,9 @@ const remoteMethod = (query) => {
   }, 500)
 }
 const changeSelect = (value) => {
+  const val = option.value.filter(o => o.id == value)[0]
   list.value = []
+  emit('change', val)
 }
 function getNestedProperty(obj, path) {
   const keys = path.split('.');

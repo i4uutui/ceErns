@@ -129,7 +129,6 @@ export default defineComponent({
                     <ElTableColumn label="型号&规格" width="160">
                       {{
                         default: ({ row }) => {
-                          console.log(row)
                           const model = row.product.model
                           const spec = row.product.specification
                           return `${model}&${spec}`;
@@ -176,7 +175,6 @@ export default defineComponent({
                       <ElTableColumn label="型号&规格">
                         {{
                           default: ({ row }) => {
-                            console.log(row)
                             const model = row.product.model
                             const spec = row.product.specification
                             return `${model}&${spec}`;

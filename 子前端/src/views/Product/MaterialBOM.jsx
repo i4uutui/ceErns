@@ -1,71 +1,63 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElButton, ElCard, ElCascader, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn } from 'element-plus'
+import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
+import { ElButton, ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn, ElIcon } from 'element-plus'
+import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
+import { getRandomString } from '@/utils/tool';
 import request from '@/utils/request';
+import MySelect from '@/components/tables/mySelect.vue';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
     const rules = reactive({
-      customer_code: [
-        { required: true, message: '请输入客户编码', trigger: 'blur' },
+      product_id: [
+        { required: true, message: '请选择产品编码', trigger: 'blur' },
       ],
-      customer_abbreviation: [
-        { required: true, message: '请输入客户简称', trigger: 'blur' },
+      part_id: [
+        { required: true, message: '请选择部件编码', trigger: 'blur' },
       ],
-      contact_person: [
-        { required: true, message: '请输入联系人', trigger: 'blur' },
+      material_id: [
+        { required: true, message: '请选择材料编码', trigger: 'blur' }
       ],
-      contact_information: [
-        { required: true, message: '请输入联系方式', trigger: 'blur' },
-      ],
-      company_full_name: [
-        { required: true, message: '请输入公司全名', trigger: 'blur' },
-      ],
-      company_address: [
-        { required: true, message: '请输入公司地址', trigger: 'blur' },
-      ],
-      delivery_address: [
-        { required: true, message: '请输入交货地址', trigger: 'blur' },
-      ],
-      tax_registration_number: [
-        { required: true, message: '请输入税务登记号', trigger: 'blur' },
-      ],
-      transaction_method: [
-        { required: true, message: '请输入交易方式', trigger: 'blur' },
-      ],
-      transaction_currency: [
-        { required: true, message: '请输入交易币别', trigger: 'blur' },
-      ],
+      number: [
+        { required: true, message: '请输入数量', trigger: 'blur' },
+      ]
     })
     let dialogVisible = ref(false)
     let form = ref({
-      customer_code: '',
-      customer_abbreviation: '',
-      contact_person: '',
-      contact_information: '',
-      company_full_name: '',
-      company_address: '',
-      delivery_address: '',
-      tax_registration_number: '',
-      transaction_method: '',
-      transaction_currency: '',
-      other_transaction_terms: '',
+      product_id: '',
+      part_id: '',
+      textJson: [
+        { id: getRandomString(), material_id: '', material_code: '', material_name: '', specification: '', number: '' }
+      ]
     })
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
-    let partCode = ref([])
-    let materialCode = ref([])
-    let propsCascader = ref({
-      emitPath: false,
-      value: 'id'
-    })
+
+    const maxBomLength = computed(() => {
+      if (tableData.value.length === 0) return 0;
+      return Math.max(...tableData.value.map(item => item.textJson.length));
+    });
+
+    // 处理数据：确保每条记录的 textJson 长度一致（不足的补空对象）
+    const processedTableData = computed(() => {
+      return tableData.value.map(item => {
+        const newItem = { ...item, textJson: [...item.textJson] };
+        while (newItem.textJson.length < maxBomLength.value) {
+          newItem.textJson.push({
+            material_code: '',
+            material_name: '',
+            specification: '',
+            number: ''
+          });
+        }
+        return newItem;
+      });
+    });
     
     onMounted(() => {
-      getPartCode()
-      getMaterialCode()
       fetchProductList()
     })
     
@@ -77,23 +69,22 @@ export default defineComponent({
           pageSize: pageSize.value
         },
       });
-      tableData.value = res.data;
+      const data = res.data.map(o => {
+        const test = JSON.parse(o.textJson)
+        o.textJson = test
+        return o
+      })
+      tableData.value = data;
       total.value = res.total;
     };
-    const getPartCode = async () => {
-      const res = await request.get('/api/getPartCode');
-      partCode.value = res.data
-    }
-    const getMaterialCode = async () => {
-      const res = await request.get('/api/getMaterialCode');
-      materialCode.value = res.data
-    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
         if (valid){
+          const low = { ...form.value }
+          low.textJson = JSON.stringify(low.textJson)
           if(!edit.value){
-            const res = await request.post('/api/material_bom', form.value);
+            const res = await request.post('/api/material_bom', low);
             if(res && res.code == 200){
               ElMessage.success('添加成功');
               dialogVisible.value = false;
@@ -104,7 +95,7 @@ export default defineComponent({
             // 修改
             const myForm = {
               id: edit.value,
-              ...form.value
+              ...low
             }
             const res = await request.put('/api/material_bom', myForm);
             if(res && res.code == 200){
@@ -116,10 +107,10 @@ export default defineComponent({
         }
       })
     }
-    const handleUplate = (row) => {
-      edit.value = row.id;
+    const handleUplate = ({ id, product_id, part_id, textJson }) => {
+      edit.value = id;
       dialogVisible.value = true;
-      form.value = { ...row };
+      form.value = { textJson, id, product_id, part_id };
     }
     // 添加
     const handleAdd = () => {
@@ -135,16 +126,33 @@ export default defineComponent({
     }
     const resetForm = () => {
       form.value = {
-        number: '',
+        product_id: '',
         part_id: '',
-        material_id: '',
-        model_spec: '',
-        other_features: '',
-        send_receiving_units: '',
-        purchasing_unit: '',
-        quantity_used: '',
-        loss_rate: '',
-        purchase_quantity: '',
+        textJson: [
+          { id: getRandomString(), material_id: '', material_code: '', material_name: '', specification: '', number: '' }
+        ]
+      }
+    }
+    const handleAddJson = () => {
+      const obj = { id: getRandomString(), material_id: '', material_code: '', material_name: '', specification: '', number: '' }
+      form.value.textJson.push(obj)
+    }
+    const handledeletedJson = (index) => {
+      form.value.textJson.splice(index, 1)
+    }
+    const materialHandle = (row, index) => {
+      form.value.textJson[index].material_code = row.material_code
+      form.value.textJson[index].material_name = row.material_name
+      form.value.textJson[index].specification = row.specification
+    }
+    const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
+      if(rowIndex >= 1 || columnIndex >= 5 && column.label != '操作'){
+        return { backgroundColor: '#fbe1e5' }
+      }
+    }
+    const cellStyle = ({ columnIndex, rowIndex, column }) => {
+      if(columnIndex >= 5 && column.label != '操作'){
+        return { backgroundColor: '#fbe1e5' }
       }
     }
     // 分页相关
@@ -169,20 +177,22 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                  <ElTableColumn prop="number" label="序号" />
-                  <ElTableColumn prop="part.part_code" label="部位编码" />
-                  <ElTableColumn prop="part.part_name" label="部位名称" />
-                  <ElTableColumn prop="material.material_code" label="材料编码" />
-                  <ElTableColumn prop="material.material_name" label="材料名称" />
-                  <ElTableColumn prop="model_spec" label="型号&规格" />
-                  <ElTableColumn prop="other_features" label="其它特性" />
-                  <ElTableColumn prop="send_receiving_units" label="收发单位" />
-                  <ElTableColumn prop="purchasing_unit" label="采购单位" />
-                  <ElTableColumn prop="quantity_used" label="使用数量" />
-                  <ElTableColumn prop="loss_rate" label="损耗率" />
-                  <ElTableColumn prop="purchase_quantity" label="采购数量" />
-                  <ElTableColumn prop="created_at" label="创建时间" />
+                <ElTable data={ processedTableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                  <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
+                  <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
+                  <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
+                  <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" />
+                  <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" />
+                  {
+                    Array.from({ length: maxBomLength.value }).map((_, index) => (
+                      <ElTableColumn label={`材料BOM-${index + 1}`} key={index}>
+                        <ElTableColumn prop={`textJson[${index}].material_code`} label="材料编码" />
+                        <ElTableColumn prop={`textJson[${index}].material_name`} label="材料名称" />
+                        <ElTableColumn prop={`textJson[${index}].specification`} label="规格" />
+                        <ElTableColumn prop={`textJson[${index}].number`} label="数量" />
+                      </ElTableColumn>
+                    ))
+                  }
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
@@ -196,40 +206,38 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料BOM信息' : '添加材料BOM信息' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料BOM信息' : '添加材料BOM信息' } bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="序号" prop="number">
-                  <ElInput v-model={ form.value.number } placeholder="请输入序号" />
+                <ElFormItem label="产品编码" prop="product_id">
+                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
                 </ElFormItem>
-                <ElFormItem label="部件名称" prop="part_id">
-                  <ElCascader v-model={ form.value.part_id } placeholder="请选择部件名称" options={ partCode.value } filterable props={ propsCascader.value } />
+                <ElFormItem label="部件编码" prop="part_id">
+                  <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
                 </ElFormItem>
-                <ElFormItem label="材料名称" prop="material_id">
-                  <ElCascader v-model={ form.value.material_id } placeholder="请选择材料名称" options={ materialCode.value } filterable props={ propsCascader.value } />
-                </ElFormItem>
-                <ElFormItem label="型号&规格" prop="model_spec">
-                  <ElInput v-model={ form.value.model_spec } placeholder="请输入型号&规格" />
-                </ElFormItem>
-                <ElFormItem label="其它特性" prop="other_features">
-                  <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
-                </ElFormItem>
-                <ElFormItem label="收发单位" prop="send_receiving_units">
-                  <ElInput v-model={ form.value.send_receiving_units } placeholder="请输入收发单位" />
-                </ElFormItem>
-                <ElFormItem label="采购单位" prop="purchasing_unit">
-                  <ElInput v-model={ form.value.purchasing_unit } placeholder="请输入采购单位" />
-                </ElFormItem>
-                <ElFormItem label="使用数量" prop="quantity_used">
-                  <ElInput v-model={ form.value.quantity_used } placeholder="请输入使用数量" />
-                </ElFormItem>
-                <ElFormItem label="损耗率" prop="loss_rate">
-                  <ElInput v-model={ form.value.loss_rate } placeholder="请输入损耗率" />
-                </ElFormItem>
-                <ElFormItem label="采购数量" prop="purchase_quantity">
-                  <ElInput v-model={ form.value.purchase_quantity } placeholder="请输入采购数量" />
-                </ElFormItem>
+                {
+                  form.value.textJson.map((e, index) => (
+                    <Fragment key={ index }>
+                      <ElFormItem label="材料编码" prop={ `textJson[${index}].material_id` } rules={ rules.material_id }>
+                        <MySelect v-model={ e.material_id } apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料编码" onChange={ (val) => materialHandle(val, index) } />
+                      </ElFormItem>
+                      <ElFormItem label="数量" prop={ `textJson[${index}].number` } rules={ rules.number }>
+                        <div class="flex">
+                          <ElInput v-model={ e.number } placeholder="请输入数量" />
+                          <div class="flex">
+                            {
+                              index == form.value.textJson.length - 1 && index < 20 ? <ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon> : <></>
+                            }
+                            {
+                              index > 0 ? <ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon> : <></>
+                            }
+                          </div>
+                        </div>
+                      </ElFormItem>
+                    </Fragment>
+                  ))
+                }
               </ElForm>
             ),
             footer: () => (

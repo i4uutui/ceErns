@@ -37,3 +37,10 @@
 .aside_body .el-sub-menu > .el-menu {
   background-color: #101117;
 }
+.el-form--inline .el-form-item{
+  margin-right: 30px;
+}
+.dialogBodyStyle{
+  max-height: 500px;
+  overflow-y: auto;
+}

@@ -14,6 +14,7 @@ const SubMaterialCode = require('./SubMaterialCode.js') // 材料编码基础信
 const SubEquipmentCode = require('./SubEquipmentCode.js') // 设备编码基础信息表
 const SubEmployeeInfo = require('./SubEmployeeInfo.js') // 员工信息基础信息表
 const SubMaterialBom = require('./SubMaterialBom.js') // 材料BOM信息表
+const SubProcessBom = require('./SubProcessBom.js') // 材料BOM信息表
 const SubSaleOrder = require('./SubSaleOrder.js') // 销售订单表
 const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
 
@@ -32,6 +33,17 @@ SubProductNotice.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubProductNotice.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductNotice.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
 
+SubMaterialBom.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
+SubMaterialBom.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
+
+SubProcessBom.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
+SubProcessBom.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
+
+SubMaterialQuote.belongsTo(SubMaterialCode, { foreignKey: 'material_id', as: 'material' })
+SubMaterialQuote.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
+SubMaterialQuote.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+SubMaterialQuote.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
+
 module.exports = {
   Op,
   AdAdmin,
@@ -48,6 +60,7 @@ module.exports = {
   SubEquipmentCode,
   SubEmployeeInfo,
   SubMaterialBom,
+  SubProcessBom,
   SubSaleOrder,
   SubMaterialQuote
 }

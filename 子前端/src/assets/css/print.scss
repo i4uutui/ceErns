@@ -1,6 +1,7 @@
 @media print {
   @page {
     margin-bottom: 0mm; //去掉页脚
+    margin-top: 1mm;
   }
  .el-table{
    max-width: 100%;

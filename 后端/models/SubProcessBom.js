@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-const SubMaterialBom = sequelize.define('SubMaterialBom', {
+const SubProcessBom = sequelize.define('SubProcessBom', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -29,6 +29,11 @@ const SubMaterialBom = sequelize.define('SubMaterialBom', {
     allowNull: false,
     comment: '部件编码id'
   },
+  make_time: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '制程总工时'
+  },
   textJson: {
     type: DataTypes.TEXT,
     allowNull: true,
@@ -42,12 +47,12 @@ const SubMaterialBom = sequelize.define('SubMaterialBom', {
   }
 }, {
   sequelize,
-  modelName: 'sub_material_bom',
-  tableName: 'sub_material_bom',
+  modelName: 'sub_process_bom',
+  tableName: 'sub_process_bom',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
   comment: '材料BOM信息表'
 })
 
-module.exports = SubMaterialBom;
+module.exports = SubProcessBom;
