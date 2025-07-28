@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 28/07/2025 10:34:58
+ Date: 28/07/2025 19:13:37
 */
 
 SET NAMES utf8mb4;
@@ -271,15 +271,17 @@ CREATE TABLE `sub_outsourcing_quote`  (
   `processing_unit_price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
+  `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_outsourcing_quote
 -- ----------------------------
+INSERT INTO `sub_outsourcing_quote` VALUES (1, 1, 1, 2, 11, 6, 3, 111, '111', '111', '111', 1, '2025-07-28 14:45:21', '2025-07-28 14:49:39');
 
 -- ----------------------------
 -- Table structure for sub_part_code
