@@ -57,6 +57,11 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: true,
     comment: ' 交易条件 '
   },
+  remarks: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    comment: ' 备注 '
+  },
   is_deleted: {
     type: DataTypes.TINYINT(1),
     allowNull: true,
