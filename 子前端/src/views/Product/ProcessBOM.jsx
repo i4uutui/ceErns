@@ -30,9 +30,6 @@ export default defineComponent({
       price: [
         { required: true, message: '请输入加工单价', trigger: 'blur' },
       ],
-      number: [
-        { required: true, message: '请输入段数点数', trigger: 'blur' },
-      ],
       long: [
         { required: true, message: '请输入生产制程', trigger: 'blur' },
       ]
@@ -43,7 +40,7 @@ export default defineComponent({
       part_id: '',
       make_time: '',
       textJson: [
-        { id: getRandomString(), process_id: '', process_code: '', process_name: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', number: '', long: '' }
+        { id: getRandomString(), process_id: '', process_code: '', process_name: '', section_points: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', long: '' }
       ]
     })
     let tableData = ref([])
@@ -63,10 +60,14 @@ export default defineComponent({
         const newItem = { ...item, textJson: [...item.textJson] };
         while (newItem.textJson.length < maxBomLength.value) {
           newItem.textJson.push({
-            material_code: '',
-            material_name: '',
-            specification: '',
-            number: ''
+            process_code: '',
+            process_name: '',
+            section_points: '',
+            equipment_code: '',
+            equipment_name: '',
+            time: '',
+            price: '',
+            long: '',
           });
         }
         return newItem;
@@ -146,12 +147,12 @@ export default defineComponent({
         part_id: '',
         make_time: '',
         textJson: [
-          { id: getRandomString(), process_id: '', process_code: '', process_name: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', number: '', long: '' }
+          { id: getRandomString(), process_id: '', process_code: '', process_name: '', section_points: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', long: '' }
         ]
       }
     }
     const handleAddJson = () => {
-      const obj = { id: getRandomString(), process_id: '', process_code: '', process_name: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', number: '', long: '' }
+      const obj = { id: getRandomString(), process_id: '', process_code: '', process_name: '', section_points: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', long: '' }
       form.value.textJson.push(obj)
     }
     const handledeletedJson = (index) => {
@@ -160,6 +161,15 @@ export default defineComponent({
     const makeHandle = (row, index, val) => {
       form.value.textJson[index][`${val}code`] = row[`${val}code`]
       form.value.textJson[index][`${val}name`] = row[`${val}name`]
+    }
+    const processHandle = (row, index) => {
+      form.value.textJson[index].process_code = row.process_code
+      form.value.textJson[index].process_name = row.process_name
+      form.value.textJson[index].section_points = row.section_points
+    }
+    const equipmentHandle = (row, index) => {
+      form.value.textJson[index].equipment_code = row.equipment_code
+      form.value.textJson[index].equipment_name = row.equipment_name
     }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(rowIndex >= 1 || columnIndex >= 6 && column.label != '操作'){
@@ -209,7 +219,7 @@ export default defineComponent({
                         <ElTableColumn prop={`textJson[${index}].equipment_name`} label="设备名称" />
                         <ElTableColumn prop={`textJson[${index}].time`} label="单件工时" />
                         <ElTableColumn prop={`textJson[${index}].price`} label="加工单价" />
-                        <ElTableColumn prop={`textJson[${index}].number`} label="段数点数" />
+                        <ElTableColumn prop={`textJson[${index}].section_points`} label="段数点数" />
                         <ElTableColumn prop={`textJson[${index}].long`} label="生产制程" />
                       </ElTableColumn>
                     ))
@@ -245,19 +255,16 @@ export default defineComponent({
                     form.value.textJson.map((e, index) => (
                       <Fragment key={ index }>
                         <ElFormItem label="工艺编码" prop={ `textJson[${index}].process_id` } rules={ rules.process_id }>
-                          <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" onChange={ (val) => makeHandle(val, index, 'process_') } />
+                          <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" onChange={ (val) => processHandle(val, index) } />
                         </ElFormItem>
                         <ElFormItem label="设备编码" prop={ `textJson[${index}].equipment_id` } rules={ rules.equipment_id }>
-                          <MySelect v-model={ e.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择工艺编码" onChange={ (val) => makeHandle(val, index, 'equipment_') } />
+                          <MySelect v-model={ e.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择工艺编码" onChange={ (val) => equipmentHandle(val, index) } />
                         </ElFormItem>
                         <ElFormItem label="单件工时" prop={ `textJson[${index}].time` } rules={ rules.time }>
                           <ElInput v-model={ e.time } placeholder="请输入单件工时" />
                         </ElFormItem>
                         <ElFormItem label="加工单价" prop={ `textJson[${index}].price` } rules={ rules.price }>
                           <ElInput v-model={ e.price } placeholder="请输入加工单价" />
-                        </ElFormItem>
-                        <ElFormItem label="段数点数" prop={ `textJson[${index}].number` } rules={ rules.number }>
-                          <ElInput v-model={ e.number } placeholder="请输入段数点数" />
                         </ElFormItem>
                         <ElFormItem label="生产制程" prop={ `textJson[${index}].long` } rules={ rules.long }>
                           <div class="flex">
