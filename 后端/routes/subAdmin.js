@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
 
   const companyRows = await AdCompanyInfo.findAll({ where: { id: row[0].company_id }, raw: true });
   
-  const token = jwt.sign({ ...row[0] }, process.env.JWT_SECRET);
+  const token = jwt.sign({ ...row[0] }, process.env.JWT_SECRET, { expiresIn: '7d' });
   
   const { password: _, ...user } = row[0];
 
