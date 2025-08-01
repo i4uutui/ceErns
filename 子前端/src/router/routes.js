@@ -25,6 +25,15 @@ const routes = [
           parent: '系统管理'
         }
       },
+      {
+        path: '/system/organize',
+        name: 'OrganizeManagement',
+        component: () => import('@/views/System/OrganizeManagement.jsx'),
+        meta: {
+          title: '组织架构',
+          parent: '系统管理'
+        }
+      },
       // 基础资料
       {
         path: '/basic/product-code',

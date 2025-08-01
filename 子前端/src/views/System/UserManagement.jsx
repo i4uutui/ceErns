@@ -221,6 +221,9 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="username" label="用户名" width="180" />
                   <ElTableColumn prop="name" label="姓名" width="180" />
+                  <ElTableColumn label="工作岗位" width="180">
+                    {({ row }) => <span>{ row.organizeNames.length ? row.organizeNames.join('，') : 'null' }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="status" label="是否开启" width="180">
                     {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } onChange={ () => closeUser(scope.row) } />}
                   </ElTableColumn>

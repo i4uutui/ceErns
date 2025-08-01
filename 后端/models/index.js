@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 const AdAdmin = require('./AdAdmin.js') // 产品报价信息表
 const AdCompanyInfo = require('./AdCompanyInfo.js') // 客户企业信息表
 const AdUser = require('./AdUser.js') // 子后台用户表
+const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
 const SubProductNotice = require('./SubProductNotice.js') // 生产通知单信息表
 const SubProductQuotation = require('./SubProductQuotation.js') // 产品报价信息表
 const SubCustomerInfo = require('./SubCustomerInfo.js') // 客户信息基础信息表
@@ -19,8 +20,11 @@ const SubSaleOrder = require('./SubSaleOrder.js') // 销售订单表
 const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
 const SubOutsourcingQuote = require('./SubOutsourcingQuote.js') // 委外报价信息表
 
-AdUser.hasOne(AdCompanyInfo, { foreignKey: 'id', sourceKey: 'company_id', as: 'company' })
-AdCompanyInfo.belongsTo(AdUser, { foreignKey: 'id', targetKey: 'company_id' })
+// AdUser.hasOne(AdCompanyInfo, { foreignKey: 'id', sourceKey: 'company_id', as: 'company' })
+// AdCompanyInfo.belongsTo(AdUser, { foreignKey: 'id', targetKey: 'company_id' })
+AdUser.hasMany(AdOrganize, { foreignKey: 'menber_id', as: 'organize' });
+AdOrganize.hasMany(AdOrganize, { foreignKey: 'pid', as: 'children' });
+AdOrganize.belongsTo(AdUser, { foreignKey: 'menber_id', as: 'menber' });
 
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
@@ -55,6 +59,7 @@ module.exports = {
   AdAdmin,
   AdCompanyInfo,
   AdUser,
+  AdOrganize,
   SubProductNotice,
   SubProductQuotation,
   SubCustomerInfo,

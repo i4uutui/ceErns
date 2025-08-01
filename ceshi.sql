@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 28/07/2025 19:13:37
+ Date: 01/08/2025 17:25:25
 */
 
 SET NAMES utf8mb4;
@@ -59,6 +59,31 @@ INSERT INTO `ad_company_info` VALUES (1, NULL, '东莞企业', '梁工', '138001
 INSERT INTO `ad_company_info` VALUES (2, NULL, '东坑企业', '刘工1', '13800138000', '东坑镇', '2025-07-07 13:59:43', '2025-07-12 15:29:04');
 
 -- ----------------------------
+-- Table structure for ad_organize
+-- ----------------------------
+DROP TABLE IF EXISTS `ad_organize`;
+CREATE TABLE `ad_organize`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `pid` int(11) NULL DEFAULT NULL COMMENT '上级ID，用于构建组织层级关系',
+  `label` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '节点名称，如部门名称',
+  `menber_id` int(11) NULL DEFAULT NULL COMMENT '关联的用户ID，关联员工信息表',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '组织架构信息表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ad_organize
+-- ----------------------------
+INSERT INTO `ad_organize` VALUES (1, 1, 1, 0, '企业名称11', 4, 1, '2025-08-01 14:55:42', '2025-08-01 17:12:20');
+INSERT INTO `ad_organize` VALUES (2, 1, 1, 1, '业务部', 1, 0, '2025-08-01 14:56:50', '2025-08-01 17:11:17');
+INSERT INTO `ad_organize` VALUES (3, 1, 1, 0, '前端工程师', 4, 1, '2025-08-01 15:56:01', '2025-08-01 15:56:01');
+INSERT INTO `ad_organize` VALUES (4, 1, 1, 1, '221', 5, 0, '2025-08-01 17:11:46', '2025-08-01 17:11:50');
+
+-- ----------------------------
 -- Table structure for ad_user
 -- ----------------------------
 DROP TABLE IF EXISTS `ad_user`;
@@ -86,7 +111,7 @@ INSERT INTO `ad_user` VALUES (1, 1, 'admin1', '$2b$10$qJOWecY5nOd6ICarLgePce3XPy
 INSERT INTO `ad_user` VALUES (2, 2, 'admin99', '$2b$10$Ukc2Byd6TFsl0u2p68J0leC7tVgwp4LDWr7s6YV0EWpc6xR3dZyMm', NULL, NULL, 1, 0, 1, 1, '2025-07-07 14:00:05', '2025-07-08 14:21:48');
 INSERT INTO `ad_user` VALUES (3, 1, '2121', '$2b$10$EpPaXdgc4ugWWT1Qi.DFSeRoz9XyBa3N7mKkNGuXEBvmy.pe8HEWq', NULL, NULL, 1, 0, 1, 1, '2025-07-08 10:35:09', '2025-07-08 14:21:49');
 INSERT INTO `ad_user` VALUES (4, 1, '121', '$2b$10$4ZYMcp6ZeDQauRLCZCb1mOBIUy9ML4gbRTZDizJU3VaOt83D8ZJnu', '2132', '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"ProductDelivery\"]]', 2, 1, 1, 1, '2025-07-08 14:10:45', '2025-07-08 14:40:30');
-INSERT INTO `ad_user` VALUES (5, 1, 'admin2', '$2b$10$0HdrlA/lzF2sEhesH/MXEOorOAC9uHMr0ggKxgHdFQa6vQiL9bNWG', '哈哈', '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"]]', 2, 1, 1, 1, '2025-07-08 14:20:13', '2025-07-08 14:40:30');
+INSERT INTO `ad_user` VALUES (5, 1, 'admin2', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '哈哈', '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"]]', 2, 1, 1, 1, '2025-07-08 14:20:13', '2025-08-01 10:55:13');
 
 -- ----------------------------
 -- Table structure for sub_customer_info
