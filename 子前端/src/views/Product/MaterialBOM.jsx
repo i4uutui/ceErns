@@ -66,7 +66,8 @@ export default defineComponent({
       const res = await request.get('/api/material_bom', {
         params: {
           page: currentPage.value,
-          pageSize: pageSize.value
+          pageSize: pageSize.value,
+          archive: 1
         },
       });
       const data = res.data.map(o => {
@@ -81,7 +82,7 @@ export default defineComponent({
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
         if (valid){
-          const low = { ...form.value }
+          const low = { ...form.value, archive: 1 }
           low.textJson = JSON.stringify(low.textJson)
           if(!edit.value){
             const res = await request.post('/api/material_bom', low);

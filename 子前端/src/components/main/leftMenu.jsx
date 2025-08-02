@@ -35,9 +35,10 @@ export default defineComponent({
         Object.entries(groupedRoutes).filter(([_, routes]) => routes.length > 0)
       );
       menuRoutes.value = Object.entries(filteredRoutes).map(([key, value]) => {
+        const menu = value.filter(row => row.meta.menu == true)
         return {
           title: key,
-          children: value
+          children: menu
         }
       });
     });

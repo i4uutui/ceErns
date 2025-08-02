@@ -12,7 +12,8 @@ const routes = [
         component: () => import('../views/home.jsx'),
         meta: {
           title: '首页',
-          parent: '首页'
+          parent: '首页',
+          menu: true
         }
       },
       // 系统管理
@@ -22,7 +23,8 @@ const routes = [
         component: () => import('@/views/System/UserManagement.jsx'),
         meta: {
           title: '用户管理',
-          parent: '系统管理'
+          parent: '系统管理',
+          menu: true
         }
       },
       {
@@ -31,7 +33,8 @@ const routes = [
         component: () => import('@/views/System/OrganizeManagement.jsx'),
         meta: {
           title: '组织架构',
-          parent: '系统管理'
+          parent: '系统管理',
+          menu: true
         }
       },
       // 基础资料
@@ -41,7 +44,8 @@ const routes = [
         component: () => import('@/views/Basic/ProductCode.jsx'),
         meta: {
           title: '产品编码',
-          parent: '基础资料'
+          parent: '基础资料',
+          menu: true
         }
       },
       {
@@ -50,7 +54,8 @@ const routes = [
         component: () => import('@/views/Basic/PartCode.jsx'),
         meta: {
           title: '部位编码',
-          parent: '基础资料'
+          parent: '基础资料',
+          menu: true
         }
       },
       {
@@ -59,7 +64,8 @@ const routes = [
         component: () => import('@/views/Basic/MaterialCode.jsx'),
         meta: {
           title: '原材料编码',
-          parent: '基础资料'
+          parent: '基础资料',
+          menu: true
         }
       },
       {
@@ -68,7 +74,8 @@ const routes = [
         component: () => import('@/views/Basic/ProcessCode.jsx'),
         meta: {
           title: '工艺编码',
-          parent: '基础资料'
+          parent: '基础资料',
+          menu: true
         }
       },
       {
@@ -77,7 +84,8 @@ const routes = [
         component: () => import('@/views/Basic/EquipmentCode.jsx'),
         meta: {
           title: '设备编码',
-          parent: '基础资料'
+          parent: '基础资料',
+          menu: true
         }
       },
       {
@@ -86,7 +94,8 @@ const routes = [
         component: () => import('@/views/Basic/EmployeeInfo.jsx'),
         meta: {
           title: '员工信息',
-          parent: '基础资料'
+          parent: '基础资料',
+          menu: true
         }
       },
       // 订单管理
@@ -96,7 +105,8 @@ const routes = [
         component: () => import('@/views/Order/CustomerInfo.jsx'),
         meta: {
           title: '客户资料',
-          parent: '订单管理'
+          parent: '订单管理',
+          menu: true
         }
       },
       {
@@ -105,7 +115,8 @@ const routes = [
         component: () => import('@/views/Order/SalesOrder.jsx'),
         meta: {
           title: '销售订单',
-          parent: '订单管理'
+          parent: '订单管理',
+          menu: true
         }
       },
       {
@@ -114,7 +125,8 @@ const routes = [
         component: () => import('@/views/Order/ProductQuote.jsx'),
         meta: {
           title: '产品报价',
-          parent: '订单管理'
+          parent: '订单管理',
+          menu: true
         }
       },
       {
@@ -123,7 +135,8 @@ const routes = [
         component: () => import('@/views/Order/ProductNotice.jsx'),
         meta: {
           title: '产品通知单',
-          parent: '订单管理'
+          parent: '订单管理',
+          menu: true
         }
       },
       {
@@ -132,7 +145,8 @@ const routes = [
         component: () => import('@/views/Order/ProductDelivery.jsx'),
         meta: {
           title: '产品出货单',
-          parent: '订单管理'
+          parent: '订单管理',
+          menu: true
         }
       },
       // 产品信息
@@ -142,7 +156,8 @@ const routes = [
       //   component: () => import('@/views/Product/ProductBOM.vue'),
       //   meta: {
       //     title: '产品BOM',
-      //     parent: '产品信息'
+      //     parent: '产品信息',
+      //     menu: true
       //   }
       // },
       {
@@ -151,7 +166,18 @@ const routes = [
         component: () => import('@/views/Product/MaterialBOM.jsx'),
         meta: {
           title: '材料BOM',
-          parent: '产品信息'
+          parent: '产品信息',
+          menu: true
+        }
+      },
+      {
+        path: '/product/material-bom-archive',
+        name: 'MaterialBOMArchive',
+        component: () => import('@/views/Product/MaterialBOMArchive.jsx'),
+        meta: {
+          title: '材料BOM存档库',
+          parent: '产品信息',
+          menu: false
         }
       },
       {
@@ -160,7 +186,8 @@ const routes = [
         component: () => import('@/views/Product/ProcessBOM.jsx'),
         meta: {
           title: '工艺BOM',
-          parent: '产品信息'
+          parent: '产品信息',
+          menu: true
         }
       },
       // // 采购管理
@@ -170,7 +197,8 @@ const routes = [
         component: () => import('@/views/Purchase/SupplierInfo.jsx'),
         meta: {
           title: '供应商资料',
-          parent: '采购管理'
+          parent: '采购管理',
+          menu: true
         }
       },
       {
@@ -179,7 +207,8 @@ const routes = [
         component: () => import('@/views/Purchase/MaterialQuote.jsx'),
         meta: {
           title: '原材料报价',
-          parent: '采购管理'
+          parent: '采购管理',
+          menu: true
         }
       },
       {
@@ -188,7 +217,8 @@ const routes = [
         component: () => import('@/views/Purchase/PurchaseOrder.jsx'),
         meta: {
           title: '采购单',
-          parent: '采购管理'
+          parent: '采购管理',
+          menu: true
         }
       },
       // // 委外管理
@@ -198,7 +228,8 @@ const routes = [
         component: () => import('@/views/Outsourcing/OutsourcingQuote.jsx'),
         meta: {
           title: '委外报价',
-          parent: '委外管理'
+          parent: '委外管理',
+          menu: true
         }
       },
       {
@@ -207,7 +238,8 @@ const routes = [
         component: () => import('@/views/Outsourcing/OutsourcingOrder.jsx'),
         meta: {
           title: '委外加工单',
-          parent: '委外管理'
+          parent: '委外管理',
+          menu: true
         }
       },
       {
@@ -216,7 +248,8 @@ const routes = [
         component: () => import('@/views/Outsourcing/OutsourcingMaterial.jsx'),
         meta: {
           title: '委外发料',
-          parent: '委外管理'
+          parent: '委外管理',
+          menu: true
         }
       },
       // // 生产管理
@@ -226,7 +259,8 @@ const routes = [
       //   component: () => import('@/views/Production/ProductionProgress.vue'),
       //   meta: {
       //     title: '生产进度表',
-      //     parent: '生产管理'
+      //     parent: '生产管理',
+      //     menu: true
       //   }
       // },
       // {
@@ -235,7 +269,8 @@ const routes = [
       //   component: () => import('@/views/Production/WorkOrder.vue'),
       //   meta: {
       //     title: '派工单',
-      //     parent: '生产管理'
+      //     parent: '生产管理',
+      //     menu: true
       //   }
       // },
       // {
@@ -244,7 +279,8 @@ const routes = [
       //   component: () => import('@/views/Production/ReportOrder.vue'),
       //   meta: {
       //     title: '报工单',
-      //     parent: '生产管理'
+      //     parent: '生产管理',
+      //     menu: true
       //   }
       // },
       // {
@@ -253,7 +289,8 @@ const routes = [
       //   component: () => import('@/views/Production/ProductionMaterial.vue'),
       //   meta: {
       //     title: '生产领料',
-      //     parent: '生产管理'
+      //     parent: '生产管理',
+      //     menu: true
       //   }
       // },
       // {
@@ -262,7 +299,8 @@ const routes = [
       //   component: () => import('@/views/Production/EmployeePieceRate.vue'),
       //   meta: {
       //     title: '员工计件工资',
-      //     parent: '生产管理'
+      //     parent: '生产管理',
+      //     menu: true
       //   }
       // }
     ]

@@ -6,7 +6,7 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 
 // 获取材料BOM信息表
 router.get('/material_bom', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, archive } = req.query;
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
@@ -15,6 +15,7 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
+      archive
     },
     include: [
       { model: SubPartCode, as: 'part' },
@@ -40,12 +41,12 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
 
 // 添加材料BOM
 router.post('/material_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, textJson } = req.body;
+  const { product_id, part_id, textJson, archive } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   await SubMaterialBom.create({
-    product_id, part_id, textJson, company_id,
+    product_id, part_id, textJson, company_id, archive,
     user_id: userId
   })
   
@@ -54,12 +55,12 @@ router.post('/material_bom', authMiddleware, async (req, res) => {
 
 // 更新材料BOM
 router.put('/material_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, textJson, id } = req.body;
+  const { product_id, part_id, textJson, archive, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubMaterialBom.update({
-    product_id, part_id, textJson, company_id,
+    product_id, part_id, textJson, archive, company_id,
     user_id: userId
   }, {
     where: {
