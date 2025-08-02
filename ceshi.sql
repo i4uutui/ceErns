@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 01/08/2025 17:25:25
+ Date: 02/08/2025 16:36:18
 */
 
 SET NAMES utf8mb4;
@@ -209,18 +209,20 @@ CREATE TABLE `sub_material_bom`  (
   `product_id` int(11) NOT NULL COMMENT '产品编码id',
   `part_id` int(11) NOT NULL COMMENT '部件编码id',
   `textJson` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'BOM表的json字符串',
+  `archive` int(11) NULL DEFAULT NULL COMMENT '是否已存档，1未存，0已存',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_bom
 -- ----------------------------
-INSERT INTO `sub_material_bom` VALUES (5, 1, 1, 11, 6, '[{\"id\":\"fPBK2r0uJsZVbPxc\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"111\"}]', 1, '2025-07-27 11:10:29', '2025-07-27 11:10:29');
-INSERT INTO `sub_material_bom` VALUES (6, 1, 1, 10, 5, '[{\"id\":\"KBXxC9iDMJDOCfxw\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"22\"},{\"id\":\"GGYJMRyAV6KRHO4b\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"211\"},{\"id\":\"OWoSNk8j9QYKQ7QK\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"111\"}]', 1, '2025-07-27 11:22:56', '2025-07-27 11:22:56');
-INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, '[{\"id\":\"taXVmFvVRX0eamKY\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"1\"},{\"id\":\"YuQXKNnr694QA8k2\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"211\"},{\"id\":\"k7sK1insbtCn6CjN\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"12\"},{\"id\":\"ZAU5X7TLIJZaJBqH\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"2\"}]', 1, '2025-07-27 11:50:06', '2025-07-27 12:54:43');
+INSERT INTO `sub_material_bom` VALUES (5, 1, 1, 11, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"}]', 0, 1, '2025-07-27 11:10:29', '2025-08-02 14:42:20');
+INSERT INTO `sub_material_bom` VALUES (6, 1, 1, 10, 5, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"},{\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"444\",\"material_id\":2},{\"id\":\"6lzVkl80q6ffe9hf\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"4444\"}]', 0, 1, '2025-07-27 11:22:56', '2025-08-02 14:42:20');
+INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"}]', 0, 1, '2025-07-27 11:50:06', '2025-08-02 14:42:20');
+INSERT INTO `sub_material_bom` VALUES (8, 1, 1, 10, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"},{\"id\":\"QASStVzNPAySJaR1\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"333\"}]', 0, 1, '2025-08-02 11:04:51', '2025-08-02 14:42:20');
 
 -- ----------------------------
 -- Table structure for sub_material_code
