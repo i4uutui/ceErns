@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
-import { ElButton, ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn, ElIcon } from 'element-plus'
+import { ElButton, ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn, ElIcon, ElMessageBox } from 'element-plus'
 import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
 import { getRandomString } from '@/utils/tool';
 import request from '@/utils/request';
@@ -108,6 +108,25 @@ export default defineComponent({
         }
       })
     }
+    const handleArchive = () => {
+      if(tableData.value.length){
+        ElMessageBox.confirm('是否确认存档', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(async () => {
+          const ids = tableData.value.map(row => row.id)
+          const res = await request.put('/api/material_bom_archive', { ids, archive: 0 });
+          if(res && res.code == 200){
+            ElMessage.success('修改成功');
+            dialogVisible.value = false;
+            fetchProductList();
+          }
+        }).catch(() => {})
+      }else{
+        ElMessage.error('暂无数据可存档！');
+      }
+    }
     const handleUplate = ({ id, product_id, part_id, textJson }) => {
       edit.value = id;
       dialogVisible.value = true;
@@ -172,9 +191,14 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                添加材料BOM
-              </ElButton>
+              <>
+                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                  添加材料BOM
+                </ElButton>
+                <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
+                  存档
+                </ElButton>
+              </>
             ),
             default: () => (
               <>

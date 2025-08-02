@@ -71,6 +71,20 @@ router.put('/material_bom', authMiddleware, async (req, res) => {
   
   res.json({ message: '修改成功', code: 200 });
 });
+// 材料BOM存档
+router.put('/material_bom_archive', authMiddleware, async (req, res) => {
+  const { archive, ids } = req.body;
+  const updateResult = await SubMaterialBom.update({
+    archive
+  }, {
+    where: {
+      id: ids
+    }
+  })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  
+  res.json({ message: '修改成功', code: 200 });
+});
 
 
 // 获取工艺BOM信息表
