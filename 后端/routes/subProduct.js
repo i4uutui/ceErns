@@ -71,7 +71,7 @@ router.put('/material_bom', authMiddleware, async (req, res) => {
   
   res.json({ message: '修改成功', code: 200 });
 });
-// 材料BOM存档
+// 添加材料BOM存档
 router.put('/material_bom_archive', authMiddleware, async (req, res) => {
   const { archive, ids } = req.body;
   const updateResult = await SubMaterialBom.update({
@@ -85,11 +85,23 @@ router.put('/material_bom_archive', authMiddleware, async (req, res) => {
   
   res.json({ message: '修改成功', code: 200 });
 });
+router.delete('/material_bom', authMiddleware, async (req, res) => {
+  const { id } = req.query
+  const updateResult = await SubMaterialBom.update({
+    is_deleted: 0
+  }, {
+    where: {
+      id
+    }
+  })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  res.json({ message: '删除成功', code: 200 });
+})
 
 
 // 获取工艺BOM信息表
 router.get('/process_bom', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, archive } = req.query;
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
@@ -98,6 +110,7 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
+      archive
     },
     include: [
       { model: SubPartCode, as: 'part' },
@@ -122,26 +135,25 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
 })
 // 添加工艺BOM
 router.post('/process_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, make_time, textJson } = req.body;
+  const { product_id, part_id, make_time, textJson, archive } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   await SubProcessBom.create({
-    product_id, part_id, make_time, textJson, company_id,
+    product_id, part_id, make_time, textJson, archive, company_id,
     user_id: userId
   })
   
   res.json({ message: '添加成功', code: 200 });
 });
-
 // 更新工艺BOM
 router.put('/process_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, make_time, textJson, id } = req.body;
+  const { product_id, part_id, make_time, textJson, archive, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubProcessBom.update({
-    product_id, part_id, make_time, textJson, company_id,
+    product_id, part_id, make_time, textJson, archive, company_id,
     user_id: userId
   }, {
     where: {
@@ -152,5 +164,31 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
   
   res.json({ message: '修改成功', code: 200 });
 });
+// 添加工艺BOM存档
+router.put('/process_bom_archive', authMiddleware, async (req, res) => {
+  const { archive, ids } = req.body;
+  const updateResult = await SubProcessBom.update({
+    archive
+  }, {
+    where: {
+      id: ids
+    }
+  })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  
+  res.json({ message: '修改成功', code: 200 });
+});
+router.delete('/process_bom', authMiddleware, async (req, res) => {
+  const { id } = req.query
+  const updateResult = await SubProcessBom.update({
+    is_deleted: 0
+  }, {
+    where: {
+      id
+    }
+  })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  res.json({ message: '删除成功', code: 200 });
+})
 
 module.exports = router; 

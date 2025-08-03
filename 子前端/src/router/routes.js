@@ -190,6 +190,16 @@ const routes = [
           menu: true
         }
       },
+      {
+        path: '/product/process-bom-archive',
+        name: 'ProcessBOMArchive',
+        component: () => import('@/views/Product/ProcessBOMArchive.jsx'),
+        meta: {
+          title: '工艺BOM存档库',
+          parent: '产品信息',
+          menu: false
+        }
+      },
       // // 采购管理
       {
         path: '/purchase/supplier-info',

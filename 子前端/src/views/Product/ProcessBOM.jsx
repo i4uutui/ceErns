@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
-import { ElButton, ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn, ElIcon } from 'element-plus'
+import { ElButton, ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn, ElIcon, ElMessageBox } from 'element-plus'
 import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
 import { getRandomString } from '@/utils/tool';
 import request from '@/utils/request';
@@ -82,8 +82,9 @@ export default defineComponent({
     const fetchProductList = async () => {
       const res = await request.get('/api/process_bom', {
         params: {
-          page: currentPage.value,
-          pageSize: pageSize.value
+          page: 1,
+          pageSize: 100,
+          archive: 1
         },
       });
       const data = res.data.map(o => {
@@ -98,7 +99,7 @@ export default defineComponent({
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
         if (valid){
-          const low = { ...form.value }
+          const low = { ...form.value, archive: 1 }
           low.textJson = JSON.stringify(low.textJson)
           if(!edit.value){
             const res = await request.post('/api/process_bom', low);
@@ -123,6 +124,39 @@ export default defineComponent({
           }
         }
       })
+    }
+    const handleArchive = () => {
+      if(tableData.value.length){
+        ElMessageBox.confirm('是否确认存档', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(async () => {
+          const ids = tableData.value.map(row => row.id)
+          const res = await request.put('/api/process_bom_archive', { ids, archive: 0 });
+          if(res && res.code == 200){
+            ElMessage.success('修改成功');
+            dialogVisible.value = false;
+            fetchProductList();
+          }
+        }).catch(() => {})
+      }else{
+        ElMessage.error('暂无数据可存档！');
+      }
+    }
+    const handleDelete = ({ id }) => {
+      ElMessageBox.confirm('是否确认存档', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(async () => {
+          const res = await request.delete('/api/process_bom', { params: { id } });
+          if(res && res.code == 200){
+            ElMessage.success('修改成功');
+            dialogVisible.value = false;
+            fetchProductList();
+          }
+        }).catch(() => {})
     }
     const handleUplate = ({ id, product_id, part_id, make_time, textJson }) => {
       edit.value = id;
@@ -158,10 +192,6 @@ export default defineComponent({
     const handledeletedJson = (index) => {
       form.value.textJson.splice(index, 1)
     }
-    const makeHandle = (row, index, val) => {
-      form.value.textJson[index][`${val}code`] = row[`${val}code`]
-      form.value.textJson[index][`${val}name`] = row[`${val}name`]
-    }
     const processHandle = (row, index) => {
       form.value.textJson[index].process_code = row.process_code
       form.value.textJson[index].process_name = row.process_name
@@ -181,6 +211,9 @@ export default defineComponent({
         return { backgroundColor: '#fbe1e5' }
       }
     }
+    const goArchive = () => {
+      window.open('/product/process-bom-archive', '_blank')
+    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -197,9 +230,21 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                添加工艺BOM
-              </ElButton>
+              <div class="flex row-between">
+                <div>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                    添加工艺BOM
+                  </ElButton>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
+                    存档
+                  </ElButton>
+                </div>
+                <div>
+                  <ElButton style="margin-top: -5px" type="warning" onClick={ goArchive } >
+                    存档库
+                  </ElButton>
+                </div>
+              </div>
             ),
             default: () => (
               <>
@@ -228,6 +273,7 @@ export default defineComponent({
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                       </>
                     )}
                   </ElTableColumn>

@@ -29,6 +29,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = getItem('token');
+  document.title = to.meta.title
   if (!token && to.name !== 'AdminLogin') {
     // 如果没有 token 且访问的不是登录页面，跳转到登录页面
     next({ name: 'AdminLogin' });

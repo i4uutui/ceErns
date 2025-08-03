@@ -1,17 +1,17 @@
 /*
- Navicat Premium Data Transfer
+ Navicat MySQL Data Transfer
 
- Source Server         : ceshi
+ Source Server         : thinkphp_demo
  Source Server Type    : MySQL
- Source Server Version : 50740
+ Source Server Version : 50722 (5.7.22)
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50740
+ Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 02/08/2025 16:36:18
+ Date: 03/08/2025 11:04:43
 */
 
 SET NAMES utf8mb4;
@@ -73,7 +73,7 @@ CREATE TABLE `ad_organize`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '组织架构信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '组织架构信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ad_organize
@@ -219,10 +219,10 @@ CREATE TABLE `sub_material_bom`  (
 -- ----------------------------
 -- Records of sub_material_bom
 -- ----------------------------
-INSERT INTO `sub_material_bom` VALUES (5, 1, 1, 11, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"}]', 0, 1, '2025-07-27 11:10:29', '2025-08-02 14:42:20');
-INSERT INTO `sub_material_bom` VALUES (6, 1, 1, 10, 5, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"},{\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"444\",\"material_id\":2},{\"id\":\"6lzVkl80q6ffe9hf\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"4444\"}]', 0, 1, '2025-07-27 11:22:56', '2025-08-02 14:42:20');
-INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"}]', 0, 1, '2025-07-27 11:50:06', '2025-08-02 14:42:20');
-INSERT INTO `sub_material_bom` VALUES (8, 1, 1, 10, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"},{\"id\":\"QASStVzNPAySJaR1\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"333\"}]', 0, 1, '2025-08-02 11:04:51', '2025-08-02 14:42:20');
+INSERT INTO `sub_material_bom` VALUES (5, 1, 1, 11, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"}]', 0, 1, '2025-07-27 11:10:29', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (6, 1, 1, 10, 5, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"},{\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"444\",\"material_id\":2},{\"id\":\"6lzVkl80q6ffe9hf\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"4444\"}]', 0, 1, '2025-07-27 11:22:56', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"}]', 0, 1, '2025-07-27 11:50:06', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (8, 1, 1, 10, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"},{\"id\":\"QASStVzNPAySJaR1\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"333\"}]', 0, 1, '2025-08-02 11:04:51', '2025-08-03 11:04:19');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -303,7 +303,7 @@ CREATE TABLE `sub_outsourcing_quote`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_outsourcing_quote
@@ -352,6 +352,7 @@ CREATE TABLE `sub_process_bom`  (
   `part_id` int(11) NOT NULL COMMENT '部件编码id',
   `make_time` int(11) NULL DEFAULT NULL COMMENT '制程总工时',
   `textJson` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'BOM表的json字符串',
+  `archive` int(11) NULL DEFAULT NULL COMMENT '是否已存档，1未存，0已存',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -361,7 +362,7 @@ CREATE TABLE `sub_process_bom`  (
 -- ----------------------------
 -- Records of sub_process_bom
 -- ----------------------------
-INSERT INTO `sub_process_bom` VALUES (11, 1, 1, 11, 6, 111, '[{\"id\":\"S0DUSftqku50QEoZ\",\"process_id\":3,\"process_code\":\"123\",\"process_name\":\"212\",\"section_points\":21,\"equipment_id\":3,\"equipment_code\":\"123\",\"equipment_name\":\"2121\",\"time\":\"111\",\"price\":\"111\",\"long\":\"111\"}]', 1, '2025-07-28 09:55:50', '2025-07-28 09:55:50');
+INSERT INTO `sub_process_bom` VALUES (11, 1, 1, 11, 6, 111, '[{\"id\":\"S0DUSftqku50QEoZ\",\"process_id\":3,\"process_code\":\"123\",\"process_name\":\"212\",\"section_points\":21,\"equipment_id\":3,\"equipment_code\":\"123\",\"equipment_name\":\"2121\",\"time\":\"111\",\"price\":\"111\",\"long\":\"111\"}]', 0, 1, '2025-07-28 09:55:50', '2025-08-03 11:04:13');
 
 -- ----------------------------
 -- Table structure for sub_process_code

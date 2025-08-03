@@ -39,6 +39,11 @@ const SubProcessBom = sequelize.define('SubProcessBom', {
     allowNull: true,
     comment: 'BOM表的json字符串'
   },
+  archive: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '是否已存档，1未存，0已存'
+  },
   is_deleted: {
     type: DataTypes.TINYINT(1),
     allowNull: true,

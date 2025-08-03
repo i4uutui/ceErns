@@ -65,8 +65,8 @@ export default defineComponent({
     const fetchProductList = async () => {
       const res = await request.get('/api/material_bom', {
         params: {
-          page: currentPage.value,
-          pageSize: pageSize.value,
+          page: 1,
+          pageSize: 100,
           archive: 1
         },
       });
@@ -127,6 +127,20 @@ export default defineComponent({
         ElMessage.error('暂无数据可存档！');
       }
     }
+    const handleDelete = ({ id }) => {
+      ElMessageBox.confirm('是否确认存档', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(async () => {
+          const res = await request.delete('/api/material_bom', { params: { id } });
+          if(res && res.code == 200){
+            ElMessage.success('修改成功');
+            dialogVisible.value = false;
+            fetchProductList();
+          }
+        }).catch(() => {})
+    }
     const handleUplate = ({ id, product_id, part_id, textJson }) => {
       edit.value = id;
       dialogVisible.value = true;
@@ -175,6 +189,9 @@ export default defineComponent({
         return { backgroundColor: '#fbe1e5' }
       }
     }
+    const goArchive = () => {
+      window.open('/product/material-bom-archive', '_blank')
+    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -191,14 +208,21 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <>
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  添加材料BOM
-                </ElButton>
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
-                  存档
-                </ElButton>
-              </>
+              <div class="flex row-between">
+                <div>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                    添加工艺BOM
+                  </ElButton>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
+                    存档
+                  </ElButton>
+                </div>
+                <div>
+                  <ElButton style="margin-top: -5px" type="warning" onClick={ goArchive } >
+                    存档库
+                  </ElButton>
+                </div>
+              </div>
             ),
             default: () => (
               <>
@@ -222,6 +246,7 @@ export default defineComponent({
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                       </>
                     )}
                   </ElTableColumn>
