@@ -219,7 +219,7 @@ export default defineComponent({
                 </div>
                 <div>
                   <ElButton style="margin-top: -5px" type="warning" onClick={ goArchive } >
-                    存档库
+                    材料BOM库
                   </ElButton>
                 </div>
               </div>

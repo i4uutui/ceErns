@@ -104,7 +104,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  添加生产单
+                  添加生产通知单
                 </ElButton>
               </div>
             ),

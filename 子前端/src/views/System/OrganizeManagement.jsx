@@ -27,7 +27,7 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      data.value = { id: 0, label: { label: getItem('company').name, menberName: '' }, children: [] }
+      data.value = { id: 0, label: { label: '总经理', menberName: '222' }, children: [] }
 
       fetchAdminList()
       fetchUserList()

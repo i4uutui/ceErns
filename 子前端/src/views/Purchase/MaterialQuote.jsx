@@ -10,9 +10,9 @@ export default defineComponent({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' },
       ],
-      notice_id: [
-        { required: true, message: '请选择生产订单号', trigger: 'blur' },
-      ],
+      // notice_id: [
+      //   { required: true, message: '请选择生产订单号', trigger: 'blur' },
+      // ],
       material_id: [
         { required: true, message: '请选择材料编码', trigger: 'blur' },
       ],
@@ -20,7 +20,7 @@ export default defineComponent({
         { required: true, message: '请输入送货方式', trigger: 'blur' },
       ],
       number: [
-        { required: true, message: '请输入交易数量', trigger: 'blur' },
+        { required: true, message: '请输入采购数量', trigger: 'blur' },
       ],
       packaging: [
         { required: true, message: '请输入包装要求', trigger: 'blur' },
@@ -159,7 +159,7 @@ export default defineComponent({
                   <ElTableColumn prop="material.purchase_unit" label="采购单位" />
                   <ElTableColumn prop="material.unit_price" label="采购单价" />
                   <ElTableColumn prop="delivery" label="送货方式" />
-                  <ElTableColumn prop="number" label="交易数量" />
+                  <ElTableColumn prop="number" label="采购数量" />
                   <ElTableColumn prop="packaging" label="包装要求" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />

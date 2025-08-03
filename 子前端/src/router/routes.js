@@ -134,7 +134,7 @@ const routes = [
         name: 'ProductNotice',
         component: () => import('@/views/Order/ProductNotice.jsx'),
         meta: {
-          title: '产品通知单',
+          title: '生产通知单',
           parent: '订单管理',
           menu: true
         }
