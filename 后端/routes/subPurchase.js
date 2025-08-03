@@ -94,19 +94,12 @@ router.put('/supplier_info', authMiddleware, async (req, res) => {
 
 
 
-// 材料报价 / 采购单
+// 材料报价
 router.get('/material_quote', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10, supplier_abbreviation, product_code, product_name, notice } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
-  let supplierInfoWhere = {}
-  let productsCodeWhere = {}
-  let productNoticeWhere = {}
-  if(supplier_abbreviation) supplierInfoWhere.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` }
-  if(product_name) productsCodeWhere.product_name = { [Op.like]: `%${product_name}%` }
-  if(product_code) productsCodeWhere.product_code = { [Op.like]: `%${product_code}%` }
-  if(notice) productNoticeWhere.notice = { [Op.like]: `%${notice}%` }
   const { count, rows } = await SubMaterialQuote.findAndCountAll({
     where: {
       is_deleted: 1,
@@ -114,9 +107,9 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
     },
     include: [
       { model: SubMaterialCode, as: 'material' },
-      { model: SubSupplierInfo, as: 'supplier', where: supplierInfoWhere },
-      { model: SubProductNotice, as: 'notice', where: productNoticeWhere },
-      { model: SubProductsCode, as: 'product', where: productsCodeWhere }
+      { model: SubSupplierInfo, as: 'supplier' },
+      { model: SubProductNotice, as: 'notice' },
+      { model: SubProductsCode, as: 'product' }
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),

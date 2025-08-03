@@ -8,7 +8,7 @@ const formatTime = (time) => {
 // 格式化对象中的时间字段
 const formatObjectTime = (obj) => {
   if (!obj) return obj;
-  const timeStr = [ 'rece_time', 'delivery_time', 'updated_at', 'created_at' ]
+  const timeStr = [ 'rece_time', 'delivery_time', 'goods_time', 'updated_at', 'created_at' ]
   
   const result = {};
   for (const [key, value] of Object.entries(obj)) {

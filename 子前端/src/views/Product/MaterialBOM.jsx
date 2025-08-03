@@ -211,7 +211,7 @@ export default defineComponent({
               <div class="flex row-between">
                 <div>
                   <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                    添加工艺BOM
+                    添加材料BOM
                   </ElButton>
                   <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
                     存档

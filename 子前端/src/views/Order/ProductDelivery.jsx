@@ -1,4 +1,4 @@
-import { ElButton, ElCard, ElInput, ElMessage, ElTable, ElTableColumn } from 'element-plus'
+import { ElButton, ElCard, ElInput, ElMessage, ElSwitch, ElTable, ElTableColumn } from 'element-plus'
 import { defineComponent, ref, reactive, watch, onMounted } from 'vue'
 import { numberToChinese } from '@/utils/tool.js'
 import { getItem } from "@/assets/js/storage";
@@ -15,6 +15,7 @@ export default defineComponent({
     let customer_order = ref('')
     let goods_address = ref('')
     let isPrint = ref(false)
+    let modelSwitch = ref(false)
     
     const printObj = ref({
       id: "printTable", // 这里是要打印元素的ID
@@ -67,9 +68,11 @@ export default defineComponent({
     // 统计合计
     const getSummaries = ({ columns, data }) => {
       const sums = [];
-      // 计算product_price的总和
+      // 计算unit_price的总和
       const totalPrice = data.reduce((sum, item) => {
-        return sum + Number(item.quote.product_price);
+        const order_number = Number(item.sale.order_number)
+        const unit_price = Number(item.product.unit_price)
+        return sum + order_number * unit_price
       }, 0);
       
       columns.forEach((column, index) => {
@@ -78,11 +81,11 @@ export default defineComponent({
           return;
         }
         if (index === 2) {
-          sums[index] = totalPrice;
+          sums[index] = modelSwitch.value ? "***" : totalPrice;
           return;
         }
         if (index === 1) {
-          sums[index] = `人民币大写：${numberToChinese(totalPrice)}`;
+          sums[index] = `人民币大写：${modelSwitch.value ? "***" : numberToChinese(totalPrice)}`;
           return;
         }
       });
@@ -97,15 +100,19 @@ export default defineComponent({
               <div class="flex">
                 <div class="pr10 flex">
                   <span>客户名称:</span>
-                  <ElInput v-model={ customer_abbreviation.value } style="width: 240px" placeholder="请输入"/>
+                  <ElInput v-model={ customer_abbreviation.value } style="width: 160px" placeholder="请输入"/>
                 </div>
                 <div class="pr10 flex">
                   <span>客户订单号:</span>
-                  <ElInput v-model={ customer_order.value } style="width: 240px" placeholder="请输入"/>
+                  <ElInput v-model={ customer_order.value } style="width: 160px" placeholder="请输入"/>
                 </div>
                 <div class="pr10 flex">
                   <span>交货地点:</span>
-                  <ElInput v-model={ goods_address.value } style="width: 240px" placeholder="请输入"/>
+                  <ElInput v-model={ goods_address.value } style="width: 160px" placeholder="请输入"/>
+                </div>
+                <div class="pr10 flex">
+                  <span>是否隐藏金额:</span>
+                  <ElSwitch v-model={ modelSwitch.value } />
                 </div>
                 <div class="pr10">
                   <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>
@@ -137,14 +144,18 @@ export default defineComponent({
                     </ElTableColumn>
                     <ElTableColumn prop="product.other_features" label="其它特性" width="120" />
                     <ElTableColumn prop="sale.unit" label="单位" width="100" />
-                    <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
-                    <ElTableColumn prop="quote.product_price" label="单价" width="100" />
+                    <ElTableColumn prop="sale.order_number" label="生产数量" width="100" />
+                    <ElTableColumn prop="product.unit_price" label="单价" width="100">
+                      {{
+                        default: ({ row }) => modelSwitch.value ? "***" : row.product.unit_price
+                      }}
+                    </ElTableColumn>
                     <ElTableColumn label="金额" width="120">
                       {{
                         default: ({ row }) => {
                           const order_number = Number(row.sale.order_number)
-                          const product_price = Number(row.quote.product_price)
-                          return order_number * product_price
+                          const unit_price = Number(row.product.unit_price)
+                          return modelSwitch.value ? "***" : order_number * unit_price
                         }
                       }}
                     </ElTableColumn>
@@ -184,13 +195,17 @@ export default defineComponent({
                       <ElTableColumn prop="product.other_features" label="其它特性" />
                       <ElTableColumn prop="sale.unit" label="单位" />
                       <ElTableColumn prop="sale.order_number" label="订单数量" />
-                      <ElTableColumn prop="quote.product_price" label="单价" />
+                      <ElTableColumn prop="product.unit_price" label="单价" width="100">
+                        {{
+                          default: ({ row }) => modelSwitch.value ? "***" : row.product.unit_price
+                        }}
+                      </ElTableColumn>
                       <ElTableColumn label="金额">
                         {{
                           default: ({ row }) => {
                             const order_number = Number(row.sale.order_number)
-                            const product_price = Number(row.quote.product_price)
-                            return order_number * product_price
+                          const unit_price = Number(row.product.unit_price)
+                          return modelSwitch.value ? "***" : order_number * unit_price
                           }
                         }}
                       </ElTableColumn>

@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 03/08/2025 11:04:43
+ Date: 03/08/2025 20:43:40
 */
 
 SET NAMES utf8mb4;
@@ -239,7 +239,7 @@ CREATE TABLE `sub_material_code`  (
   `other_features` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '其它特性',
   `usage_unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '使用单位',
   `purchase_unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '采购单位',
-  `unit_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '单价',
+  `unit_price` int(10) NULL DEFAULT NULL COMMENT '单价',
   `currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '币别',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   `is_deleted` int(1) UNSIGNED ZEROFILL NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
@@ -251,7 +251,7 @@ CREATE TABLE `sub_material_code`  (
 -- ----------------------------
 -- Records of sub_material_code
 -- ----------------------------
-INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', 122.00, '12', '21', 1, '2025-07-08 15:36:33', '2025-07-08 15:37:12');
+INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', 122, '12', '21', 1, '2025-07-08 15:36:33', '2025-07-08 15:37:12');
 
 -- ----------------------------
 -- Table structure for sub_material_quote
@@ -403,19 +403,19 @@ CREATE TABLE `sub_product_notice`  (
   `customer_id` int(11) NULL DEFAULT NULL COMMENT '客户id',
   `product_id` int(11) NULL DEFAULT NULL COMMENT '产品id',
   `sale_id` int(11) NULL DEFAULT NULL COMMENT '销售id',
-  `quote_id` int(11) NULL DEFAULT NULL COMMENT '报价单id',
   `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交货日期',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产通知单信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产通知单信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_notice
 -- ----------------------------
-INSERT INTO `sub_product_notice` VALUES (5, 1, 1, '1111', 2, 9, 2, 11, '2025-07-30T16:00:00.000Z', 1, '2025-07-25 22:56:01', '2025-07-25 22:56:01');
-INSERT INTO `sub_product_notice` VALUES (6, 1, 1, '2222', 3, 10, 1, 12, '2025-07-28 00:00:00', 1, '2025-07-25 22:56:09', '2025-07-25 22:58:37');
+INSERT INTO `sub_product_notice` VALUES (5, 1, 1, '1111', 2, 9, 2, '2025-07-30T16:00:00.000Z', 1, '2025-07-25 22:56:01', '2025-07-25 22:56:01');
+INSERT INTO `sub_product_notice` VALUES (6, 1, 1, '2222', 3, 10, 1, '2025-07-28 00:00:00', 1, '2025-07-25 22:56:09', '2025-08-03 19:54:05');
+INSERT INTO `sub_product_notice` VALUES (7, 1, 1, '11111', 2, 9, 2, '2025-08-10T16:00:00.000Z', 1, '2025-08-03 19:54:20', '2025-08-03 19:54:20');
 
 -- ----------------------------
 -- Table structure for sub_product_quotation
@@ -460,7 +460,7 @@ CREATE TABLE `sub_products_code`  (
   `other_features` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '产品的其他特性描述',
   `component_structure` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '产品的部件结构说明',
   `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品的计量单位',
-  `unit_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '产品的单价',
+  `unit_price` int(10) NULL DEFAULT NULL COMMENT '产品的单价',
   `currency` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品价格的币别',
   `production_requirements` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '产品的生产要求',
   `is_deleted` int(1) UNSIGNED ZEROFILL NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
@@ -472,9 +472,9 @@ CREATE TABLE `sub_products_code`  (
 -- ----------------------------
 -- Records of sub_products_code
 -- ----------------------------
-INSERT INTO `sub_products_code` VALUES (9, 1, 1, '123', '113', '图只可以', '21', '2131', '3131', '1313', '212', 1212.00, '121', '21', 1, '2025-07-08 15:02:27', '2025-07-14 10:04:36');
-INSERT INTO `sub_products_code` VALUES (10, 1, 1, '1233', '212', '月1', '121', '2121', '2121', '21', '212', 121.00, '21', '2121', 1, '2025-07-08 15:12:29', '2025-07-14 10:04:29');
-INSERT INTO `sub_products_code` VALUES (11, 1, 1, '1234', '12', '121', '212', '21', '212', '211', '1212', 2212.00, '1212', '121', 1, '2025-07-15 11:04:40', '2025-07-15 11:12:37');
+INSERT INTO `sub_products_code` VALUES (9, 1, 1, '123', '113', '图只可以', '21', '2131', '3131', '1313', '212', 1212, '121', '21', 1, '2025-07-08 15:02:27', '2025-07-14 10:04:36');
+INSERT INTO `sub_products_code` VALUES (10, 1, 1, '1233', '212', '月1', '121', '2121', '2121', '21', '212', 121, '21', '2121', 1, '2025-07-08 15:12:29', '2025-07-14 10:04:29');
+INSERT INTO `sub_products_code` VALUES (11, 1, 1, '1234', '12', '121', '212', '21', '212', '211', '1212', 2212, '1212', '121', 1, '2025-07-15 11:04:40', '2025-07-15 11:12:37');
 
 -- ----------------------------
 -- Table structure for sub_sales_order
@@ -504,7 +504,7 @@ CREATE TABLE `sub_sales_order`  (
 -- Records of sub_sales_order
 -- ----------------------------
 INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07 00:00:00', 3, '31232131', 10, '我的要求', '311', '车1', '2025-07-07 00:00:00', '2025-07-27 00:00:00', '2123121', 1, '2025-07-14 13:55:51', '2025-07-25 19:51:48');
-INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 2, '31232131', 9, '21', '2121', '2121', '2025-07-14 00:00:00', '2025-07-14T10:47:29.000Z', '3131', 1, '2025-07-14 18:47:31', '2025-07-25 19:50:59');
+INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 2, '31232131', 9, '21', '2121', '2121', '2025-07-14 00:00:00', '2025-07-14T10:47:29.000Z', '3131', 1, '2025-07-14 18:47:31', '2025-08-03 19:37:53');
 
 -- ----------------------------
 -- Table structure for sub_supplier_info

@@ -7,7 +7,7 @@ export default defineComponent({
   setup(){
     const formRef = ref(null);
     const rules = reactive({
-      quote_id: [
+      sale_id: [
         { required: true, message: '请选择报价单号', trigger: 'blur' },
       ],
       notice: [
@@ -19,7 +19,7 @@ export default defineComponent({
     })
     let dialogVisible = ref(false)
     let form = ref({
-      quote_id: '',
+      sale_id: '',
       notice: '',
       delivery_time: '',
     })
@@ -91,7 +91,7 @@ export default defineComponent({
     }
     const resetForm = () => {
       form.value = {
-        quote_id: '',
+        sale_id: '',
         notice: '',
         delivery_time: '',
       }
@@ -144,8 +144,8 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="报价单" prop="quote_id">
-                  <MySelect v-model={ form.value.quote_id } apiUrl="/api/getProductQuotation" query="notice" itemValue="notice" placeholder="请选择报价单" />
+                <ElFormItem label="客户订单号" prop="sale_id">
+                  <MySelect v-model={ form.value.sale_id } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择客户订单号" />
                 </ElFormItem>
                 <ElFormItem label="生产订单号" prop="notice">
                   <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />

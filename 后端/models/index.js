@@ -33,7 +33,6 @@ SubProductQuotation.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' 
 SubProductQuotation.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductQuotation.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
 
-SubProductNotice.belongsTo(SubProductQuotation, { foreignKey: 'quote_id', as: 'quote' })
 SubProductNotice.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubProductNotice.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductNotice.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })

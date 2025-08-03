@@ -166,7 +166,7 @@ router.post('/sale_order', authMiddleware, async (req, res) => {
   res.json({ message: '添加成功', code: 200 });
 });
 
-// 更新产品报价
+// 更新销售订单
 router.put('/sale_order', authMiddleware, async (req, res) => {
   const { customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, id } = req.body;
   
@@ -304,7 +304,6 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
       company_id,
     },
     include: [
-      { model: SubProductQuotation, as: 'quote' },
       { model: SubSaleOrder, as: 'sale', where: saleOrderWhere },
       { model: SubCustomerInfo, as: 'customer', where: customerInfoWhere },
       { model: SubProductsCode, as: 'product' }
@@ -330,54 +329,50 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
   });
 })
 router.post('/product_notice', authMiddleware, async (req, res) => {
-  const { notice, quote_id, delivery_time } = req.body;
+  const { sale_id, notice, delivery_time } = req.body;
   
   const { id: userId, company_id } = req.user;
 
   let customer_id = ''
   let product_id = ''
-  let sale_id = ''
-  const quote = await SubProductQuotation.findOne({
-    where: { id: quote_id },
+  const quote = await SubSaleOrder.findOne({
+    where: { id: sale_id },
     raw: true
   })
   if(quote){
     customer_id = quote.customer_id
     product_id = quote.product_id
-    sale_id = quote.sale_id
   }else{
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   
   await SubProductNotice.create({
-    notice, quote_id, customer_id, product_id, sale_id, delivery_time, company_id,
+    notice, customer_id, product_id, sale_id, delivery_time, company_id,
     user_id: userId
   })
   
   res.json({ message: '添加成功', code: 200 });
 });
 router.put('/product_notice', authMiddleware, async (req, res) => {
-  const { notice, quote_id, delivery_time, id } = req.body;
+  const { notice, sale_id, delivery_time, id } = req.body;
   
   const { id: userId, company_id } = req.user;
 
   let customer_id = ''
   let product_id = ''
-  let sale_id = ''
-  const quote = await SubProductQuotation.findOne({
-    where: { id: quote_id },
+  const quote = await SubSaleOrder.findOne({
+    where: { id: sale_id },
     raw: true
   })
   if(quote){
     customer_id = quote.customer_id
     product_id = quote.product_id
-    sale_id = quote.sale_id
   }else{
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   
   const updateResult = await SubProductNotice.update({
-    notice, quote_id, customer_id, product_id, sale_id, delivery_time, company_id,
+    notice, customer_id, product_id, sale_id, delivery_time, company_id,
     user_id: userId
   }, {
     where: {

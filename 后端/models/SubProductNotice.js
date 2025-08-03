@@ -26,11 +26,6 @@ const SubProductNotice = sequelize.define('SubProductNotice', {
     allowNull: false,
     comment: ' 生产订单号 '
   },
-  quote_id: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    comment: ' 报价单 id'
-  },
   sale_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
