@@ -4,7 +4,7 @@ const { SubProductionProgress, SubProductNotice, SubProductsCode, SubCustomerInf
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
-// 获取供应商列表
+// 获取生产进度表列表
 router.get('/production_progress', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
@@ -21,7 +21,7 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
       { model: SubProductsCode, as: 'product' },
       { model: SubCustomerInfo, as: 'customer' },
       { model: SubSaleOrder, as: 'sale' },
-      { model: SubPartCode, as: 'part_id' }
+      { model: SubPartCode, as: 'part', required: false }
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
