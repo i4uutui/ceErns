@@ -21,7 +21,7 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
       { model: SubProductsCode, as: 'product' },
       { model: SubCustomerInfo, as: 'customer' },
       { model: SubSaleOrder, as: 'sale' },
-      { model: SubPartCode, as: 'part', required: false }
+      { model: SubPartCode, as: 'part' }
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),

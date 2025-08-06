@@ -1,17 +1,17 @@
 /*
- Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
- Source Server         : thinkphp_demo
+ Source Server         : ceshi
  Source Server Type    : MySQL
- Source Server Version : 50722 (5.7.22)
+ Source Server Version : 50740
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50722 (5.7.22)
+ Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 03/08/2025 20:43:40
+ Date: 06/08/2025 16:34:56
 */
 
 SET NAMES utf8mb4;
@@ -443,6 +443,31 @@ CREATE TABLE `sub_product_quotation`  (
 -- ----------------------------
 INSERT INTO `sub_product_quotation` VALUES (11, 1, 1, 2, 2, 9, '111', '111', '111', '111', 1, '2025-07-25 22:44:22', '2025-07-25 22:44:22');
 INSERT INTO `sub_product_quotation` VALUES (12, 1, 1, 1, 3, 10, '222', '222', '222', '222', 1, '2025-07-25 22:44:29', '2025-07-25 22:44:29');
+
+-- ----------------------------
+-- Table structure for sub_production_progress
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_production_progress`;
+CREATE TABLE `sub_production_progress`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `notice_id` int(11) NOT NULL COMMENT '生产通知单id',
+  `product_id` int(11) NOT NULL COMMENT '产品id',
+  `customer_id` int(11) NOT NULL COMMENT '客户id',
+  `sale_id` int(11) NOT NULL COMMENT '销售id',
+  `part_id` int(11) NULL DEFAULT NULL COMMENT '部件编码id',
+  `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '生产特别要求',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of sub_production_progress
+-- ----------------------------
+INSERT INTO `sub_production_progress` VALUES (7, 1, 1, 6, 10, 3, 1, NULL, NULL, 1, '2025-08-06 14:43:43', '2025-08-06 14:43:43');
 
 -- ----------------------------
 -- Table structure for sub_products_code
