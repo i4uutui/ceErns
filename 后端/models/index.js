@@ -19,6 +19,7 @@ const SubProcessBom = require('./SubProcessBom.js') // 材料BOM信息表
 const SubSaleOrder = require('./SubSaleOrder.js') // 销售订单表
 const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
 const SubOutsourcingQuote = require('./SubOutsourcingQuote.js') // 委外报价信息表
+const SubProductionProgress = require('./SubProductionProgress.js') // 生产进度表
 
 // AdUser.hasOne(AdCompanyInfo, { foreignKey: 'id', sourceKey: 'company_id', as: 'company' })
 // AdCompanyInfo.belongsTo(AdUser, { foreignKey: 'id', targetKey: 'company_id' })
@@ -53,6 +54,12 @@ SubOutsourcingQuote.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: '
 SubOutsourcingQuote.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
 SubOutsourcingQuote.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' })
 
+SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+SubProductionProgress.belongsTo(SubProductsCode, { foreignKey: 'product_id', as: 'product' })
+SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
+SubProductionProgress.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
+SubProductionProgress.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
+
 module.exports = {
   Op,
   AdAdmin,
@@ -73,7 +80,8 @@ module.exports = {
   SubProcessBom,
   SubSaleOrder,
   SubMaterialQuote,
-  SubOutsourcingQuote
+  SubOutsourcingQuote,
+  SubProductionProgress
 }
 
 

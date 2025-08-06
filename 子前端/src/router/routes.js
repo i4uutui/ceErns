@@ -262,27 +262,27 @@ const routes = [
           menu: true
         }
       },
-      // // 生产管理
-      // {
-      //   path: '/production/production-progress',
-      //   name: 'ProductionProgress',
-      //   component: () => import('@/views/Production/ProductionProgress.vue'),
-      //   meta: {
-      //     title: '生产进度表',
-      //     parent: '生产管理',
-      //     menu: true
-      //   }
-      // },
-      // {
-      //   path: '/production/work-order',
-      //   name: 'WorkOrder',
-      //   component: () => import('@/views/Production/WorkOrder.vue'),
-      //   meta: {
-      //     title: '派工单',
-      //     parent: '生产管理',
-      //     menu: true
-      //   }
-      // },
+      // 生产管理
+      {
+        path: '/production/production-progress',
+        name: 'ProductionProgress',
+        component: () => import('@/views/Production/ProductionProgress.jsx'),
+        meta: {
+          title: '生产进度表',
+          parent: '生产管理',
+          menu: true
+        }
+      },
+      {
+        path: '/production/work-order',
+        name: 'WorkOrder',
+        component: () => import('@/views/Production/WorkOrder.jsx'),
+        meta: {
+          title: '派工单',
+          parent: '生产管理',
+          menu: true
+        }
+      },
       // {
       //   path: '/production/report-order',
       //   name: 'ReportOrder',

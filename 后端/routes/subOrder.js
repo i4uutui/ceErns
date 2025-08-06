@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductsCode, SubSaleOrder, SubProductNotice, Op } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductsCode, SubSaleOrder, SubProductNotice, SubProductionProgress, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -383,6 +383,46 @@ router.put('/product_notice', authMiddleware, async (req, res) => {
   
   res.json({ message: '修改成功', code: 200 });
 });
+// 通知单排期
+router.post('/set_production_progress', authMiddleware, async (req, res) => {
+  const { id } = req.body;
+  const { id: userId, company_id } = req.user;
+  
+  const rows = await SubProductNotice.findAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+      id
+    }
+  })
+  if(rows.length == 0){
+    return res.json({ message: '数据不存在，或已被删除', code: 401 })
+  }
+  const row = rows[0].toJSON()
+  const objData = {
+    product_id: row.product_id,
+    sale_id: row.sale_id,
+    customer_id: row.customer_id
+  }
+  const red = await SubProductionProgress.findAll({
+    where: {
+      notice_id: id,
+      company_id
+    }
+  })
+  if(red.length != 0){
+    return res.json({ message: '该生产通知单已排期', code: 401 })
+  }
+  
+  const result = await SubProductionProgress.create({
+    notice_id: id,
+    ...objData,
+    company_id,
+    user_id: userId
+  })
+  
+  res.json({ message: '操作成功', code: 200 });
+})
 
 module.exports = router;
 

@@ -1,4 +1,4 @@
-import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn } from 'element-plus'
+import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElMessageBox, ElPagination, ElTable, ElTableColumn } from 'element-plus'
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
@@ -72,6 +72,19 @@ export default defineComponent({
         }
       })
     }
+    const handleScheduling = (row) => {
+      ElMessageBox.confirm('是否确认将此通知单进行排期？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(res => {
+        request.post('/api/set_production_progress', { id: row.id }).then(res => {
+          if(res && res.code == 200){
+            ElMessage.success('操作成功');
+          }
+        })
+      }).catch({})
+    }
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
@@ -95,6 +108,16 @@ export default defineComponent({
         notice: '',
         delivery_time: '',
       }
+    }
+    // 分页相关
+    function pageSizeChange(val) {
+      currentPage.value = 1;
+      pageSize.value = val;
+      fetchProductList()
+    }
+    function currentPageChange(val) {
+      currentPage.value = val;
+      fetchProductList();
     }
 
     return() => (
@@ -131,6 +154,7 @@ export default defineComponent({
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="primary" onClick={ () => handleScheduling(scope.row) }>排期</ElButton>
                       </>
                     )}
                   </ElTableColumn>

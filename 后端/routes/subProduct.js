@@ -6,20 +6,22 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 
 // 获取材料BOM信息表
 router.get('/material_bom', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, archive } = req.query;
+  const { page = 1, pageSize = 10, archive, product_code } = req.query;
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
   
+  const productWhere = {}
+  if(product_code) productWhere.product_code = product_code
   const { count, rows } = await SubMaterialBom.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id,
-      archive
+      archive,
     },
     include: [
       { model: SubPartCode, as: 'part' },
-      { model: SubProductsCode, as: 'product'}
+      { model: SubProductsCode, as: 'product', where: productWhere}
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),

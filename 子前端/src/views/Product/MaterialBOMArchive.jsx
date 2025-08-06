@@ -1,10 +1,11 @@
 import { defineComponent, ref, onMounted, computed } from 'vue';
-import { ElButton, ElCard, ElPagination, ElTable, ElTableColumn, } from 'element-plus'
+import { ElButton, ElCard, ElInput, ElPagination, ElTable, ElTableColumn, } from 'element-plus'
 import request from '@/utils/request';
 
 export default defineComponent({
   setup(){
     let tableData = ref([])
+    let product_code = ref('')
     let currentPage = ref(1);
     let pageSize = ref(10);
     let total = ref(0);
@@ -39,7 +40,8 @@ export default defineComponent({
         params: {
           page: currentPage.value,
           pageSize: pageSize.value,
-          archive: 0
+          archive: 0,
+          product_code: product_code.value
         },
       });
       const data = res.data.map(o => {
@@ -74,16 +76,19 @@ export default defineComponent({
       <>
         <ElCard>
           {{
-            // header: () => (
-            //   <>
-            //     <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-            //       添加材料BOM
-            //     </ElButton>
-            //     <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
-            //       存档
-            //     </ElButton>
-            //   </>
-            // ),
+            header: () => (
+              <div class="flex">
+                <div class="pr10 flex">
+                  <span>产品编码:</span>
+                  <ElInput v-model={ product_code.value } style="width: 160px" placeholder="请输入"/>
+                </div>
+                <div class="pr10">
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList } >
+                    查询
+                  </ElButton>
+                </div>
+              </div>
+            ),
             default: () => (
               <>
                 <ElTable data={ processedTableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
