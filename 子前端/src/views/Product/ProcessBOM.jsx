@@ -25,7 +25,7 @@ export default defineComponent({
         { required: true, message: '请选择设备编码', trigger: 'blur' },
       ],
       time: [
-        { required: true, message: '请输入单件工时', trigger: 'blur' },
+        { required: true, message: '请输入单件工时(分)', trigger: 'blur' },
       ],
       price: [
         { required: true, message: '请输入加工单价', trigger: 'blur' },
@@ -262,7 +262,7 @@ export default defineComponent({
                         <ElTableColumn prop={`textJson[${index}].process_name`} label="工艺名称" />
                         <ElTableColumn prop={`textJson[${index}].equipment_code`} label="设备编码" />
                         <ElTableColumn prop={`textJson[${index}].equipment_name`} label="设备名称" />
-                        <ElTableColumn prop={`textJson[${index}].time`} label="单件工时" />
+                        <ElTableColumn prop={`textJson[${index}].time`} label="单件工时(分)" />
                         <ElTableColumn prop={`textJson[${index}].price`} label="加工单价" />
                         <ElTableColumn prop={`textJson[${index}].section_points`} label="段数点数" />
                         <ElTableColumn prop={`textJson[${index}].long`} label="生产制程" />
@@ -306,7 +306,7 @@ export default defineComponent({
                         <ElFormItem label="设备编码" prop={ `textJson[${index}].equipment_id` } rules={ rules.equipment_id }>
                           <MySelect v-model={ e.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择工艺编码" onChange={ (val) => equipmentHandle(val, index) } />
                         </ElFormItem>
-                        <ElFormItem label="单件工时" prop={ `textJson[${index}].time` } rules={ rules.time }>
+                        <ElFormItem label="单件工时(分)" prop={ `textJson[${index}].time` } rules={ rules.time }>
                           <ElInput v-model={ e.time } placeholder="请输入单件工时" />
                         </ElFormItem>
                         <ElFormItem label="加工单价" prop={ `textJson[${index}].price` } rules={ rules.price }>

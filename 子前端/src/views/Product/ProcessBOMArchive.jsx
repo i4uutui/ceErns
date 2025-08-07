@@ -104,7 +104,7 @@ export default defineComponent({
                         <ElTableColumn prop={`textJson[${index}].process_name`} label="工艺名称" />
                         <ElTableColumn prop={`textJson[${index}].equipment_code`} label="设备编码" />
                         <ElTableColumn prop={`textJson[${index}].equipment_name`} label="设备名称" />
-                        <ElTableColumn prop={`textJson[${index}].time`} label="单件工时" />
+                        <ElTableColumn prop={`textJson[${index}].time`} label="单件工时(分)" />
                         <ElTableColumn prop={`textJson[${index}].price`} label="加工单价" />
                         <ElTableColumn prop={`textJson[${index}].section_points`} label="段数点数" />
                         <ElTableColumn prop={`textJson[${index}].long`} label="生产制程" />

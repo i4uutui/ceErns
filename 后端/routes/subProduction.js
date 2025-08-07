@@ -41,5 +41,23 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
     code: 200 
   });
 });
+router.put('/production_progress', authMiddleware, async (req, res) => {
+  const { id, part_id, out_number, order_number, remarks } = req.body
+  const { id: userId, company_id } = req.user;
+  
+  const row = await SubProductionProgress.findAll({
+    where: { id }
+  })
+  if(row.length == 0){
+    return res.json({ message: '数据不存在，或已被删除', code: 401 })
+  }
+  await SubProductionProgress.update({
+    part_id, out_number, order_number, remarks
+  }, {
+    where: { id, company_id }
+  })
+  
+  res.json({ message: '修改成功', code: 200 });
+})
 
 module.exports = router;
