@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { SubProductsCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, Op } = require('../models')
+const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -12,7 +12,7 @@ router.get('/products_code', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user;
   
-  const { count, rows } = await SubProductsCode.findAndCountAll({
+  const { count, rows } = await SubProductCode.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id
@@ -41,7 +41,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const rows = await SubProductsCode.findAll({
+  const rows = await SubProductCode.findAll({
     where: {
       product_code,
       company_id
@@ -51,7 +51,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  SubProductsCode.create({
+  SubProductCode.create({
     product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
     user_id: userId
   })
@@ -65,14 +65,14 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   
   const { id: userId, company_id } = req.user;
   
-  const rows = await SubProductsCode.findAll({
+  const rows = await SubProductCode.findAll({
     where: { product_code, company_id, id: { [Op.ne]: id } }
   })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  const result = await SubProductsCode.update({
+  const result = await SubProductCode.update({
     product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
     user_id: userId
   }, { where: { id } })
@@ -88,7 +88,7 @@ router.delete('/products_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
   
-  const result = await SubProductsCode.update({
+  const result = await SubProductCode.update({
     is_deleted: 0
   }, { where: { id, is_deleted: 1, company_id } })
   

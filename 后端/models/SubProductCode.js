@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-const SubProductsCode = sequelize.define('SubProductsCode', {
+const SubProductCode = sequelize.define('SubProductCode', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -82,12 +82,12 @@ const SubProductsCode = sequelize.define('SubProductsCode', {
   }
 }, {
   sequelize,
-  modelName: 'sub_products_code',
-  tableName: 'sub_products_code',
+  modelName: 'sub_product_code',
+  tableName: 'sub_product_code',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
   comment: '产品编码信息表'
 })
 
-module.exports = SubProductsCode;
+module.exports = SubProductCode;
