@@ -27,8 +27,17 @@ AdUser.hasMany(AdOrganize, { foreignKey: 'menber_id', as: 'organize' });
 AdOrganize.hasMany(AdOrganize, { foreignKey: 'pid', as: 'children' });
 AdOrganize.belongsTo(AdUser, { foreignKey: 'menber_id', as: 'menber' });
 
+
+SubProductCode.belongsToMany(SubPartCode, { through: 'sub_product_part', foreignKey: 'product_id', as: 'part' });
+SubPartCode.belongsToMany(SubProductCode, { through: 'sub_product_part', foreignKey: 'part_id', as: 'product' });
+
+SubPartCode.belongsToMany(SubMaterialCode, { through: 'sub_part_material', foreignKey: 'part_id', as: 'material' })
+SubMaterialCode.belongsToMany(SubPartCode, { through: 'sub_part_material', foreignKey: 'material_id', as: 'part' })
+
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
+SubProductCode.hasMany(SubSaleOrder, { foreignKey: 'product_id', as: 'order' })
+SubCustomerInfo.hasMany(SubSaleOrder, { foreignKey: 'customer_id', as: 'order' })
 
 SubProductQuotation.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubProductQuotation.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
@@ -58,7 +67,6 @@ SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as:
 SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductionProgress.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
-SubProductionProgress.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
 
 module.exports = {
   Op,

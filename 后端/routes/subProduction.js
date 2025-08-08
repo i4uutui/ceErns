@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductionProgress, SubProductNotice, SubProductsCode, SubCustomerInfo, SubSaleOrder, SubPartCode, Op } = require('../models');
+const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -18,10 +18,15 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
     },
     include: [
       { model: SubProductNotice, as: 'notice' },
-      { model: SubProductsCode, as: 'product' },
+      {
+        model: SubProductCode,
+        as: 'product',
+        include: [
+          { model: SubPartCode, as: 'part' }
+        ]
+      },
       { model: SubCustomerInfo, as: 'customer' },
       { model: SubSaleOrder, as: 'sale' },
-      { model: SubPartCode, as: 'part' }
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -29,7 +34,7 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
   })
   const totalPages = Math.ceil(count / pageSize)
   
-  const fromData = rows.map(item => item.dataValues)
+  const fromData = rows.map(item => item.toJSON())
   
   // 返回所需信息
   res.json({ 

@@ -1,5 +1,6 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox, ElPagination } from 'element-plus'
+import MySelect from '@/components/tables/mySelect.vue';
 import request from '@/utils/request';
 
 export default defineComponent({
@@ -53,6 +54,7 @@ export default defineComponent({
       unit_price: '',
       currency: '',
       production_requirements: '',
+      partIds: []
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -123,7 +125,9 @@ export default defineComponent({
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
-      form.value = { ...row };
+      const rows = { ...row }
+      rows.partIds = rows.part.map(e => e.id)
+      form.value = rows;
     }
     // 添加
     const handleAdd = () => {
@@ -150,6 +154,7 @@ export default defineComponent({
         unit_price: '',
         currency: '',
         production_requirements: '',
+        partIds: []
       }
     }
     // 分页相关
@@ -184,6 +189,12 @@ export default defineComponent({
                   <ElTableColumn prop="specification" label="规格" />
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="component_structure" label="产品结构" />
+                  <ElTableColumn label="部件">
+                  {({row}) => (
+                    <span>{ row.part && row.part.length ? row.part.map(part => part.part_name).join('，') : 'null' }
+                    </span>
+                  )}
+                  </ElTableColumn>
                   <ElTableColumn prop="unit" label="单位" width="100" />
                   <ElTableColumn prop="unit_price" label="单价" width="100" />
                   <ElTableColumn prop="currency" label="币别" width="100" />
@@ -224,8 +235,11 @@ export default defineComponent({
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
                 </ElFormItem>
-                <ElFormItem label="部件结构" prop="component_structure">
-                  <ElInput v-model={ form.value.component_structure } placeholder="请输入部件结构" />
+                <ElFormItem label="产品结构" prop="component_structure">
+                  <ElInput v-model={ form.value.component_structure } placeholder="请输入产品结构" />
+                </ElFormItem>
+                <ElFormItem label="部件" prop="partIds">
+                  <MySelect v-model={ form.value.partIds } multiple apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件" />
                 </ElFormItem>
                 <ElFormItem label="单位" prop="unit">
                   <ElInput v-model={ form.value.unit } placeholder="请输入单位" />

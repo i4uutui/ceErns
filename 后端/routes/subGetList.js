@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductsCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, Op } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -14,7 +14,7 @@ router.get('/getSaleOrder', authMiddleware, async (req, res) => {
       [Op.like]: `%${customer_order}%`
     } },
     include: [
-      { model: SubProductsCode, as: 'product' },
+      { model: SubProductCode, as: 'product' },
       { model: SubCustomerInfo, as: 'customer'}
     ],
     order: [['created_at', 'DESC']],
@@ -67,7 +67,7 @@ router.get('/getProductsCode', authMiddleware, async (req, res) => {
     } },
     order: [['created_at', 'DESC']],
   }
-  const { count, rows } = await SubProductsCode.findAndCountAll(config);
+  const { count, rows } = await SubProductCode.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())
   
   res.json({ data: formatArrayTime(row), code: 200 });

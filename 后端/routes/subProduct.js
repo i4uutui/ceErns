@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubMaterialBom, SubPartCode, SubProductsCode, SubProcessBom, Op } = require('../models');
+const { SubMaterialBom, SubPartCode, SubProductCode, SubProcessBom, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -21,7 +21,7 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
     },
     include: [
       { model: SubPartCode, as: 'part' },
-      { model: SubProductsCode, as: 'product', where: productWhere}
+      { model: SubProductCode, as: 'product', where: productWhere}
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -116,7 +116,7 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
     },
     include: [
       { model: SubPartCode, as: 'part' },
-      { model: SubProductsCode, as: 'product'}
+      { model: SubProductCode, as: 'product'}
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),

@@ -1,5 +1,6 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox, ElPagination } from 'element-plus'
+import MySelect from '@/components/tables/mySelect.vue';
 import request from '@/utils/request';
 
 export default defineComponent({
@@ -40,6 +41,7 @@ export default defineComponent({
       part_name: '',
       model: '',
       specification: '',
+      materialIds: [],
       other_features: '',
       unit: '',
       unit_price: '',
@@ -116,7 +118,9 @@ export default defineComponent({
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
-      form.value = { ...row };
+      const rows = { ...row }
+      rows.materialIds = rows.material.map(e => e.id)
+      form.value = rows;
     }
     // 添加
     const handleAdd = () => {
@@ -136,6 +140,7 @@ export default defineComponent({
         part_name: '',
         model: '',
         specification: '',
+        materialIds: [],
         other_features: '',
         unit: '',
         unit_price: '',
@@ -173,6 +178,12 @@ export default defineComponent({
                   <ElTableColumn prop="part_name" label="部件名称" />
                   <ElTableColumn prop="model" label="型号" />
                   <ElTableColumn prop="specification" label="规格" />
+                  <ElTableColumn label="材料">
+                  {({row}) => (
+                    <span>{ row.material && row.material.length ? row.material.map(material => material.material_name).join('，') : 'null' }
+                    </span>
+                  )}
+                  </ElTableColumn>
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="unit" label="单位" width="100" />
                   <ElTableColumn prop="unit_price" label="单价" width="100" />
@@ -208,6 +219,9 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="规格" prop="specification">
                   <ElInput v-model={ form.value.specification } placeholder="请输入规格" />
+                </ElFormItem>
+                <ElFormItem label="材料" prop="materialIds">
+                  <MySelect v-model={ form.value.materialIds } multiple apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料" />
                 </ElFormItem>
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />

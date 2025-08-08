@@ -1,5 +1,5 @@
 <template>
-  <ElSelect v-model="valueData" filterable remote remote-show-suffix :remoteMethod="remoteMethod" valueKey="id" :placeholder="placeholder" @change="changeSelect">
+  <ElSelect v-model="valueData" :multiple="multiple" filterable remote remote-show-suffix valueKey="id" :placeholder="placeholder" @change="changeSelect">
     <ElOption v-for="(item, index) in option" :value="item.id" :label="item[itemValue]" :key="index">
       <div v-if="arrValue.length">
         <span v-for="(o, idx) in arrValue" :key="idx">
@@ -38,6 +38,10 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: ''
+  },
+  multiple: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -62,25 +66,25 @@ const getList = async (query) => {
 }
 
 const remoteMethod = (query) => {
-  option.value = []
-  if(timeout.value){
-    clearTimeout(timeout.value)
-    timeout.value = null
-  }
-  timeout.value = setTimeout(async () => {
-    if(query){
-      getList(query)
-    }else{
-      list.value = []
-    }
-    clearTimeout(timeout.value)
-    timeout.value = null
-  }, 500)
+  // option.value = []
+  // if(timeout.value){
+  //   clearTimeout(timeout.value)
+  //   timeout.value = null
+  // }
+  // timeout.value = setTimeout(async () => {
+  //   if(query){
+  //     getList(query)
+  //   }else{
+  //     list.value = []
+  //   }
+  //   clearTimeout(timeout.value)
+  //   timeout.value = null
+  // }, 500)
 }
 const changeSelect = (value) => {
-  const val = option.value.filter(o => o.id == value)[0]
-  list.value = []
-  emit('change', val)
+  // const val = option.value.filter(o => o.id == value)[0]
+  // list.value = []
+  // emit('change', val)
 }
 function getNestedProperty(obj, path) {
   const keys = path.split('.');

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductsCode, SubSaleOrder, SubProductNotice, SubProductionProgress, Op } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubSaleOrder, SubProductNotice, SubProductionProgress, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -129,8 +129,8 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
       company_id,
     },
     include: [
-      { model: SubProductsCode, as: 'product' },
-      { model: SubCustomerInfo, as: 'customer'}
+      { model: SubCustomerInfo, as: 'customer'},
+      { model: SubProductCode, as: 'product' }
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -204,10 +204,10 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
     include: [
       { model: SubSaleOrder, as: 'sale' },
       { model: SubCustomerInfo, as: 'customer' },
-      { model: SubProductsCode, as: 'product' }
+      { model: SubProductCode, as: 'product' }
     ],
     order: [
-      [{ model: SubProductsCode, as: 'product' }, 'product_name', 'DESC'],
+      [{ model: SubProductCode, as: 'product' }, 'product_name', 'DESC'],
       ['created_at', 'DESC']
     ],
     limit: parseInt(pageSize),
@@ -306,7 +306,7 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
     include: [
       { model: SubSaleOrder, as: 'sale', where: saleOrderWhere },
       { model: SubCustomerInfo, as: 'customer', where: customerInfoWhere },
-      { model: SubProductsCode, as: 'product' }
+      { model: SubProductCode, as: 'product' }
     ],
     order: [
       ['created_at', 'DESC']

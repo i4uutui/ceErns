@@ -39,11 +39,6 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     allowNull: false,
     comment: '销售id'
   },
-  part_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    comment: '部件编码id'
-  },
   out_number: {
     type: DataTypes.INTEGER(20),
     allowNull: true,

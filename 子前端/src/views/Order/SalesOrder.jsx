@@ -200,8 +200,8 @@ export default defineComponent({
                 <ElFormItem label="客户订单号" prop="customer_order">
                   <ElInput v-model={ form.value.customer_order } placeholder="请输入客户订单号" />
                 </ElFormItem>
-                <ElFormItem label="产品名称" prop="product_id">
-                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_name" itemValue="product_name" placeholder="请选择产品名称" />
+                <ElFormItem label="产品编码" prop="product_id">
+                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_name" itemValue="product_name" placeholder="请选择产品编码" />
                 </ElFormItem>
                 <ElFormItem label="产品要求" prop="product_req">
                   <ElInput v-model={ form.value.product_req } placeholder="请输入产品要求" />

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductsCode, Op } = require('../models')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -109,7 +109,7 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
       { model: SubMaterialCode, as: 'material' },
       { model: SubSupplierInfo, as: 'supplier' },
       { model: SubProductNotice, as: 'notice' },
-      { model: SubProductsCode, as: 'product' }
+      { model: SubProductCode, as: 'product' }
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubOutsourcingQuote, SubSupplierInfo, SubProductsCode, SubPartCode, SubProcessCode, Op } = require('../models');
+const { SubOutsourcingQuote, SubSupplierInfo, SubProductCode, SubPartCode, SubProcessCode, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -17,7 +17,7 @@ router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
     },
     include: [
       { model: SubSupplierInfo, as: 'supplier' },
-      { model: SubProductsCode, as: 'product' },
+      { model: SubProductCode, as: 'product' },
       { model: SubPartCode, as: 'part' },
       { model: SubProcessCode, as: 'process' },
     ],

@@ -17,6 +17,14 @@ router.get('/products_code', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id
     },
+    include: [{ 
+      model: SubPartCode, 
+      as: 'part', 
+      attributes: ['id', 'part_name', 'part_code'],
+      through: {
+        attributes: []
+      }
+    }],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -37,47 +45,74 @@ router.get('/products_code', authMiddleware, async (req, res) => {
 
 // 添加产品编码
 router.post('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, partIds } = req.body;
   
   const { id: userId, company_id } = req.user;
   
-  const rows = await SubProductCode.findAll({
-    where: {
-      product_code,
-      company_id
-    }
-  })
+  const rows = await SubProductCode.findAll({ where: { product_code, company_id } })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  SubProductCode.create({
+  // 验证所有部件是否存在
+  if(partIds.length){
+    const parts = await SubPartCode.findAll({ where: { id: partIds } });
+    if (parts.length !== partIds.length) {
+      return res.json({ message: '部分部件不存在', code: 401 });
+    }
+  }
+  
+  const newProduct = await SubProductCode.create({
     product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
     user_id: userId
   })
+  
+  // 中间表
+  if(partIds.length){
+    await newProduct.addPart(partIds);
+  }
   
   res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新产品编码接口
 router.put('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, id } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, partIds, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
-  const rows = await SubProductCode.findAll({
+  // 验证产品是否存在
+  const product = await SubProductCode.findByPk(id);
+  if (!product) {
+    return res.status(404).json({ message: '产品不存在' });
+  }
+  
+  const row = await SubProductCode.findOne({
     where: { product_code, company_id, id: { [Op.ne]: id } }
   })
-  if(rows.length != 0){
+  if(row){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  const result = await SubProductCode.update({
+  // 验证所有部件是否存在
+  if(partIds.length){
+    const parts = await SubPartCode.findAll({ where: { id: partIds } });
+    if (parts.length !== partIds.length) {
+      return res.json({ message: '部分部件不存在', code: 401 });
+    }
+  }
+  
+  const result = await product.update({
     product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
     user_id: userId
   }, { where: { id } })
   if (result.length == 0) {
     return res.json({ message: '未找到该产品编码', code: 401 });
+  }
+  
+  // 中间表
+  if(partIds.length){
+    await product.setPart(partIds);
   }
   
   res.json({ msg: "修改成功", code: 200 });
@@ -88,14 +123,18 @@ router.delete('/products_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
   
+  // 验证产品是否存在
+  const product = await SubProductCode.findByPk(id);
+  if (!product) {
+    return res.status(404).json({ message: '产品不存在' });
+  }
+  
   const result = await SubProductCode.update({
     is_deleted: 0
   }, { where: { id, is_deleted: 1, company_id } })
   
-  if (result.length == 0) {
-    return res.json({ message: '产品编码不存在或已被删除', code: 401 });
-  }
-
+  await product.setPart([])
+  
   res.json({ message: '删除成功', code: 200 });
 });
 
@@ -107,12 +146,30 @@ router.get('/part_code', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
-  
+  console.log(22222);
   const { count, rows } = await SubPartCode.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id
     },
+    include: [
+      {
+        model: SubProductCode, 
+        as: 'product', 
+        attributes: ['id', 'product_name', 'product_code'],
+        through: {
+          attributes: []
+        }
+      },
+      {
+        model: SubMaterialCode,
+        as: 'material',
+        attributes: ['id', 'material_code', 'material_name'],
+        through: {
+          attributes: []
+        }
+      }
+    ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -134,47 +191,74 @@ router.get('/part_code', authMiddleware, async (req, res) => {
 
 // 添加部件编码
 router.post('/part_code', authMiddleware, async (req, res) => {
-  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks } = req.body;
+  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, materialIds } = req.body;
   
   const { id: userId, company_id } = req.user;
   
-  const rows = await SubPartCode.findAll({
-    where: {
-      part_code,
-      company_id
-    }
-  })
+  const rows = await SubPartCode.findAll({ where: { part_code, company_id } })
   if(rows.length != 0){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  SubPartCode.create({
+  // 验证所有部件是否存在
+  if(materialIds.length){
+    const materials = await SubMaterialCode.findAll({ where: { id: materialIds } });
+    if (materials.length !== materialIds.length) {
+      return res.json({ message: '部分材料不存在', code: 401 });
+    }
+  }
+  
+  const newProduct = await SubPartCode.create({
     part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, company_id,
     user_id: userId
   })
+  
+  // 中间表
+  if(materialIds.length){
+    await newProduct.addMaterial(materialIds);
+  }
   
   res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新部件编码接口
 router.put('/part_code', authMiddleware, async (req, res) => {
-  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, id } = req.body;
+  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, materialIds, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
-  const rows = await SubPartCode.findAll({
+  // 验证部件是否存在
+  const part = await SubPartCode.findByPk(id);
+  if (!part) {
+    return res.status(404).json({ message: '部件不存在' });
+  }
+  
+  const row = await SubPartCode.findOne({
     where: { part_code, company_id, id: { [Op.ne]: id } }
   })
-  if(rows.length != 0){
+  if(row){
     return res.json({ message: '编码不能重复', code: 401 })
   }
   
-  const result = await SubPartCode.update({
+  // 验证所有材料是否存在
+  if(materialIds.length){
+    const materials = await SubMaterialCode.findAll({ where: { id: materialIds } });
+    if (materials.length !== materialIds.length) {
+      return res.json({ message: '部分材料不存在', code: 401 });
+    }
+  }
+  
+  const result = await part.update({
     part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   if (result.length == 0) {
     return res.json({ message: '未找到该部件编码', code: 401 });
+  }
+  
+  // 中间表
+  if(materialIds.length){
+    await part.setMaterial(materialIds);
   }
   
   res.json({ msg: "修改成功", code: 200 });
@@ -185,6 +269,17 @@ router.delete('/part_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
   
+  // 验证部件是否存在
+  const part = await SubPartCode.findByPk(id);
+  if (!part) {
+    return res.status(404).json({ message: '部件不存在', code: 401 });
+  }
+  
+  const relatedProducts = await part.getProduct();
+  if (relatedProducts.length > 0) {
+    return res.json({ message: '该部件已关联产品编码，无法删除', code: 401 });
+  }
+  
   const result = await SubPartCode.update({
     is_deleted: 0
   }, { where: { id, is_deleted: 1, company_id } })
@@ -192,6 +287,8 @@ router.delete('/part_code/:id', authMiddleware, async (req, res) => {
   if (result.length == 0) {
     return res.json({ message: '部件编码不存在或已被删除', code: 401 });
   }
+  
+  await part.setMaterial([])
   
   res.json({ message: '删除成功', code: 200 });
 });
@@ -212,6 +309,16 @@ router.get('/material_code', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id
     },
+    include: [
+      {
+        model: SubPartCode, 
+        as: 'part', 
+        attributes: ['id', 'part_name', 'part_code'],
+        through: {
+          attributes: []
+        }
+      },
+    ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -283,6 +390,17 @@ router.put('/material_code', authMiddleware, async (req, res) => {
 router.delete('/material_code/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { company_id } = req.user
+  
+  // 验证材料是否存在
+  const part = await SubMaterialCode.findByPk(id);
+  if (!part) {
+    return res.status(404).json({ message: '材料不存在', code: 401 });
+  }
+  
+  const relatedParts = await part.getPart();
+  if (relatedParts.length > 0) {
+    return res.json({ message: '该材料已关联部件编码，无法删除', code: 401 });
+  }
   
   const result = await SubMaterialCode.update({
     is_deleted: 0
