@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 08/08/2025 18:06:15
+ Date: 09/08/2025 19:10:40
 */
 
 SET NAMES utf8mb4;
@@ -191,12 +191,13 @@ CREATE TABLE `sub_equipment_code`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '设备信息基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '设备信息基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_equipment_code
 -- ----------------------------
-INSERT INTO `sub_equipment_code` VALUES (3, 1, 1, '123', '2121', 12, '121', '121', '211', '21', '212', 1, '2025-07-08 16:06:29', '2025-07-16 19:09:21');
+INSERT INTO `sub_equipment_code` VALUES (3, 1, 1, '123', '设备2121', 12, '121', '121', '211', '21', '212', 1, '2025-07-08 16:06:29', '2025-08-09 16:06:26');
+INSERT INTO `sub_equipment_code` VALUES (4, 1, 1, '111', '设备4444', 22, '2121', '2121', '212', '121', '2121', 1, '2025-08-09 16:06:56', '2025-08-09 16:06:56');
 
 -- ----------------------------
 -- Table structure for sub_material_bom
@@ -338,7 +339,7 @@ CREATE TABLE `sub_part_code`  (
 -- Records of sub_part_code
 -- ----------------------------
 INSERT INTO `sub_part_code` VALUES (5, 1, 1, '123', '2121', '212', '1212', '121', '3131', 31.00, '311', '3131', '3131', 1, '2025-07-08 15:35:24', '2025-07-08 15:35:24');
-INSERT INTO `sub_part_code` VALUES (6, 1, 1, '21', '31', '12', '1212', '1', '3131', 12.00, '21', '2121', '2121', 1, '2025-07-08 15:36:15', '2025-07-08 15:36:15');
+INSERT INTO `sub_part_code` VALUES (6, 1, 1, '21', '31', '12', '1212', '1', '3131', 12.00, '21', '2121', '2121', 1, '2025-07-08 15:36:15', '2025-08-09 14:55:06');
 INSERT INTO `sub_part_code` VALUES (7, 1, 1, '1234', '2124', '212', '1212', '121', '3131', 31.00, '311', '3131', '3131', 1, '2025-07-08 15:35:24', '2025-08-08 11:14:41');
 INSERT INTO `sub_part_code` VALUES (8, 1, 1, '1238', '2128', '212', '1212', '121', '3131', 31.00, '311', '3131', '3131', 1, '2025-07-08 15:35:24', '2025-08-08 11:14:38');
 INSERT INTO `sub_part_code` VALUES (9, 1, 1, '12310', '21210', '212', '1212', '121', '3131', 31.00, '311', '3131', '3131', 1, '2025-07-08 15:35:24', '2025-08-08 11:14:44');
@@ -373,6 +374,29 @@ CREATE TABLE `sub_part_material`  (
 -- ----------------------------
 INSERT INTO `sub_part_material` VALUES (5, 2, '2025-08-08 10:03:56', '2025-08-08 10:03:56');
 INSERT INTO `sub_part_material` VALUES (6, 2, '2025-08-08 09:30:51', '2025-08-08 09:30:51');
+INSERT INTO `sub_part_material` VALUES (13, 2, '2025-08-09 10:09:04', '2025-08-09 10:09:04');
+
+-- ----------------------------
+-- Table structure for sub_part_process
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_part_process`;
+CREATE TABLE `sub_part_process`  (
+  `part_id` int(11) NOT NULL,
+  `process_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`part_id`, `process_id`) USING BTREE,
+  INDEX `process_id`(`process_id`) USING BTREE,
+  CONSTRAINT `part_process_ibfk_1` FOREIGN KEY (`part_id`) REFERENCES `sub_part_code` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `part_process_ibfk_2` FOREIGN KEY (`process_id`) REFERENCES `sub_process_code` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '部件和工艺的关联中间表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of sub_part_process
+-- ----------------------------
+INSERT INTO `sub_part_process` VALUES (6, 3, '2025-08-09 07:31:08', '2025-08-09 07:31:08');
+INSERT INTO `sub_part_process` VALUES (13, 3, '2025-08-09 10:09:04', '2025-08-09 10:09:04');
+INSERT INTO `sub_part_process` VALUES (13, 4, '2025-08-09 10:09:04', '2025-08-09 10:09:04');
 
 -- ----------------------------
 -- Table structure for sub_process_bom
@@ -385,18 +409,20 @@ CREATE TABLE `sub_process_bom`  (
   `product_id` int(11) NOT NULL COMMENT '产品编码id',
   `part_id` int(11) NOT NULL COMMENT '部件编码id',
   `make_time` int(11) NULL DEFAULT NULL COMMENT '制程总工时',
-  `textJson` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'BOM表的json字符串',
   `archive` int(11) NULL DEFAULT NULL COMMENT '是否已存档，1未存，0已存',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_bom
 -- ----------------------------
-INSERT INTO `sub_process_bom` VALUES (11, 1, 1, 11, 6, 111, '[{\"id\":\"S0DUSftqku50QEoZ\",\"process_id\":3,\"process_code\":\"123\",\"process_name\":\"212\",\"section_points\":21,\"equipment_id\":3,\"equipment_code\":\"123\",\"equipment_name\":\"2121\",\"time\":\"111\",\"price\":\"111\",\"long\":\"111\"}]', 0, 1, '2025-07-28 09:55:50', '2025-08-03 11:04:13');
+INSERT INTO `sub_process_bom` VALUES (16, 1, 1, 17, 13, NULL, 1, 1, '2025-08-09 18:18:19', '2025-08-09 18:54:39');
+INSERT INTO `sub_process_bom` VALUES (17, 1, 1, 17, 15, NULL, 1, 1, '2025-08-09 18:18:19', '2025-08-09 18:54:39');
+INSERT INTO `sub_process_bom` VALUES (18, 1, 1, 17, 17, NULL, 1, 1, '2025-08-09 18:18:19', '2025-08-09 18:54:40');
+INSERT INTO `sub_process_bom` VALUES (19, 1, 1, 17, 19, NULL, 1, 1, '2025-08-09 18:18:19', '2025-08-09 18:54:41');
 
 -- ----------------------------
 -- Table structure for sub_process_code
@@ -406,24 +432,26 @@ CREATE TABLE `sub_process_code`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
   `user_id` int(5) NULL DEFAULT NULL COMMENT '用户id',
   `company_id` int(5) NULL DEFAULT NULL COMMENT '企业id',
+  `equipment_id` int(11) NULL DEFAULT NULL COMMENT '设备编码ID',
   `process_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '工艺编码',
   `process_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '工艺名称',
-  `equipment_used` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '使用设备',
-  `piece_working_hours` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单件工时(小时)',
-  `processing_unit_price` int(10) NULL DEFAULT NULL COMMENT '加工单价',
+  `times` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单件工时(小时)',
+  `price` int(10) NULL DEFAULT NULL COMMENT '加工单价',
   `section_points` int(11) NULL DEFAULT NULL COMMENT '段数点数',
   `total_processing_price` int(10) NULL DEFAULT NULL COMMENT '加工总价',
+  `long` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生产制程',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   `is_deleted` int(1) UNSIGNED ZEROFILL NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_code
 -- ----------------------------
-INSERT INTO `sub_process_code` VALUES (3, 1, 1, '123', '212', '121', '21', 2121, 21, 21, '212', 1, '2025-07-08 15:56:54', '2025-07-08 16:00:17');
+INSERT INTO `sub_process_code` VALUES (3, 1, 1, 3, '123', '212', '21', 2121, 21, 21, NULL, '212', 1, '2025-07-08 15:56:54', '2025-08-09 16:06:07');
+INSERT INTO `sub_process_code` VALUES (4, 1, 1, 4, '2222', '111', '3131', 21, 213, 3131, NULL, '3131', 1, '2025-08-09 16:07:09', '2025-08-09 16:07:09');
 
 -- ----------------------------
 -- Table structure for sub_product_code

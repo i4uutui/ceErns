@@ -34,11 +34,6 @@ const SubProcessBom = sequelize.define('SubProcessBom', {
     allowNull: false,
     comment: '制程总工时'
   },
-  textJson: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    comment: 'BOM表的json字符串'
-  },
   archive: {
     type: DataTypes.INTEGER(11),
     allowNull: false,

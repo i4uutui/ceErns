@@ -37,6 +37,7 @@ export default defineComponent({
     })
     let dialogVisible = ref(false)
     let form = ref({
+      processIds: [],
       part_code: '',
       part_name: '',
       model: '',
@@ -120,6 +121,7 @@ export default defineComponent({
       dialogVisible.value = true;
       const rows = { ...row }
       rows.materialIds = rows.material.map(e => e.id)
+      rows.processIds = rows.process.map(e => e.id)
       form.value = rows;
     }
     // 添加
@@ -136,6 +138,7 @@ export default defineComponent({
     }
     const resetForm = () => {
       form.value = {
+        processIds: [],
         part_code: '',
         part_name: '',
         model: '',
@@ -222,6 +225,9 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="材料" prop="materialIds">
                   <MySelect v-model={ form.value.materialIds } multiple apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料" />
+                </ElFormItem>
+                <ElFormItem label="工艺" prop="processIds">
+                  <MySelect v-model={ form.value.processIds } multiple apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择材料" />
                 </ElFormItem>
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />

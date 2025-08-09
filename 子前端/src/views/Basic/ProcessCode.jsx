@@ -1,5 +1,6 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox, ElPagination } from 'element-plus'
+import MySelect from '@/components/tables/mySelect.vue';
 import request from '@/utils/request';
 
 export default defineComponent({
@@ -15,10 +16,10 @@ export default defineComponent({
       equipment_used: [
         { required: true, message: '请输入使用设备', trigger: 'blur' },
       ],
-      piece_working_hours: [
+      times: [
         { required: true, message: '请输入单件工时', trigger: 'blur' },
       ],
-      processing_unit_price: [
+      price: [
         { required: true, message: '请输入加工单价', trigger: 'blur' },
       ],
       section_points: [
@@ -30,13 +31,15 @@ export default defineComponent({
     })
     let dialogVisible = ref(false)
     let form = ref({
+      equipment_id: '',
       process_code: '',
       process_name: '',
       equipment_used: '',
-      piece_working_hours: '',
-      processing_unit_price: '',
+      times: '',
+      price: '',
       section_points: '',
       total_processing_price: '',
+      long: '',
       remarks: '',
     })
     let tableData = ref([])
@@ -124,13 +127,15 @@ export default defineComponent({
     }
     const resetForm = () => {
       form.value = {
+        equipment_id: '',
         process_code: '',
         process_name: '',
         equipment_used: '',
-        piece_working_hours: '',
-        processing_unit_price: '',
+        times: '',
+        price: '',
         section_points: '',
         total_processing_price: '',
+        long: '',
         remarks: '',
       }
     }
@@ -161,11 +166,12 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="process_code" label="工艺编码" />
                   <ElTableColumn prop="process_name" label="工艺名称" />
-                  <ElTableColumn prop="equipment_used" label="使用设备" />
-                  <ElTableColumn prop="piece_working_hours" label="单件工时(时)" />
-                  <ElTableColumn prop="processing_unit_price" label="加工单价" />
+                  <ElTableColumn prop="equipment.equipment_name" label="使用设备" />
+                  <ElTableColumn prop="times" label="单件工时(时)" />
+                  <ElTableColumn prop="price" label="加工单价" />
                   <ElTableColumn prop="section_points" label="段数点数" />
                   <ElTableColumn prop="total_processing_price" label="加工总价" />
+                  <ElTableColumn prop="long" label="生产制程" />
                   <ElTableColumn prop="remarks" label="备注" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -191,20 +197,23 @@ export default defineComponent({
                 <ElFormItem label="工艺名称" prop="process_name">
                   <ElInput v-model={ form.value.process_name } placeholder="请输入工艺名称" />
                 </ElFormItem>
-                <ElFormItem label="使用设备" prop="equipment_used">
-                  <ElInput v-model={ form.value.equipment_used } placeholder="请输入使用设备" />
+                <ElFormItem label="使用设备" prop="equipment_id">
+                  <MySelect v-model={ form.value.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择设备" />
                 </ElFormItem>
-                <ElFormItem label="单件工时(时)" prop="piece_working_hours">
-                  <ElInput v-model={ form.value.piece_working_hours } type="number" placeholder="请输入单件工时(时)" />
+                <ElFormItem label="单件工时(时)" prop="times">
+                  <ElInput v-model={ form.value.times } type="number" placeholder="请输入单件工时(时)" />
                 </ElFormItem>
-                <ElFormItem label="加工单价" prop="processing_unit_price">
-                  <ElInput v-model={ form.value.processing_unit_price } type="number" placeholder="请输入加工单价" />
+                <ElFormItem label="加工单价" prop="price">
+                  <ElInput v-model={ form.value.price } type="number" placeholder="请输入加工单价" />
                 </ElFormItem>
                 <ElFormItem label="段数点数" prop="section_points">
                   <ElInput v-model={ form.value.section_points } type="number" placeholder="请输入段数点数" />
                 </ElFormItem>
                 <ElFormItem label="加工总价" prop="total_processing_price">
                   <ElInput v-model={ form.value.total_processing_price } type="number" placeholder="请输入加工总价" />
+                </ElFormItem>
+                <ElFormItem label="生产制程" prop="long">
+                  <ElInput v-model={ form.value.long } placeholder="请输入生产制程" />
                 </ElFormItem>
                 <ElFormItem label="备注" prop="remarks">
                   <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />

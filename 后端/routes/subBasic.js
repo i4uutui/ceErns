@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, Op } = require('../models')
+const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, SubProcessBom, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -146,7 +146,6 @@ router.get('/part_code', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
-  console.log(22222);
   const { count, rows } = await SubPartCode.findAndCountAll({
     where: {
       is_deleted: 1,
@@ -165,6 +164,14 @@ router.get('/part_code', authMiddleware, async (req, res) => {
         model: SubMaterialCode,
         as: 'material',
         attributes: ['id', 'material_code', 'material_name'],
+        through: {
+          attributes: []
+        }
+      },
+      {
+        model: SubProcessCode,
+        as: 'process',
+        attributes: ['id', 'process_code', 'process_name'],
         through: {
           attributes: []
         }
@@ -191,7 +198,7 @@ router.get('/part_code', authMiddleware, async (req, res) => {
 
 // 添加部件编码
 router.post('/part_code', authMiddleware, async (req, res) => {
-  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, materialIds } = req.body;
+  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, materialIds, processIds } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -207,6 +214,13 @@ router.post('/part_code', authMiddleware, async (req, res) => {
       return res.json({ message: '部分材料不存在', code: 401 });
     }
   }
+  // 验证所有工艺是否存在
+  if(processIds.length){
+    const process = await SubProcessCode.findAll({ where: { id: processIds } });
+    if (process.length !== processIds.length) {
+      return res.json({ message: '部分工艺不存在', code: 401 });
+    }
+  }
   
   const newProduct = await SubPartCode.create({
     part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, company_id,
@@ -217,13 +231,16 @@ router.post('/part_code', authMiddleware, async (req, res) => {
   if(materialIds.length){
     await newProduct.addMaterial(materialIds);
   }
+  if(processIds.length){
+    await newProduct.addProcess(processIds);
+  }
   
   res.json({ msg: '添加成功', code: 200 });
 });
 
 // 更新部件编码接口
 router.put('/part_code', authMiddleware, async (req, res) => {
-  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, materialIds, id } = req.body;
+  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, materialIds, processIds, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -247,6 +264,13 @@ router.put('/part_code', authMiddleware, async (req, res) => {
       return res.json({ message: '部分材料不存在', code: 401 });
     }
   }
+  // 验证所有工艺是否存在
+  if(processIds.length){
+    const process = await SubProcessCode.findAll({ where: { id: processIds } });
+    if (process.length !== processIds.length) {
+      return res.json({ message: '部分工艺不存在', code: 401 });
+    }
+  }
   
   const result = await part.update({
     part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, company_id,
@@ -259,6 +283,9 @@ router.put('/part_code', authMiddleware, async (req, res) => {
   // 中间表
   if(materialIds.length){
     await part.setMaterial(materialIds);
+  }
+  if(processIds.length){
+    await part.setProcess(processIds);
   }
   
   res.json({ msg: "修改成功", code: 200 });
@@ -429,11 +456,24 @@ router.get('/process_code', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id
     },
+    include: [
+      {
+        model: SubPartCode,
+        as: 'part',
+        attributes: ['id', 'part_name', 'part_code'],
+        through: {
+          attributes: []
+        }
+      },
+      {
+        model: SubEquipmentCode,
+        as: 'equipment'
+      }
+    ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
   })
-  
   const totalPages = Math.ceil(count / pageSize);
   row = rows.map(e => e.toJSON())
   
@@ -450,7 +490,7 @@ router.get('/process_code', authMiddleware, async (req, res) => {
 
 // 添加工艺编码
 router.post('/process_code', authMiddleware, async (req, res) => {
-  const { process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks } = req.body;
+  const { process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, equipment_id, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -465,7 +505,7 @@ router.post('/process_code', authMiddleware, async (req, res) => {
   }
   
   SubProcessCode.create({
-    process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, company_id,
+    process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, company_id,
     user_id: userId
   })
   
@@ -474,7 +514,7 @@ router.post('/process_code', authMiddleware, async (req, res) => {
 
 // 更新工艺编码接口
 router.put('/process_code', authMiddleware, async (req, res) => {
-  const { process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, id } = req.body;
+  const { process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -486,7 +526,7 @@ router.put('/process_code', authMiddleware, async (req, res) => {
   }
   
   const result = await SubProcessCode.update({
-    process_code, process_name, equipment_used, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, company_id,
+    process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, company_id,
     user_id: userId
   }, { where: { id } })
   if (result.length == 0) {
@@ -528,6 +568,12 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id
     },
+    include: [
+      {
+        model: SubProcessCode,
+        as: 'process'
+      }
+    ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -709,5 +755,43 @@ router.delete('/employee_info/:id', authMiddleware, async (req, res) => {
   
   res.json({ message: '删除成功', code: 200 });
 });
+
+
+
+// 自动生成工艺BOM表
+router.post('/set_process_BOM', authMiddleware, async (req, res) => {
+  const { id } = req.body;
+  const { id: userId, company_id } = req.user;
+  
+  // 验证产品是否存在
+  const product = await SubProductCode.findByPk(id);
+  if (!product) {
+    return res.json({ message: '产品不存在', code: 401 });
+  }
+  // 获取产品关联的所有部件
+  const productWithParts = await SubProductCode.findByPk(id, {
+    include: [{
+      model: SubPartCode,
+      as: 'part',
+      attributes: ['id', 'part_name', 'part_code'],
+      through: { attributes: [] } // 只需要部件数据，不需要中间表数据
+    }]
+  });
+  const productWithPartsJson = productWithParts.toJSON()
+  if (!productWithParts.part || productWithParts.part.length === 0) {
+    return res.json({ message: '该产品没有关联部件，无法生成工艺BOM', code: 401 });
+  }
+  // 批量创建BOM数据
+  const bomData = productWithParts.part.map(part => ({
+    product_id: id,
+    part_id: part.id,
+    user_id: userId,
+    company_id,
+    archive: 1
+  }));
+  await SubProcessBom.bulkCreate(bomData);
+  
+  return res.json({ message: '操作成功', code: 200 })
+})
 
 module.exports = router;

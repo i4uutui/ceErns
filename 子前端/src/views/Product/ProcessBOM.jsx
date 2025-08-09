@@ -9,29 +9,14 @@ export default defineComponent({
   setup(){
     const formRef = ref(null);
     const rules = reactive({
-      product_id: [
-        { required: true, message: '请选择产品编码', trigger: 'blur' },
-      ],
-      part_id: [
-        { required: true, message: '请选择部件编码', trigger: 'blur' },
-      ],
+      // product_id: [
+      //   { required: true, message: '请选择产品编码', trigger: 'blur' },
+      // ],
+      // part_id: [
+      //   { required: true, message: '请选择部件编码', trigger: 'blur' },
+      // ],
       make_time: [
         { required: true, message: '请选择制程工时', trigger: 'blur' },
-      ],
-      process_id: [
-        { required: true, message: '请选择工艺编码', trigger: 'blur' }
-      ],
-      equipment_id: [
-        { required: true, message: '请选择设备编码', trigger: 'blur' },
-      ],
-      time: [
-        { required: true, message: '请输入单件工时(分)', trigger: 'blur' },
-      ],
-      price: [
-        { required: true, message: '请输入加工单价', trigger: 'blur' },
-      ],
-      long: [
-        { required: true, message: '请输入生产制程', trigger: 'blur' },
       ]
     })
     let dialogVisible = ref(false)
@@ -39,9 +24,6 @@ export default defineComponent({
       product_id: '',
       part_id: '',
       make_time: '',
-      textJson: [
-        { id: getRandomString(), process_id: '', process_code: '', process_name: '', section_points: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', long: '' }
-      ]
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -49,31 +31,6 @@ export default defineComponent({
     let total = ref(0);
     let edit = ref(0)
 
-    const maxBomLength = computed(() => {
-      if (tableData.value.length === 0) return 0;
-      return Math.max(...tableData.value.map(item => item.textJson.length));
-    });
-
-    // 处理数据：确保每条记录的 textJson 长度一致（不足的补空对象）
-    const processedTableData = computed(() => {
-      return tableData.value.map(item => {
-        const newItem = { ...item, textJson: [...item.textJson] };
-        while (newItem.textJson.length < maxBomLength.value) {
-          newItem.textJson.push({
-            process_code: '',
-            process_name: '',
-            section_points: '',
-            equipment_code: '',
-            equipment_name: '',
-            time: '',
-            price: '',
-            long: '',
-          });
-        }
-        return newItem;
-      });
-    });
-    
     onMounted(() => {
       fetchProductList()
     })
@@ -87,12 +44,7 @@ export default defineComponent({
           archive: 1
         },
       });
-      const data = res.data.map(o => {
-        const test = JSON.parse(o.textJson)
-        o.textJson = test
-        return o
-      })
-      tableData.value = data;
+      tableData.value = res.data;
       total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
@@ -158,10 +110,10 @@ export default defineComponent({
           }
         }).catch(() => {})
     }
-    const handleUplate = ({ id, product_id, part_id, make_time, textJson }) => {
+    const handleUplate = ({ id, product_id, part_id, make_time }) => {
       edit.value = id;
       dialogVisible.value = true;
-      form.value = { textJson, id, product_id, make_time, part_id };
+      form.value = { id, product_id, make_time, part_id };
     }
     // 添加
     const handleAdd = () => {
@@ -180,26 +132,7 @@ export default defineComponent({
         product_id: '',
         part_id: '',
         make_time: '',
-        textJson: [
-          { id: getRandomString(), process_id: '', process_code: '', process_name: '', section_points: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', long: '' }
-        ]
       }
-    }
-    const handleAddJson = () => {
-      const obj = { id: getRandomString(), process_id: '', process_code: '', process_name: '', section_points: '', equipment_id: '', equipment_code: '', equipment_name: '', time: '', price: '', long: '' }
-      form.value.textJson.push(obj)
-    }
-    const handledeletedJson = (index) => {
-      form.value.textJson.splice(index, 1)
-    }
-    const processHandle = (row, index) => {
-      form.value.textJson[index].process_code = row.process_code
-      form.value.textJson[index].process_name = row.process_name
-      form.value.textJson[index].section_points = row.section_points
-    }
-    const equipmentHandle = (row, index) => {
-      form.value.textJson[index].equipment_code = row.equipment_code
-      form.value.textJson[index].equipment_name = row.equipment_name
     }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(rowIndex >= 1 || columnIndex >= 6 && column.label != '操作'){
@@ -232,9 +165,9 @@ export default defineComponent({
             header: () => (
               <div class="flex row-between">
                 <div>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                  {/* <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
                     添加工艺BOM
-                  </ElButton>
+                  </ElButton> */}
                   <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
                     存档
                   </ElButton>
@@ -248,27 +181,29 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ processedTableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
                   <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" />
                   <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" />
                   <ElTableColumn prop="make_time" label="制程工时" fixed="left" />
-                  {
-                    Array.from({ length: maxBomLength.value }).map((_, index) => (
+                  {({row}) => (
+                    row.part.process.map((e, index) => (
+                    <>
                       <ElTableColumn label={`工序-${index + 1}`} key={index}>
-                        <ElTableColumn prop={`textJson[${index}].process_code`} label="工艺编码" />
-                        <ElTableColumn prop={`textJson[${index}].process_name`} label="工艺名称" />
-                        <ElTableColumn prop={`textJson[${index}].equipment_code`} label="设备编码" />
-                        <ElTableColumn prop={`textJson[${index}].equipment_name`} label="设备名称" />
-                        <ElTableColumn prop={`textJson[${index}].time`} label="单件工时(分)" />
-                        <ElTableColumn prop={`textJson[${index}].price`} label="加工单价" />
-                        <ElTableColumn prop={`textJson[${index}].section_points`} label="段数点数" />
-                        <ElTableColumn prop={`textJson[${index}].long`} label="生产制程" />
+                        <ElTableColumn prop={`row.part.process[${index}].process_code`} label="工艺编码" />
+                        <ElTableColumn prop={`row.part.process[${index}].process_name`} label="工艺名称" />
+                        <ElTableColumn prop={`row.part.process[${index}].equipment.equipment_code`} label="设备编码" />
+                        <ElTableColumn prop={`row.part.process[${index}].equipment.equipment_name`} label="设备名称" />
+                        <ElTableColumn prop={`row.part.process[${index}].times`} label="单件工时(分)" />
+                        <ElTableColumn prop={`row.part.process[${index}].price`} label="加工单价" />
+                        <ElTableColumn prop={`row.part.process[${index}].section_points`} label="段数点数" />
+                        <ElTableColumn prop={`row.part.process[${index}].long`} label="生产制程" />
                       </ElTableColumn>
+                    </>
                     ))
-                  }
+                  )}
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
@@ -296,39 +231,6 @@ export default defineComponent({
                 <ElFormItem label="制程工时" prop="make_time">
                   <ElInput v-model={ form.value.make_time } placeholder="请输入制程工时" />
                 </ElFormItem>
-                <div>
-                  {
-                    form.value.textJson.map((e, index) => (
-                      <Fragment key={ index }>
-                        <ElFormItem label="工艺编码" prop={ `textJson[${index}].process_id` } rules={ rules.process_id }>
-                          <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" onChange={ (val) => processHandle(val, index) } />
-                        </ElFormItem>
-                        <ElFormItem label="设备编码" prop={ `textJson[${index}].equipment_id` } rules={ rules.equipment_id }>
-                          <MySelect v-model={ e.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择工艺编码" onChange={ (val) => equipmentHandle(val, index) } />
-                        </ElFormItem>
-                        <ElFormItem label="单件工时(分)" prop={ `textJson[${index}].time` } rules={ rules.time }>
-                          <ElInput v-model={ e.time } placeholder="请输入单件工时" />
-                        </ElFormItem>
-                        <ElFormItem label="加工单价" prop={ `textJson[${index}].price` } rules={ rules.price }>
-                          <ElInput v-model={ e.price } placeholder="请输入加工单价" />
-                        </ElFormItem>
-                        <ElFormItem label="生产制程" prop={ `textJson[${index}].long` } rules={ rules.long }>
-                          <div class="flex">
-                            <ElInput v-model={ e.long } placeholder="请输入生产制程" />
-                            <div class="flex">
-                              {
-                                index == form.value.textJson.length - 1 && index < 20 ? <ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon> : <></>
-                              }
-                              {
-                                index > 0 ? <ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon> : <></>
-                              }
-                            </div>
-                          </div>
-                        </ElFormItem>
-                      </Fragment>
-                    ))
-                  }
-                </div>
               </ElForm>
             ),
             footer: () => (

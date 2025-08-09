@@ -122,6 +122,28 @@ export default defineComponent({
         }
       }).catch(() => {})
     }
+    const handleProcessBOM = (row) => {
+      if(!row.part.length) return ElMessage.error('请先绑定部件编码')
+      ElMessageBox.confirm(
+        "是否确认生成工艺BOM？",
+        "提示",
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(async () => {
+        const params = {
+          id: row.id
+        }
+        const res = await request.post('/api/set_process_BOM', params);
+        if(res && res.code == 200){
+          ElMessage.success('操作成功');
+          fetchProductList();
+        }
+      }).catch(() => {})
+    }
+    
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
@@ -204,6 +226,7 @@ export default defineComponent({
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                         <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                        <ElButton size="small" type="warning" onClick={ () => handleProcessBOM(scope.row) }>生成工艺BOM</ElButton>
                       </>
                     )}
                   </ElTableColumn>

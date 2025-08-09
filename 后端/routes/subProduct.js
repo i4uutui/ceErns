@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubMaterialBom, SubPartCode, SubProductCode, SubProcessBom, Op } = require('../models');
+const { SubMaterialBom, SubPartCode, SubProductCode, SubProcessBom, SubProcessCode, SubEquipmentCode, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -114,11 +114,34 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
       company_id,
       archive
     },
+    attributes: ['id', 'make_time', 'archive'],
     include: [
-      { model: SubPartCode, as: 'part' },
-      { model: SubProductCode, as: 'product'}
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code'] },
+      {
+        model: SubPartCode,
+        as: 'part',
+        attributes: ['id', 'part_name', 'part_code'],
+        include: [
+          {
+            model: SubProcessCode,
+            as: 'process',
+            attributes: ['id', 'process_code', 'process_name', 'times', 'price'],
+            through: { attributes: [] },
+            include: [
+              {
+                model: SubEquipmentCode,
+                as: 'equipment',
+                attributes: ['id', 'equipment_code', 'equipment_name']
+              }
+            ]
+          }
+        ]
+      }
     ],
-    order: [['created_at', 'DESC']],
+    order: [
+      ['id', 'DESC'],
+      [{ model: SubPartCode, as: 'part' }, { model: SubProcessCode, as: 'process' }, 'id', 'ASC']
+    ],
     limit: parseInt(pageSize),
     offset
   })
@@ -137,12 +160,12 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
 })
 // 添加工艺BOM
 router.post('/process_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, make_time, textJson, archive } = req.body;
+  const { product_id, part_id, make_time, archive } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   await SubProcessBom.create({
-    product_id, part_id, make_time, textJson, archive, company_id,
+    product_id, part_id, make_time, archive, company_id,
     user_id: userId
   })
   
@@ -150,12 +173,12 @@ router.post('/process_bom', authMiddleware, async (req, res) => {
 });
 // 更新工艺BOM
 router.put('/process_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, make_time, textJson, archive, id } = req.body;
+  const { product_id, part_id, make_time, archive, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubProcessBom.update({
-    product_id, part_id, make_time, textJson, archive, company_id,
+    product_id, part_id, make_time, archive, company_id,
     user_id: userId
   }, {
     where: {
@@ -180,6 +203,7 @@ router.put('/process_bom_archive', authMiddleware, async (req, res) => {
   
   res.json({ message: '修改成功', code: 200 });
 });
+// 删除工艺BOM
 router.delete('/process_bom', authMiddleware, async (req, res) => {
   const { id } = req.query
   const updateResult = await SubProcessBom.update({

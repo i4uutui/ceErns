@@ -34,6 +34,12 @@ SubPartCode.belongsToMany(SubProductCode, { through: 'sub_product_part', foreign
 SubPartCode.belongsToMany(SubMaterialCode, { through: 'sub_part_material', foreignKey: 'part_id', as: 'material' })
 SubMaterialCode.belongsToMany(SubPartCode, { through: 'sub_part_material', foreignKey: 'material_id', as: 'part' })
 
+SubPartCode.belongsToMany(SubProcessCode, { through: 'sub_part_process', foreignKey: 'part_id', as: 'process' })
+SubProcessCode.belongsToMany(SubPartCode, { through: 'sub_part_process', foreignKey: 'process_id', as: 'part' })
+
+SubProcessCode.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'equipment' })
+SubEquipmentCode.hasMany(SubProcessCode, { foreignKey: 'equipment_id', as: 'process' })
+
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 SubProductCode.hasMany(SubSaleOrder, { foreignKey: 'product_id', as: 'order' })

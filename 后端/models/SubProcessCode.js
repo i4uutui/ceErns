@@ -19,6 +19,11 @@ const SubProcessCode = sequelize.define('SubProcessCode', {
     allowNull: false,
     comment: '发布的用户id'
   },
+  equipment_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '设备编码id'
+  },
   process_code: {
     type: DataTypes.STRING(50),
     allowNull: false,
@@ -28,11 +33,6 @@ const SubProcessCode = sequelize.define('SubProcessCode', {
     type: DataTypes.STRING(100),
     allowNull: false,
     comment: '工艺名称'
-  },
-  equipment_used: {
-    type: DataTypes.STRING(100),
-    allowNull: true,
-    comment: ' 使用设备 '
   },
   piece_working_hours: {
     type: DataTypes.STRING(5),
