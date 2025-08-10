@@ -34,6 +34,32 @@ export default defineComponent({
     onMounted(() => {
       fetchProductList()
     })
+
+    const maxBomLength = computed(() => {
+      return tableData.value.reduce((max, item) => {
+        const currentLength = item.part.process.length;
+        return currentLength > max ? currentLength : max;
+      }, 0);
+    });
+
+    // 处理数据：确保每条记录的 textJson 长度一致（不足的补空对象）
+    const processedTableData = computed(() => {
+      return tableData.value.map(item => {
+        const { part } = item;
+        const { process } = part;
+        // 计算需要补充的空对象数量
+        const needFillCount = maxProcessLength - process.length;
+        // 补充空对象（可根据实际需求定义空对象结构）
+        const filledProcess = [...process, ...Array(needFillCount).fill({})];
+        return {
+          ...item,
+          part: {
+            ...part,
+            process: filledProcess
+          }
+        };
+      })
+    });
     
     // 获取列表
     const fetchProductList = async () => {
@@ -188,22 +214,20 @@ export default defineComponent({
                   <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" />
                   <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" />
                   <ElTableColumn prop="make_time" label="制程工时" fixed="left" />
-                  {({row}) => (
-                    row.part.process.map((e, index) => (
-                    <>
+                  {
+                    Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`工序-${index + 1}`} key={index}>
-                        <ElTableColumn prop={`row.part.process[${index}].process_code`} label="工艺编码" />
-                        <ElTableColumn prop={`row.part.process[${index}].process_name`} label="工艺名称" />
-                        <ElTableColumn prop={`row.part.process[${index}].equipment.equipment_code`} label="设备编码" />
-                        <ElTableColumn prop={`row.part.process[${index}].equipment.equipment_name`} label="设备名称" />
-                        <ElTableColumn prop={`row.part.process[${index}].times`} label="单件工时(分)" />
-                        <ElTableColumn prop={`row.part.process[${index}].price`} label="加工单价" />
-                        <ElTableColumn prop={`row.part.process[${index}].section_points`} label="段数点数" />
-                        <ElTableColumn prop={`row.part.process[${index}].long`} label="生产制程" />
+                        <ElTableColumn prop={`part.process[${index}].process_code`} label="工艺编码" />
+                        <ElTableColumn prop={`part.process[${index}].process_name`} label="工艺名称" />
+                        <ElTableColumn prop={`part.process[${index}].equipment.equipment_code`} label="设备编码" />
+                        <ElTableColumn prop={`part.process[${index}].equipment.equipment_name`} label="设备名称" />
+                        <ElTableColumn prop={`part.process[${index}].times`} label="单件工时(分)" />
+                        <ElTableColumn prop={`part.process[${index}].price`} label="加工单价" />
+                        <ElTableColumn prop={`part.process[${index}].section_points`} label="段数点数" />
+                        <ElTableColumn prop={`part.process[${index}].long`} label="生产制程" />
                       </ElTableColumn>
-                    </>
                     ))
-                  )}
+                  }
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>

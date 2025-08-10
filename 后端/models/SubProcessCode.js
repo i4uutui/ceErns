@@ -34,12 +34,12 @@ const SubProcessCode = sequelize.define('SubProcessCode', {
     allowNull: false,
     comment: '工艺名称'
   },
-  piece_working_hours: {
+  times: {
     type: DataTypes.STRING(5),
     allowNull: true,
     comment: ' 单件工时 (小时)'
   },
-  processing_unit_price: {
+  price: {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     comment: ' 加工单价 '
@@ -53,6 +53,11 @@ const SubProcessCode = sequelize.define('SubProcessCode', {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     comment: ' 加工总价 '
+  },
+  long: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    comment: ' 生产制程 '
   },
   remarks: {
     type: DataTypes.TEXT,

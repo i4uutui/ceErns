@@ -125,7 +125,7 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
           {
             model: SubProcessCode,
             as: 'process',
-            attributes: ['id', 'process_code', 'process_name', 'times', 'price'],
+            attributes: ['id', 'process_code', 'process_name', 'times', 'price', 'long', 'section_points'],
             through: { attributes: [] },
             include: [
               {

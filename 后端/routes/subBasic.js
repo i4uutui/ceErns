@@ -45,7 +45,7 @@ router.get('/products_code', authMiddleware, async (req, res) => {
 
 // 添加产品编码
 router.post('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, partIds } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_bom, partIds } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -63,7 +63,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
   }
   
   const newProduct = await SubProductCode.create({
-    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
+    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_bom, company_id,
     user_id: userId
   })
   
@@ -77,7 +77,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
 
 // 更新产品编码接口
 router.put('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, partIds, id } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_bom, partIds, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -103,7 +103,7 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   }
   
   const result = await product.update({
-    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
+    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_bom, company_id,
     user_id: userId
   }, { where: { id } })
   if (result.length == 0) {
@@ -490,7 +490,7 @@ router.get('/process_code', authMiddleware, async (req, res) => {
 
 // 添加工艺编码
 router.post('/process_code', authMiddleware, async (req, res) => {
-  const { process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, equipment_id, remarks } = req.body;
+  const { process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, equipment_id, long, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -505,7 +505,7 @@ router.post('/process_code', authMiddleware, async (req, res) => {
   }
   
   SubProcessCode.create({
-    process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, company_id,
+    process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, long, company_id,
     user_id: userId
   })
   
@@ -514,7 +514,7 @@ router.post('/process_code', authMiddleware, async (req, res) => {
 
 // 更新工艺编码接口
 router.put('/process_code', authMiddleware, async (req, res) => {
-  const { process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, id } = req.body;
+  const { process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, long, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -526,7 +526,7 @@ router.put('/process_code', authMiddleware, async (req, res) => {
   }
   
   const result = await SubProcessCode.update({
-    process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, company_id,
+    process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, long, company_id,
     user_id: userId
   }, { where: { id } })
   if (result.length == 0) {
@@ -778,7 +778,7 @@ router.post('/set_process_BOM', authMiddleware, async (req, res) => {
     }]
   });
   const productWithPartsJson = productWithParts.toJSON()
-  if (!productWithParts.part || productWithParts.part.length === 0) {
+  if (!productWithPartsJson.part || productWithPartsJson.part.length === 0) {
     return res.json({ message: '该产品没有关联部件，无法生成工艺BOM', code: 401 });
   }
   // 批量创建BOM数据
@@ -790,6 +790,10 @@ router.post('/set_process_BOM', authMiddleware, async (req, res) => {
     archive: 1
   }));
   await SubProcessBom.bulkCreate(bomData);
+
+  await SubProductCode.update({is_bom: 2}, {
+    where: { id }
+  })
   
   return res.json({ message: '操作成功', code: 200 })
 })

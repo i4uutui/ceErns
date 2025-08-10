@@ -74,6 +74,11 @@ const SubProductCode = sequelize.define('SubProductCode', {
     allowNull: true,
     comment: '产品的生产要求',
   },
+  is_bom: {
+    type: DataTypes.INTEGER(1),
+    allowNull: false,
+    comment: '1：未生成；2：已生成'
+  },
   is_deleted: {
     type: DataTypes.INTEGER(1).UNSIGNED.ZEROFILL,
     allowNull: true,

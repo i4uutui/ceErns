@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox, ElPagination } from 'element-plus'
+import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElMessageBox, ElPagination, ElSwitch } from 'element-plus'
 import MySelect from '@/components/tables/mySelect.vue';
 import request from '@/utils/request';
 
@@ -54,6 +54,7 @@ export default defineComponent({
       unit_price: '',
       currency: '',
       production_requirements: '',
+      is_bom: 1,
       partIds: []
     })
     let tableData = ref([])
@@ -176,6 +177,7 @@ export default defineComponent({
         unit_price: '',
         currency: '',
         production_requirements: '',
+        is_bom: 1,
         partIds: []
       }
     }
@@ -221,7 +223,12 @@ export default defineComponent({
                   <ElTableColumn prop="unit_price" label="单价" width="100" />
                   <ElTableColumn prop="currency" label="币别" width="100" />
                   <ElTableColumn prop="production_requirements" label="生产要求" />
-                  <ElTableColumn label="操作" width="140">
+                  <ElTableColumn label="是否已生成工艺bom">
+                    {({row}) => (
+                      row.is_bom == 1 ? '否' : <span style={{ color: 'red' }}>已生成</span>
+                    )}
+                  </ElTableColumn>
+                  <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>

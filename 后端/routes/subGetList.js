@@ -115,7 +115,7 @@ router.get('/getProcessCode', authMiddleware, async (req, res) => {
     } },
     order: [['created_at', 'DESC']],
   }
-  const { count, rows } = await SubProcessCode.findAndCountAll(config);
+  const rows = await SubProcessCode.findAll(config);
   const row = rows.map(e => e.toJSON())
   
   res.json({ data: formatArrayTime(row), code: 200 });
