@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 11/08/2025 10:38:39
+ Date: 11/08/2025 18:30:42
 */
 
 SET NAMES utf8mb4;
@@ -225,7 +225,7 @@ INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, 0, 1, '2025-07-27 11:50:06
 INSERT INTO `sub_material_bom` VALUES (8, 1, 1, 10, 6, 0, 1, '2025-08-02 11:04:51', '2025-08-03 11:04:19');
 INSERT INTO `sub_material_bom` VALUES (9, 1, 1, 19, 5, 1, 1, '2025-08-11 10:19:02', '2025-08-11 10:19:02');
 INSERT INTO `sub_material_bom` VALUES (10, 1, 1, 19, 6, 1, 1, '2025-08-11 10:19:02', '2025-08-11 10:19:02');
-INSERT INTO `sub_material_bom` VALUES (11, 1, 1, 19, 7, 1, 1, '2025-08-11 10:19:02', '2025-08-11 10:19:02');
+INSERT INTO `sub_material_bom` VALUES (11, 1, 1, 19, 10, 1, 1, '2025-08-11 10:19:02', '2025-08-11 18:12:57');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -427,7 +427,7 @@ CREATE TABLE `sub_process_bom`  (
 -- ----------------------------
 INSERT INTO `sub_process_bom` VALUES (29, 1, 1, 19, 5, NULL, 1, 1, '2025-08-10 10:27:05', '2025-08-10 10:27:05');
 INSERT INTO `sub_process_bom` VALUES (30, 1, 1, 19, 6, NULL, 1, 1, '2025-08-10 10:27:05', '2025-08-10 10:27:05');
-INSERT INTO `sub_process_bom` VALUES (31, 1, 1, 19, 7, NULL, 1, 1, '2025-08-10 10:27:05', '2025-08-10 10:27:05');
+INSERT INTO `sub_process_bom` VALUES (31, 1, 1, 19, 13, 11, 1, 1, '2025-08-10 10:27:05', '2025-08-11 18:14:08');
 
 -- ----------------------------
 -- Table structure for sub_process_code

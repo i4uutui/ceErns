@@ -37,24 +37,29 @@ export default defineComponent({
     let edit = ref(0)
 
     const maxBomLength = computed(() => {
-      if (tableData.value.length === 0) return 0;
-      return Math.max(...tableData.value.map(item => item.textJson.length));
+      return tableData.value.reduce((max, item) => {
+        const currentLength = item.part.material.length;
+        return currentLength > max ? currentLength : max;
+      }, 0);
     });
 
     // 处理数据：确保每条记录的 textJson 长度一致（不足的补空对象）
     const processedTableData = computed(() => {
       return tableData.value.map(item => {
-        const newItem = { ...item, textJson: [...item.textJson] };
-        while (newItem.textJson.length < maxBomLength.value) {
-          newItem.textJson.push({
-            material_code: '',
-            material_name: '',
-            specification: '',
-            number: ''
-          });
-        }
-        return newItem;
-      });
+        const { part } = item;
+        const { material } = part;
+        // 计算需要补充的空对象数量
+        const needFillCount = maxProcessLength - material.length;
+        // 补充空对象（可根据实际需求定义空对象结构）
+        const filledProcess = [...material, ...Array(needFillCount).fill({})];
+        return {
+          ...item,
+          part: {
+            ...part,
+            material: filledProcess
+          }
+        };
+      })
     });
     
     onMounted(() => {
@@ -70,12 +75,12 @@ export default defineComponent({
           archive: 1
         },
       });
-      const data = res.data.map(o => {
-        const test = JSON.parse(o.textJson)
-        o.textJson = test
-        return o
-      })
-      tableData.value = data;
+      // const data = res.data.map(o => {
+      //   const test = JSON.parse(o.textJson)
+      //   o.textJson = test
+      //   return o
+      // })
+      tableData.value = res.data;
       total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
@@ -141,10 +146,10 @@ export default defineComponent({
           }
         }).catch(() => {})
     }
-    const handleUplate = ({ id, product_id, part_id, textJson }) => {
+    const handleUplate = ({ id, part, product }) => {
       edit.value = id;
       dialogVisible.value = true;
-      form.value = { textJson, id, product_id, part_id };
+      form.value = { id, product_id: product.id, part_id: part.id };
     }
     // 添加
     const handleAdd = () => {
@@ -210,9 +215,9 @@ export default defineComponent({
             header: () => (
               <div class="flex row-between">
                 <div>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                  {/* <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
                     添加材料BOM
-                  </ElButton>
+                  </ElButton> */}
                   <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
                     存档
                   </ElButton>
@@ -226,7 +231,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ processedTableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
@@ -235,10 +240,10 @@ export default defineComponent({
                   {
                     Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`材料BOM-${index + 1}`} key={index}>
-                        <ElTableColumn prop={`textJson[${index}].material_code`} label="材料编码" />
-                        <ElTableColumn prop={`textJson[${index}].material_name`} label="材料名称" />
-                        <ElTableColumn prop={`textJson[${index}].specification`} label="规格" />
-                        <ElTableColumn prop={`textJson[${index}].number`} label="数量" />
+                        <ElTableColumn prop={`part.material[${index}].material_code`} label="材料编码" />
+                        <ElTableColumn prop={`part.material[${index}].material_name`} label="材料名称" />
+                        <ElTableColumn prop={`part.material[${index}].specification`} label="规格" />
+                        <ElTableColumn prop={`part.material[${index}].number`} label="数量" />
                       </ElTableColumn>
                     ))
                   }
@@ -266,7 +271,7 @@ export default defineComponent({
                 <ElFormItem label="部件编码" prop="part_id">
                   <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
                 </ElFormItem>
-                {
+                {/*
                   form.value.textJson.map((e, index) => (
                     <Fragment key={ index }>
                       <ElFormItem label="材料编码" prop={ `textJson[${index}].material_id` } rules={ rules.material_id }>
@@ -287,7 +292,7 @@ export default defineComponent({
                       </ElFormItem>
                     </Fragment>
                   ))
-                }
+                */}
               </ElForm>
             ),
             footer: () => (

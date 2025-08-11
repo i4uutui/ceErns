@@ -136,10 +136,10 @@ export default defineComponent({
           }
         }).catch(() => {})
     }
-    const handleUplate = ({ id, product_id, part_id, make_time }) => {
+    const handleUplate = ({ id, product, part, make_time }) => {
       edit.value = id;
       dialogVisible.value = true;
-      form.value = { id, product_id, make_time, part_id };
+      form.value = { id, product_id: product.id, make_time, part_id: part.id };
     }
     // 添加
     const handleAdd = () => {

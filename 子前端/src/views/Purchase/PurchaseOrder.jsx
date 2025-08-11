@@ -185,7 +185,8 @@ export default defineComponent({
                       <ElTableColumn prop="material.other_features" label="其它特性" width="100" />
                       <ElTableColumn prop="material.purchase_unit" label="单位" width="60" />
                       <ElTableColumn prop="material.unit_price" label="单价" width="80" />
-                      <ElTableColumn prop="number" label="交易数量" width="80" />
+                      <ElTableColumn prop="number" label="预计数量" width="80" />
+                      <ElTableColumn prop="number" label="实际数量" width="80" />
                       <ElTableColumn prop="notice.delivery_time" label="交货时间" width="100" />
                     </ElTable>
                     <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 700px">
