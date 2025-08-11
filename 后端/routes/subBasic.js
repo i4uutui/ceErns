@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, SubProcessBom, Op } = require('../models')
+const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, SubProcessBom, Op, SubMaterialBom } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -45,7 +45,7 @@ router.get('/products_code', authMiddleware, async (req, res) => {
 
 // 添加产品编码
 router.post('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_bom, partIds } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_product_bom, partIds } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -63,7 +63,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
   }
   
   const newProduct = await SubProductCode.create({
-    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_bom, company_id,
+    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_product_bom, company_id,
     user_id: userId
   })
   
@@ -77,7 +77,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
 
 // 更新产品编码接口
 router.put('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_bom, partIds, id } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_product_bom, partIds, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -103,7 +103,7 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   }
   
   const result = await product.update({
-    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_bom, company_id,
+    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, is_product_bom, company_id,
     user_id: userId
   }, { where: { id } })
   if (result.length == 0) {
@@ -367,7 +367,7 @@ router.get('/material_code', authMiddleware, async (req, res) => {
 
 // 添加材料编码
 router.post('/material_code', authMiddleware, async (req, res) => {
-  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks } = req.body;
+  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, number, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -382,7 +382,7 @@ router.post('/material_code', authMiddleware, async (req, res) => {
   }
   
   SubMaterialCode.create({
-    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, company_id,
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, number, remarks, company_id,
     user_id: userId
   })
   
@@ -391,7 +391,7 @@ router.post('/material_code', authMiddleware, async (req, res) => {
 
 // 更新材料编码接口
 router.put('/material_code', authMiddleware, async (req, res) => {
-  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, id } = req.body;
+  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, number, remarks, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -403,7 +403,7 @@ router.put('/material_code', authMiddleware, async (req, res) => {
   }
   
   const result = await SubMaterialCode.update({
-    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, company_id,
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, number, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   if (result.length == 0) {
@@ -759,8 +759,8 @@ router.delete('/employee_info/:id', authMiddleware, async (req, res) => {
 
 
 // 自动生成工艺BOM表
-router.post('/set_process_BOM', authMiddleware, async (req, res) => {
-  const { id } = req.body;
+router.post('/set_to_BOM', authMiddleware, async (req, res) => {
+  const { id, bom } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证产品是否存在
@@ -789,11 +789,19 @@ router.post('/set_process_BOM', authMiddleware, async (req, res) => {
     company_id,
     archive: 1
   }));
-  await SubProcessBom.bulkCreate(bomData);
 
-  await SubProductCode.update({is_bom: 2}, {
-    where: { id }
-  })
+  if(bom == 'process'){
+    await SubProcessBom.bulkCreate(bomData);
+    await SubProductCode.update({is_product_bom: 2}, {
+      where: { id }
+    })
+  }
+  if(bom == 'material'){
+    await SubMaterialBom.bulkCreate(bomData);
+    await SubProductCode.update({is_material_bom: 2}, {
+      where: { id }
+    })
+  }
   
   return res.json({ message: '操作成功', code: 200 })
 })

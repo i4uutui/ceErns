@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubMaterialBom, SubPartCode, SubProductCode, SubProcessBom, SubProcessCode, SubEquipmentCode, Op } = require('../models');
+const { SubMaterialBom, SubMaterialCode, SubPartCode, SubProductCode, SubProcessBom, SubProcessCode, SubEquipmentCode, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -19,16 +19,32 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
       company_id,
       archive,
     },
+    attributes: ['id', 'archive'],
     include: [
-      { model: SubPartCode, as: 'part' },
-      { model: SubProductCode, as: 'product', where: productWhere}
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'] },
+      {
+        model: SubPartCode,
+        as: 'part',
+        attributes: ['id', 'part_name', 'part_code'],
+        include: [
+          {
+            model: SubMaterialCode,
+            as: 'material',
+            attributes: ['id', 'material_code', 'material_name', 'number', 'specification'],
+            through: { attributes: [] },
+          }
+        ]
+      }
     ],
-    order: [['created_at', 'DESC']],
+    order: [
+      ['id', 'DESC'],
+      [{ model: SubPartCode, as: 'part' }, { model: SubMaterialCode, as: 'material' }, 'id', 'ASC']
+    ],
     limit: parseInt(pageSize),
     offset
   })
   const totalPages = Math.ceil(count / pageSize)
-  
+
   const fromData = rows.map(item => item.dataValues)
   // 返回所需信息
   res.json({ 
@@ -116,7 +132,7 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'make_time', 'archive'],
     include: [
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code'] },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'] },
       {
         model: SubPartCode,
         as: 'part',

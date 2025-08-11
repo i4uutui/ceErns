@@ -33,6 +33,9 @@ export default defineComponent({
       currency: [
         { required: true, message: '请输入币别', trigger: 'blur' },
       ],
+      number: [
+        { required: true, message: '请输入数量', trigger: 'blur' },
+      ],
     })
     let dialogVisible = ref(false)
     let form = ref({
@@ -45,6 +48,7 @@ export default defineComponent({
       purchase_unit: '',
       unit_price: '',
       currency: '',
+      number: '',
       remarks: '',
     })
     let tableData = ref([])
@@ -141,6 +145,7 @@ export default defineComponent({
         purchase_unit: '',
         unit_price: '',
         currency: '',
+        number: '',
         remarks: '',
       }
     }
@@ -178,6 +183,7 @@ export default defineComponent({
                   <ElTableColumn prop="purchase_unit" label="采购单位" />
                   <ElTableColumn prop="unit_price" label="单价" width="100" />
                   <ElTableColumn prop="currency" label="币别" width="100" />
+                  <ElTableColumn prop="number" label="数量" width="100" />
                   <ElTableColumn prop="remarks" label="备注" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -223,6 +229,9 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="币别" prop="currency">
                   <ElInput v-model={ form.value.currency } placeholder="请输入币别" />
+                </ElFormItem>
+                <ElFormItem label="数量" prop="number">
+                  <ElInput v-model={ form.value.number } type="number" placeholder="请输入数量" />
                 </ElFormItem>
                 <ElFormItem label="备注" prop="remarks">
                   <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />

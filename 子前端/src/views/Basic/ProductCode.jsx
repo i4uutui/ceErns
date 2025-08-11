@@ -54,7 +54,7 @@ export default defineComponent({
       unit_price: '',
       currency: '',
       production_requirements: '',
-      is_bom: 1,
+      is_product_bom: 1,
       partIds: []
     })
     let tableData = ref([])
@@ -123,10 +123,11 @@ export default defineComponent({
         }
       }).catch(() => {})
     }
-    const handleProcessBOM = (row) => {
+    const handleBOM = (row, bom) => {
       if(!row.part.length) return ElMessage.error('请先绑定部件编码')
+      const val = bom == 'process' ? '工艺' : '材料'
       ElMessageBox.confirm(
-        "是否确认生成工艺BOM？",
+        `是否确认生成${val}BOM？`,
         "提示",
         {
           confirmButtonText: '确认',
@@ -135,9 +136,10 @@ export default defineComponent({
         }
       ).then(async () => {
         const params = {
-          id: row.id
+          id: row.id,
+          bom
         }
-        const res = await request.post('/api/set_process_BOM', params);
+        const res = await request.post('/api/set_to_BOM', params);
         if(res && res.code == 200){
           ElMessage.success('操作成功');
           fetchProductList();
@@ -177,7 +179,7 @@ export default defineComponent({
         unit_price: '',
         currency: '',
         production_requirements: '',
-        is_bom: 1,
+        is_product_bom: 1,
         partIds: []
       }
     }
@@ -225,7 +227,7 @@ export default defineComponent({
                   <ElTableColumn prop="production_requirements" label="生产要求" />
                   <ElTableColumn label="是否已生成工艺bom">
                     {({row}) => (
-                      row.is_bom == 1 ? '否' : <span style={{ color: 'red' }}>已生成</span>
+                      row.is_product_bom == 1 ? '否' : <span style={{ color: 'red' }}>已生成</span>
                     )}
                   </ElTableColumn>
                   <ElTableColumn label="操作" width="140" fixed="right">
@@ -233,7 +235,8 @@ export default defineComponent({
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                         <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
-                        <ElButton size="small" type="warning" onClick={ () => handleProcessBOM(scope.row) }>生成工艺BOM</ElButton>
+                        <ElButton size="small" type="warning" onClick={ () => handleBOM(scope.row, 'process') }>生成工艺BOM</ElButton>
+                        <ElButton size="small" type="warning" onClick={ () => handleBOM(scope.row, 'material') }>生成材料BOM</ElButton>
                       </>
                     )}
                   </ElTableColumn>

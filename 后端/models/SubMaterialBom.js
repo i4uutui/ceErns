@@ -29,11 +29,6 @@ const SubMaterialBom = sequelize.define('SubMaterialBom', {
     allowNull: false,
     comment: '部件编码id'
   },
-  textJson: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    comment: 'BOM表的json字符串'
-  },
   archive: {
     type: DataTypes.INTEGER(11),
     allowNull: false,

@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 10/08/2025 22:20:29
+ Date: 11/08/2025 10:38:39
 */
 
 SET NAMES utf8mb4;
@@ -209,21 +209,23 @@ CREATE TABLE `sub_material_bom`  (
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `product_id` int(11) NOT NULL COMMENT '产品编码id',
   `part_id` int(11) NOT NULL COMMENT '部件编码id',
-  `textJson` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'BOM表的json字符串',
   `archive` int(11) NULL DEFAULT NULL COMMENT '是否已存档，1未存，0已存',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_bom
 -- ----------------------------
-INSERT INTO `sub_material_bom` VALUES (5, 1, 1, 11, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"}]', 0, 1, '2025-07-27 11:10:29', '2025-08-03 11:04:19');
-INSERT INTO `sub_material_bom` VALUES (6, 1, 1, 10, 5, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"},{\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"444\",\"material_id\":2},{\"id\":\"6lzVkl80q6ffe9hf\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"4444\"}]', 0, 1, '2025-07-27 11:22:56', '2025-08-03 11:04:19');
-INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"}]', 0, 1, '2025-07-27 11:50:06', '2025-08-03 11:04:19');
-INSERT INTO `sub_material_bom` VALUES (8, 1, 1, 10, 6, '[{\"id\":\"GjUcDi7I5XFIYlp5\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"122\"},{\"id\":\"QASStVzNPAySJaR1\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\",\"number\":\"333\"}]', 0, 1, '2025-08-02 11:04:51', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (5, 1, 1, 11, 6, 0, 1, '2025-07-27 11:10:29', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (6, 1, 1, 10, 5, 0, 1, '2025-07-27 11:22:56', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, 0, 1, '2025-07-27 11:50:06', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (8, 1, 1, 10, 6, 0, 1, '2025-08-02 11:04:51', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (9, 1, 1, 19, 5, 1, 1, '2025-08-11 10:19:02', '2025-08-11 10:19:02');
+INSERT INTO `sub_material_bom` VALUES (10, 1, 1, 19, 6, 1, 1, '2025-08-11 10:19:02', '2025-08-11 10:19:02');
+INSERT INTO `sub_material_bom` VALUES (11, 1, 1, 19, 7, 1, 1, '2025-08-11 10:19:02', '2025-08-11 10:19:02');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -242,6 +244,7 @@ CREATE TABLE `sub_material_code`  (
   `purchase_unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '采购单位',
   `unit_price` int(10) NULL DEFAULT NULL COMMENT '单价',
   `currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '币别',
+  `number` int(20) NULL DEFAULT NULL COMMENT '数量',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   `is_deleted` int(1) UNSIGNED ZEROFILL NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
@@ -252,7 +255,7 @@ CREATE TABLE `sub_material_code`  (
 -- ----------------------------
 -- Records of sub_material_code
 -- ----------------------------
-INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', 122, '12', '21', 1, '2025-07-08 15:36:33', '2025-07-08 15:37:12');
+INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', 122, '12', 21, '21', 1, '2025-07-08 15:36:33', '2025-08-11 10:06:25');
 
 -- ----------------------------
 -- Table structure for sub_material_quote
@@ -474,7 +477,8 @@ CREATE TABLE `sub_product_code`  (
   `unit_price` int(10) NULL DEFAULT NULL COMMENT '产品的单价',
   `currency` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '产品价格的币别',
   `production_requirements` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '产品的生产要求',
-  `is_bom` int(1) NULL DEFAULT NULL COMMENT '1：未生成；2：已生成',
+  `is_product_bom` int(1) NULL DEFAULT NULL COMMENT '1：未生成；2：已生成',
+  `is_material_bom` int(1) NULL DEFAULT NULL COMMENT '1：未生成；2：已生成',
   `is_deleted` int(1) UNSIGNED ZEROFILL NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
@@ -484,17 +488,17 @@ CREATE TABLE `sub_product_code`  (
 -- ----------------------------
 -- Records of sub_product_code
 -- ----------------------------
-INSERT INTO `sub_product_code` VALUES (9, 1, 1, '123', '113', '图只可以', '21', '2131', '3131', '1313', '212', 1212, '121', '21', NULL, 1, '2025-07-08 15:02:27', '2025-07-14 10:04:36');
-INSERT INTO `sub_product_code` VALUES (10, 1, 1, '1233', '212', '月1', '121', '2121', '2121', '21', '212', 121, '21', '2121', NULL, 1, '2025-07-08 15:12:29', '2025-07-14 10:04:29');
-INSERT INTO `sub_product_code` VALUES (11, 1, 1, '1234', '12', '121', '212', '21', '212', '211', '1212', 2212, '1212', '121', NULL, 1, '2025-07-15 11:04:40', '2025-07-15 11:12:37');
-INSERT INTO `sub_product_code` VALUES (12, 1, 1, '12321', '21221', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, 1, '2025-08-08 11:19:00', '2025-08-08 11:19:00');
-INSERT INTO `sub_product_code` VALUES (13, 1, 1, '12322', '21222', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, 1, '2025-08-08 11:23:21', '2025-08-08 14:44:31');
-INSERT INTO `sub_product_code` VALUES (14, 1, 1, '12323', '21223', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, 1, '2025-08-08 11:28:28', '2025-08-08 11:28:28');
-INSERT INTO `sub_product_code` VALUES (15, 1, 1, '12324', '21224', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, 1, '2025-08-08 11:34:57', '2025-08-08 11:34:57');
-INSERT INTO `sub_product_code` VALUES (16, 1, 1, '12325', '21225', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, 1, '2025-08-08 11:35:22', '2025-08-08 14:09:03');
-INSERT INTO `sub_product_code` VALUES (17, 1, 1, '12671', '4841', 'eewqw', 'ewe', 'rwrw', 'rww', 'qeqeq', 'eqwew', 323, '21', '31', NULL, 1, '2025-08-08 11:36:50', '2025-08-08 11:36:50');
-INSERT INTO `sub_product_code` VALUES (18, 1, 1, '43456', '2345', '23', '423', '42', 'ewf', '5', '3553', 21, '313', '12', NULL, 0, '2025-08-08 14:10:41', '2025-08-08 14:58:55');
-INSERT INTO `sub_product_code` VALUES (19, 1, 1, 'qqq001', 'wqwqwq', 'qqqwe', 'eeqqwq', 'sewww', 'ersdsd', 'ewww', 'ff', 22, '3rr', 'rww', 2, 1, '2025-08-10 10:09:09', '2025-08-10 10:27:05');
+INSERT INTO `sub_product_code` VALUES (9, 1, 1, '123', '113', '图只可以', '21', '2131', '3131', '1313', '212', 1212, '121', '21', NULL, NULL, 1, '2025-07-08 15:02:27', '2025-07-14 10:04:36');
+INSERT INTO `sub_product_code` VALUES (10, 1, 1, '1233', '212', '月1', '121', '2121', '2121', '21', '212', 121, '21', '2121', NULL, NULL, 1, '2025-07-08 15:12:29', '2025-07-14 10:04:29');
+INSERT INTO `sub_product_code` VALUES (11, 1, 1, '1234', '12', '121', '212', '21', '212', '211', '1212', 2212, '1212', '121', NULL, NULL, 1, '2025-07-15 11:04:40', '2025-07-15 11:12:37');
+INSERT INTO `sub_product_code` VALUES (12, 1, 1, '12321', '21221', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, NULL, 1, '2025-08-08 11:19:00', '2025-08-08 11:19:00');
+INSERT INTO `sub_product_code` VALUES (13, 1, 1, '12322', '21222', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, NULL, 1, '2025-08-08 11:23:21', '2025-08-08 14:44:31');
+INSERT INTO `sub_product_code` VALUES (14, 1, 1, '12323', '21223', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, NULL, 1, '2025-08-08 11:28:28', '2025-08-08 11:28:28');
+INSERT INTO `sub_product_code` VALUES (15, 1, 1, '12324', '21224', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, NULL, 1, '2025-08-08 11:34:57', '2025-08-08 11:34:57');
+INSERT INTO `sub_product_code` VALUES (16, 1, 1, '12325', '21225', '2121', 'wdd', 'dwwdq', 'dwqwdw', 'qdwq', 'qw', 212, '211', '2121', NULL, NULL, 1, '2025-08-08 11:35:22', '2025-08-08 14:09:03');
+INSERT INTO `sub_product_code` VALUES (17, 1, 1, '12671', '4841', 'eewqw', 'ewe', 'rwrw', 'rww', 'qeqeq', 'eqwew', 323, '21', '31', NULL, NULL, 1, '2025-08-08 11:36:50', '2025-08-08 11:36:50');
+INSERT INTO `sub_product_code` VALUES (18, 1, 1, '43456', '2345', '23', '423', '42', 'ewf', '5', '3553', 21, '313', '12', NULL, NULL, 0, '2025-08-08 14:10:41', '2025-08-08 14:58:55');
+INSERT INTO `sub_product_code` VALUES (19, 1, 1, 'qqq001', 'wqwqwq', 'qqqwe', 'eeqqwq', 'sewww', 'ersdsd', 'ewww', 'ff', 22, '3rr', 'rww', 2, 2, 1, '2025-08-10 10:09:09', '2025-08-11 10:19:02');
 
 -- ----------------------------
 -- Table structure for sub_product_notice
