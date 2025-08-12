@@ -1,7 +1,7 @@
 import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
 import { ElButton, ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn, ElIcon, ElMessageBox } from 'element-plus'
 import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
-import { getRandomString } from '@/utils/tool';
+import { isEmptyValue } from '@/utils/tool'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 
@@ -9,14 +9,29 @@ export default defineComponent({
   setup(){
     const formRef = ref(null);
     const rules = reactive({
-      // product_id: [
-      //   { required: true, message: '请选择产品编码', trigger: 'blur' },
-      // ],
-      // part_id: [
-      //   { required: true, message: '请选择部件编码', trigger: 'blur' },
-      // ],
+      product_id: [
+        { required: true, message: '请选择产品编码', trigger: 'blur' },
+      ],
+      part_id: [
+        { required: true, message: '请选择部件编码', trigger: 'blur' },
+      ],
       make_time: [
         { required: true, message: '请选择制程工时', trigger: 'blur' },
+      ],
+      process_id: [
+        { required: true, message: '请选择工艺编码', trigger: 'blur' }
+      ],
+      equipment_id: [
+        { required: true, message: '请选择设备编码', trigger: 'blur' },
+      ],
+      time: [
+        { required: true, message: '请输入单件工时', trigger: 'blur' },
+      ],
+      price: [
+        { required: true, message: '请输入加工单价', trigger: 'blur' },
+      ],
+      long: [
+        { required: true, message: '请输入生产制程', trigger: 'blur' },
       ]
     })
     let dialogVisible = ref(false)
@@ -24,6 +39,9 @@ export default defineComponent({
       product_id: '',
       part_id: '',
       make_time: '',
+      children: [
+        { process_id: '', equipment_id: '', time: '', price: '', long: '' }
+      ]
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -31,35 +49,38 @@ export default defineComponent({
     let total = ref(0);
     let edit = ref(0)
 
+    const maxBomLength = computed(() => {
+      if (tableData.value.length === 0) return 0;
+      return Math.max(...tableData.value.map(item => item.children.length));
+    });
+
+    // 处理数据：确保每条记录的 children 长度一致（不足的补空对象）
+    const processedTableData = computed(() => {
+      return tableData.value.map(item => {
+        const newItem = { ...item, children: [...item.children] };
+        while (newItem.children.length < maxBomLength.value) {
+          newItem.children.push({
+            process: {
+              process_code: '',
+              process_name: '',
+              section_points: '',
+            },
+            equipment: {
+              equipment_code: '',
+              equipment_name: '',
+            },
+            time: '',
+            price: '',
+            long: '',
+          });
+        }
+        return newItem;
+      });
+    });
+    
     onMounted(() => {
       fetchProductList()
     })
-
-    const maxBomLength = computed(() => {
-      return tableData.value.reduce((max, item) => {
-        const currentLength = item.part.process.length;
-        return currentLength > max ? currentLength : max;
-      }, 0);
-    });
-
-    // 处理数据：确保每条记录的 textJson 长度一致（不足的补空对象）
-    const processedTableData = computed(() => {
-      return tableData.value.map(item => {
-        const { part } = item;
-        const { process } = part;
-        // 计算需要补充的空对象数量
-        const needFillCount = maxProcessLength - process.length;
-        // 补充空对象（可根据实际需求定义空对象结构）
-        const filledProcess = [...process, ...Array(needFillCount).fill({})];
-        return {
-          ...item,
-          part: {
-            ...part,
-            process: filledProcess
-          }
-        };
-      })
-    });
     
     // 获取列表
     const fetchProductList = async () => {
@@ -78,7 +99,6 @@ export default defineComponent({
       await formEl.validate(async (valid, fields) => {
         if (valid){
           const low = { ...form.value, archive: 1 }
-          low.textJson = JSON.stringify(low.textJson)
           if(!edit.value){
             const res = await request.post('/api/process_bom', low);
             if(res && res.code == 200){
@@ -123,23 +143,26 @@ export default defineComponent({
       }
     }
     const handleDelete = ({ id }) => {
-      ElMessageBox.confirm('是否确认存档', '提示', {
+      ElMessageBox.confirm('是否确认删除', '提示', {
           confirmButtonText: '确认',
           cancelButtonText: '取消',
           type: 'warning',
         }).then(async () => {
           const res = await request.delete('/api/process_bom', { params: { id } });
           if(res && res.code == 200){
-            ElMessage.success('修改成功');
+            ElMessage.success('删除成功');
             dialogVisible.value = false;
             fetchProductList();
           }
         }).catch(() => {})
     }
-    const handleUplate = ({ id, product, part, make_time }) => {
+    const handleUplate = ({ id, product_id, part_id, make_time, children }) => {
       edit.value = id;
       dialogVisible.value = true;
-      form.value = { id, product_id: product.id, make_time, part_id: part.id };
+      const filtered = children.filter(item => {
+        return !Object.values(item).every(isEmptyValue);
+      });
+      form.value = { children: filtered, id, product_id, make_time, part_id };
     }
     // 添加
     const handleAdd = () => {
@@ -158,7 +181,17 @@ export default defineComponent({
         product_id: '',
         part_id: '',
         make_time: '',
+        children: [
+          { process_id: '', equipment_id: '', time: '', price: '', long: '' }
+        ]
       }
+    }
+    const handleAddJson = () => {
+      const obj = { process_id: '', equipment_id: '', time: '', price: '', long: '' }
+      form.value.children.push(obj)
+    }
+    const handledeletedJson = (index) => {
+      form.value.children.splice(index, 1)
     }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(rowIndex >= 1 || columnIndex >= 6 && column.label != '操作'){
@@ -183,7 +216,6 @@ export default defineComponent({
       currentPage.value = val;
       fetchProductList();
     }
-    
     return() => (
       <>
         <ElCard>
@@ -191,9 +223,9 @@ export default defineComponent({
             header: () => (
               <div class="flex row-between">
                 <div>
-                  {/* <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
                     添加工艺BOM
-                  </ElButton> */}
+                  </ElButton>
                   <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
                     存档
                   </ElButton>
@@ -207,7 +239,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ processedTableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
@@ -217,14 +249,14 @@ export default defineComponent({
                   {
                     Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`工序-${index + 1}`} key={index}>
-                        <ElTableColumn prop={`part.process[${index}].process_code`} label="工艺编码" />
-                        <ElTableColumn prop={`part.process[${index}].process_name`} label="工艺名称" />
-                        <ElTableColumn prop={`part.process[${index}].equipment.equipment_code`} label="设备编码" />
-                        <ElTableColumn prop={`part.process[${index}].equipment.equipment_name`} label="设备名称" />
-                        <ElTableColumn prop={`part.process[${index}].times`} label="单件工时(分)" />
-                        <ElTableColumn prop={`part.process[${index}].price`} label="加工单价" />
-                        <ElTableColumn prop={`part.process[${index}].section_points`} label="段数点数" />
-                        <ElTableColumn prop={`part.process[${index}].long`} label="生产制程" />
+                        <ElTableColumn prop={`children[${index}].process.process_code`} label="工艺编码" />
+                        <ElTableColumn prop={`children[${index}].process.process_name`} label="工艺名称" />
+                        <ElTableColumn prop={`children[${index}].equipment.equipment_code`} label="设备编码" />
+                        <ElTableColumn prop={`children[${index}].equipment.equipment_name`} label="设备名称" />
+                        <ElTableColumn prop={`children[${index}].time`} label="单件工时" />
+                        <ElTableColumn prop={`children[${index}].price`} label="加工单价" />
+                        <ElTableColumn prop={`children[${index}].process.section_points`} label="段数点数" />
+                        <ElTableColumn prop={`children[${index}].long`} label="生产制程" />
                       </ElTableColumn>
                     ))
                   }
@@ -255,6 +287,39 @@ export default defineComponent({
                 <ElFormItem label="制程工时" prop="make_time">
                   <ElInput v-model={ form.value.make_time } placeholder="请输入制程工时" />
                 </ElFormItem>
+                <div>
+                  {
+                    form.value.children.map((e, index) => (
+                      <Fragment key={ index }>
+                        <ElFormItem label="工艺编码" prop={ `children[${index}].process_id` } rules={ rules.process_id }>
+                          <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" />
+                        </ElFormItem>
+                        <ElFormItem label="设备编码" prop={ `children[${index}].equipment_id` } rules={ rules.equipment_id }>
+                          <MySelect v-model={ e.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择设备编码" />
+                        </ElFormItem>
+                        <ElFormItem label="单件工时" prop={ `children[${index}].time` } rules={ rules.time }>
+                          <ElInput v-model={ e.time } placeholder="请输入单件工时" />
+                        </ElFormItem>
+                        <ElFormItem label="加工单价" prop={ `children[${index}].price` } rules={ rules.price }>
+                          <ElInput v-model={ e.price } placeholder="请输入加工单价" />
+                        </ElFormItem>
+                        <ElFormItem label="生产制程" prop={ `children[${index}].long` } rules={ rules.long }>
+                          <div class="flex">
+                            <ElInput v-model={ e.long } placeholder="请输入生产制程" />
+                            <div class="flex">
+                              {
+                                index == form.value.children.length - 1 && index < 20 ? <ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon> : <></>
+                              }
+                              {
+                                index > 0 ? <ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon> : <></>
+                              }
+                            </div>
+                          </div>
+                        </ElFormItem>
+                      </Fragment>
+                    ))
+                  }
+                </div>
               </ElForm>
             ),
             footer: () => (

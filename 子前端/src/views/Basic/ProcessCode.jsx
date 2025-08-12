@@ -166,7 +166,6 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="process_code" label="工艺编码" />
                   <ElTableColumn prop="process_name" label="工艺名称" />
-                  <ElTableColumn prop="equipment.equipment_name" label="使用设备" />
                   <ElTableColumn prop="times" label="单件工时(时)" />
                   <ElTableColumn prop="price" label="加工单价" />
                   <ElTableColumn prop="section_points" label="段数点数" />

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubMaterialBom, SubMaterialCode, SubPartCode, SubProductCode, SubProcessBom, SubProcessCode, SubEquipmentCode, Op } = require('../models');
+const { SubMaterialBom, SubMaterialCode, SubPartCode, SubProductCode, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -130,33 +130,24 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
       company_id,
       archive
     },
-    attributes: ['id', 'make_time', 'archive'],
+    attributes: ['id', 'make_time', 'archive', 'product_id', 'part_id'],
     include: [
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'] },
+      { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
       {
-        model: SubPartCode,
-        as: 'part',
-        attributes: ['id', 'part_name', 'part_code'],
+        model: SubProcessBomChild,
+        as: 'children',
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'time', 'price', 'long'],
         include: [
-          {
-            model: SubProcessCode,
-            as: 'process',
-            attributes: ['id', 'process_code', 'process_name', 'times', 'price', 'long', 'section_points'],
-            through: { attributes: [] },
-            include: [
-              {
-                model: SubEquipmentCode,
-                as: 'equipment',
-                attributes: ['id', 'equipment_code', 'equipment_name']
-              }
-            ]
-          }
+          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
+          { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }
         ]
       }
     ],
     order: [
       ['id', 'DESC'],
-      [{ model: SubPartCode, as: 'part' }, { model: SubProcessCode, as: 'process' }, 'id', 'ASC']
+      [{ model: SubProductCode, as: 'product' }, 'id', 'DESC'],
+      [{ model: SubPartCode, as: 'part' }, 'id', 'DESC']
     ],
     limit: parseInt(pageSize),
     offset
@@ -176,32 +167,37 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
 })
 // 添加工艺BOM
 router.post('/process_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, make_time, archive } = req.body;
+  const { product_id, part_id, make_time, archive, children } = req.body;
   
   const { id: userId, company_id } = req.user;
   
-  await SubProcessBom.create({
+  const process = await SubProcessBom.create({
     product_id, part_id, make_time, archive, company_id,
     user_id: userId
   })
+  const childrens = children.map(e => ({ process_bom_id: process.id, ...e }))
+  await SubProcessBomChild.bulkCreate(childrens);
   
   res.json({ message: '添加成功', code: 200 });
 });
 // 更新工艺BOM
 router.put('/process_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, make_time, archive, id } = req.body;
-  
+  const { product_id, part_id, make_time, archive, id, children } = req.body;
   const { id: userId, company_id } = req.user;
+  
+  // 验证工艺BOM是否存在
+  const process = await SubProcessBom.findByPk(id);
+  if (!process) return res.json({ message: '工艺BOM不存在', code: 401 });
   
   const updateResult = await SubProcessBom.update({
     product_id, part_id, make_time, archive, company_id,
     user_id: userId
   }, {
-    where: {
-      id
-    }
+    where: { id }
   })
-  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  SubProcessBomChild.bulkCreate(children, {
+    updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'time', 'price', 'long']
+  })
   
   res.json({ message: '修改成功', code: 200 });
 });
@@ -222,6 +218,11 @@ router.put('/process_bom_archive', authMiddleware, async (req, res) => {
 // 删除工艺BOM
 router.delete('/process_bom', authMiddleware, async (req, res) => {
   const { id } = req.query
+  
+  // 验证工艺BOM是否存在
+  const process = await SubProcessBom.findByPk(id);
+  if (!process) return res.json({ message: '工艺BOM不存在', code: 401 });
+  
   const updateResult = await SubProcessBom.update({
     is_deleted: 0
   }, {
@@ -229,7 +230,7 @@ router.delete('/process_bom', authMiddleware, async (req, res) => {
       id
     }
   })
-  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  
   res.json({ message: '删除成功', code: 200 });
 })
 

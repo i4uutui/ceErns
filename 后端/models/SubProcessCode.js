@@ -54,11 +54,6 @@ const SubProcessCode = sequelize.define('SubProcessCode', {
     allowNull: true,
     comment: ' 加工总价 '
   },
-  long: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: ' 生产制程 '
-  },
   remarks: {
     type: DataTypes.TEXT,
     allowNull: true,

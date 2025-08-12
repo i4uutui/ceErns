@@ -15,7 +15,8 @@ const SubMaterialCode = require('./SubMaterialCode.js') // 材料编码基础信
 const SubEquipmentCode = require('./SubEquipmentCode.js') // 设备编码基础信息表
 const SubEmployeeInfo = require('./SubEmployeeInfo.js') // 员工信息基础信息表
 const SubMaterialBom = require('./SubMaterialBom.js') // 材料BOM信息表
-const SubProcessBom = require('./SubProcessBom.js') // 材料BOM信息表
+const SubProcessBom = require('./SubProcessBom.js') // 工艺BOM信息表
+const SubProcessBomChild = require('./SubProcessBomChild.js') // 工艺BOM信息表 子表
 const SubSaleOrder = require('./SubSaleOrder.js') // 销售订单表
 const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
 const SubOutsourcingQuote = require('./SubOutsourcingQuote.js') // 委外报价信息表
@@ -26,19 +27,6 @@ const SubProductionProgress = require('./SubProductionProgress.js') // 生产进
 AdUser.hasMany(AdOrganize, { foreignKey: 'menber_id', as: 'organize' });
 AdOrganize.hasMany(AdOrganize, { foreignKey: 'pid', as: 'children' });
 AdOrganize.belongsTo(AdUser, { foreignKey: 'menber_id', as: 'menber' });
-
-
-SubProductCode.belongsToMany(SubPartCode, { through: 'sub_product_part', foreignKey: 'product_id', as: 'part' });
-SubPartCode.belongsToMany(SubProductCode, { through: 'sub_product_part', foreignKey: 'part_id', as: 'product' });
-
-SubPartCode.belongsToMany(SubMaterialCode, { through: 'sub_part_material', foreignKey: 'part_id', as: 'material' })
-SubMaterialCode.belongsToMany(SubPartCode, { through: 'sub_part_material', foreignKey: 'material_id', as: 'part' })
-
-SubPartCode.belongsToMany(SubProcessCode, { through: 'sub_part_process', foreignKey: 'part_id', as: 'process' })
-SubProcessCode.belongsToMany(SubPartCode, { through: 'sub_part_process', foreignKey: 'process_id', as: 'part' })
-
-SubProcessCode.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'equipment' })
-SubEquipmentCode.hasMany(SubProcessCode, { foreignKey: 'equipment_id', as: 'process' })
 
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
@@ -53,11 +41,14 @@ SubProductNotice.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubProductNotice.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductNotice.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 
-SubMaterialBom.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
-SubMaterialBom.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
-
-SubProcessBom.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
-SubProcessBom.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
+SubProcessBom.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' });
+SubProcessBom.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' });
+SubProcessBom.hasMany(SubProcessBomChild, { foreignKey: 'process_bom_id', as: 'children' })
+SubProcessBomChild.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'parent' })
+SubProcessBomChild.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' })
+SubProcessBomChild.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'equipment' })
+SubProcessCode.hasOne(SubProcessBomChild, { foreignKey: 'process_id' })
+SubEquipmentCode.hasOne(SubProcessBomChild, { foreignKey: 'equipment_id' })
 
 SubMaterialQuote.belongsTo(SubMaterialCode, { foreignKey: 'material_id', as: 'material' })
 SubMaterialQuote.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
@@ -92,6 +83,7 @@ module.exports = {
   SubEmployeeInfo,
   SubMaterialBom,
   SubProcessBom,
+  SubProcessBomChild,
   SubSaleOrder,
   SubMaterialQuote,
   SubOutsourcingQuote,

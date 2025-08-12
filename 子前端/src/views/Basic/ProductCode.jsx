@@ -54,8 +54,6 @@ export default defineComponent({
       unit_price: '',
       currency: '',
       production_requirements: '',
-      is_product_bom: 1,
-      partIds: []
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -123,35 +121,10 @@ export default defineComponent({
         }
       }).catch(() => {})
     }
-    const handleBOM = (row, bom) => {
-      if(!row.part.length) return ElMessage.error('请先绑定部件编码')
-      const val = bom == 'process' ? '工艺' : '材料'
-      ElMessageBox.confirm(
-        `是否确认生成${val}BOM？`,
-        "提示",
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      ).then(async () => {
-        const params = {
-          id: row.id,
-          bom
-        }
-        const res = await request.post('/api/set_to_BOM', params);
-        if(res && res.code == 200){
-          ElMessage.success('操作成功');
-          fetchProductList();
-        }
-      }).catch(() => {})
-    }
-    
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
       const rows = { ...row }
-      rows.partIds = rows.part.map(e => e.id)
       form.value = rows;
     }
     // 添加
@@ -179,8 +152,6 @@ export default defineComponent({
         unit_price: '',
         currency: '',
         production_requirements: '',
-        is_product_bom: 1,
-        partIds: []
       }
     }
     // 分页相关
@@ -215,28 +186,15 @@ export default defineComponent({
                   <ElTableColumn prop="specification" label="规格" />
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="component_structure" label="产品结构" />
-                  <ElTableColumn label="部件">
-                  {({row}) => (
-                    <span>{ row.part && row.part.length ? row.part.map(part => part.part_name).join('，') : 'null' }
-                    </span>
-                  )}
-                  </ElTableColumn>
                   <ElTableColumn prop="unit" label="单位" width="100" />
                   <ElTableColumn prop="unit_price" label="单价" width="100" />
                   <ElTableColumn prop="currency" label="币别" width="100" />
                   <ElTableColumn prop="production_requirements" label="生产要求" />
-                  <ElTableColumn label="是否已生成工艺bom">
-                    {({row}) => (
-                      row.is_product_bom == 1 ? '否' : <span style={{ color: 'red' }}>已生成</span>
-                    )}
-                  </ElTableColumn>
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                         <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
-                        <ElButton size="small" type="warning" onClick={ () => handleBOM(scope.row, 'process') }>生成工艺BOM</ElButton>
-                        <ElButton size="small" type="warning" onClick={ () => handleBOM(scope.row, 'material') }>生成材料BOM</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -270,9 +228,6 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="产品结构" prop="component_structure">
                   <ElInput v-model={ form.value.component_structure } placeholder="请输入产品结构" />
-                </ElFormItem>
-                <ElFormItem label="部件" prop="partIds">
-                  <MySelect v-model={ form.value.partIds } multiple apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件" />
                 </ElFormItem>
                 <ElFormItem label="单位" prop="unit">
                   <ElInput v-model={ form.value.unit } placeholder="请输入单位" />

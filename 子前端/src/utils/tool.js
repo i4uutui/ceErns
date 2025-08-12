@@ -85,8 +85,28 @@ function getRandomString() {
   }
   return result;
 }
+// 检查值是否为空
+function isEmptyValue(value) {
+  // 处理null和undefined
+  if (value == null) return true;
+  
+  // 处理字符串
+  if (typeof value === 'string' && value.trim() === '') return true;
+  
+  // 处理数字
+  if (typeof value === 'number' && (isNaN(value) || value === 0)) return false;
+  
+  // 处理对象
+  if (typeof value === 'object') {
+    return Object.values(value).every(isEmptyValue);
+  }
+  
+  // 其他类型视为有值
+  return false;
+}
 
 export {
   numberToChinese,
-  getRandomString
+  getRandomString,
+  isEmptyValue
 }

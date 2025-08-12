@@ -64,11 +64,6 @@ const SubMaterialCode = sequelize.define('SubMaterialCode', {
     allowNull: true,
     comment: '币别'
   },
-  number: {
-    type: DataTypes.DECIMAL(20),
-    allowNull: true,
-    comment: '数量'
-  },
   remarks: {
     type: DataTypes.TEXT,
     allowNull: true,
