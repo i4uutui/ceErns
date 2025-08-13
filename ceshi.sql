@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 12/08/2025 16:37:31
+ Date: 13/08/2025 19:58:37
 */
 
 SET NAMES utf8mb4;
@@ -214,7 +214,7 @@ CREATE TABLE `sub_material_bom`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_bom
@@ -223,9 +223,43 @@ INSERT INTO `sub_material_bom` VALUES (5, 1, 1, 11, 6, 0, 1, '2025-07-27 11:10:2
 INSERT INTO `sub_material_bom` VALUES (6, 1, 1, 10, 5, 0, 1, '2025-07-27 11:22:56', '2025-08-03 11:04:19');
 INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, 0, 1, '2025-07-27 11:50:06', '2025-08-03 11:04:19');
 INSERT INTO `sub_material_bom` VALUES (8, 1, 1, 10, 6, 0, 1, '2025-08-02 11:04:51', '2025-08-03 11:04:19');
-INSERT INTO `sub_material_bom` VALUES (9, 1, 1, 19, 5, 1, 1, '2025-08-11 10:19:02', '2025-08-11 10:19:02');
-INSERT INTO `sub_material_bom` VALUES (10, 1, 1, 19, 6, 1, 1, '2025-08-11 10:19:02', '2025-08-11 10:19:02');
-INSERT INTO `sub_material_bom` VALUES (11, 1, 1, 19, 10, 1, 1, '2025-08-11 10:19:02', '2025-08-11 18:12:57');
+INSERT INTO `sub_material_bom` VALUES (9, 1, 1, 19, 5, 0, 1, '2025-08-11 10:19:02', '2025-08-13 14:40:29');
+INSERT INTO `sub_material_bom` VALUES (10, 1, 1, 19, 6, 0, 1, '2025-08-11 10:19:02', '2025-08-13 14:40:29');
+INSERT INTO `sub_material_bom` VALUES (11, 1, 1, 19, 10, 0, 1, '2025-08-11 10:19:02', '2025-08-13 14:40:29');
+INSERT INTO `sub_material_bom` VALUES (12, 1, 1, 17, 7, 0, 1, '2025-08-13 10:38:41', '2025-08-13 14:40:29');
+INSERT INTO `sub_material_bom` VALUES (13, 1, 1, 19, 6, 1, 1, '2025-08-13 14:41:35', '2025-08-13 14:41:35');
+INSERT INTO `sub_material_bom` VALUES (14, 1, 1, 17, 7, 1, 1, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
+INSERT INTO `sub_material_bom` VALUES (15, 1, 1, 19, 10, 1, 1, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
+
+-- ----------------------------
+-- Table structure for sub_material_bom_child
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_material_bom_child`;
+CREATE TABLE `sub_material_bom_child`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `material_bom_id` int(11) NOT NULL COMMENT '材料BOM的父表id',
+  `material_id` int(11) NOT NULL COMMENT '材料编码ID，关联材料编码表',
+  `number` int(20) NULL DEFAULT NULL COMMENT '数量',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表子表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of sub_material_bom_child
+-- ----------------------------
+INSERT INTO `sub_material_bom_child` VALUES (6, 12, 2, 12, '2025-08-13 10:38:41', '2025-08-13 10:38:41');
+INSERT INTO `sub_material_bom_child` VALUES (7, 12, 2, 22, '2025-08-13 10:38:41', '2025-08-13 10:38:41');
+INSERT INTO `sub_material_bom_child` VALUES (8, 12, 2, 24, '2025-08-13 10:38:41', '2025-08-13 10:38:41');
+INSERT INTO `sub_material_bom_child` VALUES (9, 11, 2, 23, '2025-08-13 10:59:47', '2025-08-13 10:59:47');
+INSERT INTO `sub_material_bom_child` VALUES (10, 11, 2, 34, '2025-08-13 10:59:47', '2025-08-13 10:59:47');
+INSERT INTO `sub_material_bom_child` VALUES (11, 10, 2, 12, '2025-08-13 10:59:52', '2025-08-13 10:59:52');
+INSERT INTO `sub_material_bom_child` VALUES (12, 13, 2, 12, '2025-08-13 14:41:35', '2025-08-13 14:41:35');
+INSERT INTO `sub_material_bom_child` VALUES (13, 14, 2, 12, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
+INSERT INTO `sub_material_bom_child` VALUES (14, 14, 2, 22, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
+INSERT INTO `sub_material_bom_child` VALUES (15, 14, 2, 24, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
+INSERT INTO `sub_material_bom_child` VALUES (16, 15, 2, 23, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
+INSERT INTO `sub_material_bom_child` VALUES (17, 15, 2, 34, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -377,8 +411,8 @@ CREATE TABLE `sub_process_bom`  (
 -- ----------------------------
 -- Records of sub_process_bom
 -- ----------------------------
-INSERT INTO `sub_process_bom` VALUES (35, 1, 1, 19, 6, 11, 1, 1, '2025-08-12 15:08:15', '2025-08-12 16:05:04');
-INSERT INTO `sub_process_bom` VALUES (36, 1, 1, 17, 6, 322, 1, 1, '2025-08-12 15:09:18', '2025-08-12 16:05:06');
+INSERT INTO `sub_process_bom` VALUES (35, 1, 1, 19, 6, 11, 0, 1, '2025-08-12 15:08:15', '2025-08-13 14:40:09');
+INSERT INTO `sub_process_bom` VALUES (36, 1, 1, 17, 6, 322, 0, 1, '2025-08-12 15:09:18', '2025-08-13 14:40:09');
 
 -- ----------------------------
 -- Table structure for sub_process_bom_child
@@ -392,18 +426,18 @@ CREATE TABLE `sub_process_bom_child`  (
   `time` int(11) NULL DEFAULT NULL COMMENT '单件工时(小时)',
   `price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
   `long` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生产制程',
-  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表子表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表子表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_process_bom_child
 -- ----------------------------
-INSERT INTO `sub_process_bom_child` VALUES (3, 35, 4, 4, 22, 22, '制程1', 1, '2025-08-12 15:08:15', '2025-08-12 15:08:15');
-INSERT INTO `sub_process_bom_child` VALUES (4, 35, 3, 3, 44, 55, '制程2', 1, '2025-08-12 15:08:15', '2025-08-12 15:08:15');
-INSERT INTO `sub_process_bom_child` VALUES (5, 36, 3, 4, 12, 331, '生产44', 1, '2025-08-12 15:09:18', '2025-08-12 15:47:23');
+INSERT INTO `sub_process_bom_child` VALUES (3, 35, 4, 4, 22, 22, '制程1', '2025-08-12 15:08:15', '2025-08-12 15:08:15');
+INSERT INTO `sub_process_bom_child` VALUES (4, 35, 3, 3, 44, 55, '制程2', '2025-08-12 15:08:15', '2025-08-12 15:08:15');
+INSERT INTO `sub_process_bom_child` VALUES (5, 36, 3, 4, 12, 331, '生产123456', '2025-08-12 15:09:18', '2025-08-13 10:33:55');
+INSERT INTO `sub_process_bom_child` VALUES (6, 36, 4, 3, 211, 1212, '生产654321', '2025-08-13 10:33:55', '2025-08-13 10:33:55');
 
 -- ----------------------------
 -- Table structure for sub_process_code
