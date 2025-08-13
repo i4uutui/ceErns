@@ -1,7 +1,7 @@
 import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
 import { ElButton, ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn, ElIcon, ElMessageBox } from 'element-plus'
 import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
-import { getRandomString } from '@/utils/tool';
+import { getRandomString, isEmptyValue } from '@/utils/tool';
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 
@@ -26,8 +26,8 @@ export default defineComponent({
     let form = ref({
       product_id: '',
       part_id: '',
-      textJson: [
-        { id: getRandomString(), material_id: '', material_code: '', material_name: '', specification: '', number: '' }
+      children: [
+        { material_id: '', number: '' }
       ]
     })
     let tableData = ref([])
@@ -37,29 +37,26 @@ export default defineComponent({
     let edit = ref(0)
 
     const maxBomLength = computed(() => {
-      return tableData.value.reduce((max, item) => {
-        const currentLength = item.part.material.length;
-        return currentLength > max ? currentLength : max;
-      }, 0);
+      if (tableData.value.length === 0) return 0;
+      return Math.max(...tableData.value.map(item => item.children.length));
     });
 
-    // 处理数据：确保每条记录的 textJson 长度一致（不足的补空对象）
+    // 处理数据：确保每条记录的 children 长度一致（不足的补空对象）
     const processedTableData = computed(() => {
       return tableData.value.map(item => {
-        const { part } = item;
-        const { material } = part;
-        // 计算需要补充的空对象数量
-        const needFillCount = maxProcessLength - material.length;
-        // 补充空对象（可根据实际需求定义空对象结构）
-        const filledProcess = [...material, ...Array(needFillCount).fill({})];
-        return {
-          ...item,
-          part: {
-            ...part,
-            material: filledProcess
-          }
-        };
-      })
+        const newItem = { ...item, children: [...item.children] };
+        while (newItem.children.length < maxBomLength.value) {
+          newItem.children.push({
+            material: {
+              material_code: '',
+              material_name: '',
+              specification: '',
+            },
+            number: ''
+          });
+        }
+        return newItem;
+      });
     });
     
     onMounted(() => {
@@ -75,11 +72,6 @@ export default defineComponent({
           archive: 1
         },
       });
-      // const data = res.data.map(o => {
-      //   const test = JSON.parse(o.textJson)
-      //   o.textJson = test
-      //   return o
-      // })
       tableData.value = res.data;
       total.value = res.total;
     };
@@ -88,7 +80,6 @@ export default defineComponent({
       await formEl.validate(async (valid, fields) => {
         if (valid){
           const low = { ...form.value, archive: 1 }
-          low.textJson = JSON.stringify(low.textJson)
           if(!edit.value){
             const res = await request.post('/api/material_bom', low);
             if(res && res.code == 200){
@@ -134,22 +125,26 @@ export default defineComponent({
     }
     const handleDelete = ({ id }) => {
       ElMessageBox.confirm('是否确认存档', '提示', {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).then(async () => {
-          const res = await request.delete('/api/material_bom', { params: { id } });
-          if(res && res.code == 200){
-            ElMessage.success('修改成功');
-            dialogVisible.value = false;
-            fetchProductList();
-          }
-        }).catch(() => {})
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        const res = await request.delete('/api/material_bom', { params: { id } });
+        if(res && res.code == 200){
+          ElMessage.success('修改成功');
+          dialogVisible.value = false;
+          fetchProductList();
+        }
+      }).catch(() => {})
     }
-    const handleUplate = ({ id, part, product }) => {
+    const handleUplate = ({ id, product_id, part_id, children }) => {
       edit.value = id;
       dialogVisible.value = true;
-      form.value = { id, product_id: product.id, part_id: part.id };
+      let filtered = children.filter(item => {
+        return !Object.values(item).every(isEmptyValue);
+      });
+      if(!filtered.length) filtered = [{ material_id: '', number: '' }]
+      form.value = { product_id, part_id, children: filtered };
     }
     // 添加
     const handleAdd = () => {
@@ -167,22 +162,17 @@ export default defineComponent({
       form.value = {
         product_id: '',
         part_id: '',
-        textJson: [
-          { id: getRandomString(), material_id: '', material_code: '', material_name: '', specification: '', number: '' }
+        children: [
+          { material_id: '', number: '' }
         ]
       }
     }
     const handleAddJson = () => {
-      const obj = { id: getRandomString(), material_id: '', material_code: '', material_name: '', specification: '', number: '' }
-      form.value.textJson.push(obj)
+      const obj = { material_id: '', number: '' }
+      form.value.children.push(obj)
     }
     const handledeletedJson = (index) => {
-      form.value.textJson.splice(index, 1)
-    }
-    const materialHandle = (row, index) => {
-      form.value.textJson[index].material_code = row.material_code
-      form.value.textJson[index].material_name = row.material_name
-      form.value.textJson[index].specification = row.specification
+      form.value.children.splice(index, 1)
     }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(rowIndex >= 1 || columnIndex >= 5 && column.label != '操作'){
@@ -215,9 +205,9 @@ export default defineComponent({
             header: () => (
               <div class="flex row-between">
                 <div>
-                  {/* <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
                     添加材料BOM
-                  </ElButton> */}
+                  </ElButton>
                   <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
                     存档
                   </ElButton>
@@ -231,7 +221,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ processedTableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
@@ -240,10 +230,10 @@ export default defineComponent({
                   {
                     Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`材料BOM-${index + 1}`} key={index}>
-                        <ElTableColumn prop={`part.material[${index}].material_code`} label="材料编码" />
-                        <ElTableColumn prop={`part.material[${index}].material_name`} label="材料名称" />
-                        <ElTableColumn prop={`part.material[${index}].specification`} label="规格" />
-                        <ElTableColumn prop={`part.material[${index}].number`} label="数量" />
+                        <ElTableColumn prop={`children[${index}].material.material_code`} label="材料编码" />
+                        <ElTableColumn prop={`children[${index}].material.material_name`} label="材料名称" />
+                        <ElTableColumn prop={`children[${index}].material.specification`} label="规格" />
+                        <ElTableColumn prop={`children[${index}].number`} label="数量" />
                       </ElTableColumn>
                     ))
                   }
@@ -271,18 +261,18 @@ export default defineComponent({
                 <ElFormItem label="部件编码" prop="part_id">
                   <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
                 </ElFormItem>
-                {/*
-                  form.value.textJson.map((e, index) => (
+                {
+                  form.value.children.map((e, index) => (
                     <Fragment key={ index }>
-                      <ElFormItem label="材料编码" prop={ `textJson[${index}].material_id` } rules={ rules.material_id }>
-                        <MySelect v-model={ e.material_id } apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料编码" onChange={ (val) => materialHandle(val, index) } />
+                      <ElFormItem label="材料编码" prop={ `children[${index}].material_id` } rules={ rules.material_id }>
+                        <MySelect v-model={ e.material_id } apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料编码" />
                       </ElFormItem>
-                      <ElFormItem label="数量" prop={ `textJson[${index}].number` } rules={ rules.number }>
+                      <ElFormItem label="数量" prop={ `children[${index}].number` } rules={ rules.number }>
                         <div class="flex">
                           <ElInput v-model={ e.number } placeholder="请输入数量" />
                           <div class="flex">
                             {
-                              index == form.value.textJson.length - 1 && index < 20 ? <ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon> : <></>
+                              index == form.value.children.length - 1 && index < 20 ? <ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon> : <></>
                             }
                             {
                               index > 0 ? <ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon> : <></>
@@ -292,7 +282,7 @@ export default defineComponent({
                       </ElFormItem>
                     </Fragment>
                   ))
-                */}
+                }
               </ElForm>
             ),
             footer: () => (

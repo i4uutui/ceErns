@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+const sequelize = require('../config/sequelize.js')
 
 const AdAdmin = require('./AdAdmin.js') // 产品报价信息表
 const AdCompanyInfo = require('./AdCompanyInfo.js') // 客户企业信息表
@@ -15,6 +16,7 @@ const SubMaterialCode = require('./SubMaterialCode.js') // 材料编码基础信
 const SubEquipmentCode = require('./SubEquipmentCode.js') // 设备编码基础信息表
 const SubEmployeeInfo = require('./SubEmployeeInfo.js') // 员工信息基础信息表
 const SubMaterialBom = require('./SubMaterialBom.js') // 材料BOM信息表
+const SubMaterialBomChild = require('./SubMaterialBomChild.js') // 材料BOM信息表 子表
 const SubProcessBom = require('./SubProcessBom.js') // 工艺BOM信息表
 const SubProcessBomChild = require('./SubProcessBomChild.js') // 工艺BOM信息表 子表
 const SubSaleOrder = require('./SubSaleOrder.js') // 销售订单表
@@ -40,6 +42,13 @@ SubProductQuotation.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'p
 SubProductNotice.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubProductNotice.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductNotice.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
+
+SubMaterialBom.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' });
+SubMaterialBom.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' });
+SubMaterialBom.hasMany(SubMaterialBomChild, { foreignKey: 'material_bom_id', as: 'children' })
+SubMaterialBomChild.belongsTo(SubMaterialBom, { foreignKey: 'material_bom_id', as: 'parent' })
+SubMaterialBomChild.belongsTo(SubMaterialCode, { foreignKey: 'material_id', as: 'material' })
+SubMaterialCode.hasOne(SubMaterialBomChild, { foreignKey: 'material_id' })
 
 SubProcessBom.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' });
 SubProcessBom.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' });
@@ -67,6 +76,7 @@ SubProductionProgress.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale
 
 module.exports = {
   Op,
+  sequelize,
   AdAdmin,
   AdCompanyInfo,
   AdUser,
@@ -82,6 +92,7 @@ module.exports = {
   SubEquipmentCode,
   SubEmployeeInfo,
   SubMaterialBom,
+  SubMaterialBomChild,
   SubProcessBom,
   SubProcessBomChild,
   SubSaleOrder,

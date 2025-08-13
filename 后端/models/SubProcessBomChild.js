@@ -41,12 +41,6 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     allowNull: true,
     comment: ' 生产制程 '
   },
-  is_deleted: {
-    type: DataTypes.TINYINT(1),
-    allowNull: true,
-    defaultValue: 1,
-    comment: ' 是否删除：1 - 未删除，0 - 已删除 '
-  },
 }, {
   sequelize,
   modelName: 'sub_process_bom_child',

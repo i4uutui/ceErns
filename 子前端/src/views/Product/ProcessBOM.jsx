@@ -159,9 +159,10 @@ export default defineComponent({
     const handleUplate = ({ id, product_id, part_id, make_time, children }) => {
       edit.value = id;
       dialogVisible.value = true;
-      const filtered = children.filter(item => {
+      let filtered = children.filter(item => {
         return !Object.values(item).every(isEmptyValue);
       });
+      if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', long: '' }]
       form.value = { children: filtered, id, product_id, make_time, part_id };
     }
     // 添加
