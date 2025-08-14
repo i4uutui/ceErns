@@ -132,6 +132,7 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
     code: 200 
   });
 });
+
 router.post('/material_quote', authMiddleware, async (req, res) => {
   const { supplier_id, notice_id, material_id, delivery, number, packaging, transaction_currency, other_transaction_terms, remarks } = req.body;
   
