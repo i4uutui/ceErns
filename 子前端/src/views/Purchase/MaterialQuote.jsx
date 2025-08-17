@@ -19,9 +19,6 @@ export default defineComponent({
       delivery: [
         { required: true, message: '请输入送货方式', trigger: 'blur' },
       ],
-      number: [
-        { required: true, message: '请输入采购数量', trigger: 'blur' },
-      ],
       packaging: [
         { required: true, message: '请输入包装要求', trigger: 'blur' },
       ],
@@ -38,7 +35,6 @@ export default defineComponent({
       notice_id: '',
       material_id: '', 
       delivery: '',
-      number: '',
       packaging: '', 
       transaction_currency: '', 
       other_transaction_terms: '', 
@@ -115,8 +111,7 @@ export default defineComponent({
         supplier_id: '',
         notice_id: '',
         material_id: '',
-        delivery: '', 
-        number: '',
+        delivery: '',
         packaging: '', 
         transaction_currency: '', 
         other_transaction_terms: '', 
@@ -159,7 +154,6 @@ export default defineComponent({
                   <ElTableColumn prop="material.purchase_unit" label="采购单位" />
                   <ElTableColumn prop="material.unit_price" label="采购单价" />
                   <ElTableColumn prop="delivery" label="送货方式" />
-                  <ElTableColumn prop="number" label="采购数量" />
                   <ElTableColumn prop="packaging" label="包装要求" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />
@@ -193,9 +187,6 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="送货方式" prop="delivery">
                   <ElInput v-model={ form.value.delivery } placeholder="请输入送货方式" />
-                </ElFormItem>
-                <ElFormItem label="交易数量" prop="number">
-                  <ElInput v-model={ form.value.number } placeholder="请输入交易数量" />
                 </ElFormItem>
                 <ElFormItem label="包装要求" prop="packaging">
                   <ElInput v-model={ form.value.packaging } placeholder="请输入包装要求" />

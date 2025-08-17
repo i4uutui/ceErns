@@ -1,17 +1,17 @@
 /*
- Navicat Premium Data Transfer
+ Navicat MySQL Data Transfer
 
- Source Server         : ceshi
+ Source Server         : thinkphp_demo
  Source Server Type    : MySQL
- Source Server Version : 50740
+ Source Server Version : 50722 (5.7.22)
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50740
+ Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 13/08/2025 19:58:37
+ Date: 17/08/2025 11:02:32
 */
 
 SET NAMES utf8mb4;
@@ -227,9 +227,9 @@ INSERT INTO `sub_material_bom` VALUES (9, 1, 1, 19, 5, 0, 1, '2025-08-11 10:19:0
 INSERT INTO `sub_material_bom` VALUES (10, 1, 1, 19, 6, 0, 1, '2025-08-11 10:19:02', '2025-08-13 14:40:29');
 INSERT INTO `sub_material_bom` VALUES (11, 1, 1, 19, 10, 0, 1, '2025-08-11 10:19:02', '2025-08-13 14:40:29');
 INSERT INTO `sub_material_bom` VALUES (12, 1, 1, 17, 7, 0, 1, '2025-08-13 10:38:41', '2025-08-13 14:40:29');
-INSERT INTO `sub_material_bom` VALUES (13, 1, 1, 19, 6, 1, 1, '2025-08-13 14:41:35', '2025-08-13 14:41:35');
-INSERT INTO `sub_material_bom` VALUES (14, 1, 1, 17, 7, 1, 1, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
-INSERT INTO `sub_material_bom` VALUES (15, 1, 1, 19, 10, 1, 1, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
+INSERT INTO `sub_material_bom` VALUES (13, 1, 1, 19, 6, 0, 1, '2025-08-13 14:41:35', '2025-08-17 09:48:46');
+INSERT INTO `sub_material_bom` VALUES (14, 1, 1, 17, 7, 0, 1, '2025-08-13 14:41:55', '2025-08-17 09:48:46');
+INSERT INTO `sub_material_bom` VALUES (15, 1, 1, 19, 10, 0, 1, '2025-08-13 14:42:03', '2025-08-17 09:48:46');
 
 -- ----------------------------
 -- Table structure for sub_material_bom_child
@@ -254,10 +254,10 @@ INSERT INTO `sub_material_bom_child` VALUES (8, 12, 2, 24, '2025-08-13 10:38:41'
 INSERT INTO `sub_material_bom_child` VALUES (9, 11, 2, 23, '2025-08-13 10:59:47', '2025-08-13 10:59:47');
 INSERT INTO `sub_material_bom_child` VALUES (10, 11, 2, 34, '2025-08-13 10:59:47', '2025-08-13 10:59:47');
 INSERT INTO `sub_material_bom_child` VALUES (11, 10, 2, 12, '2025-08-13 10:59:52', '2025-08-13 10:59:52');
-INSERT INTO `sub_material_bom_child` VALUES (12, 13, 2, 12, '2025-08-13 14:41:35', '2025-08-13 14:41:35');
+INSERT INTO `sub_material_bom_child` VALUES (12, 13, 3, 12, '2025-08-13 14:41:35', '2025-08-17 09:48:42');
 INSERT INTO `sub_material_bom_child` VALUES (13, 14, 2, 12, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
 INSERT INTO `sub_material_bom_child` VALUES (14, 14, 2, 22, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
-INSERT INTO `sub_material_bom_child` VALUES (15, 14, 2, 24, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
+INSERT INTO `sub_material_bom_child` VALUES (15, 14, 3, 24, '2025-08-13 14:41:55', '2025-08-17 09:38:34');
 INSERT INTO `sub_material_bom_child` VALUES (16, 15, 2, 23, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
 INSERT INTO `sub_material_bom_child` VALUES (17, 15, 2, 34, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
 
@@ -283,12 +283,13 @@ CREATE TABLE `sub_material_code`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_code
 -- ----------------------------
 INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', 122, '12', '21', 1, '2025-07-08 15:36:33', '2025-08-12 10:18:06');
+INSERT INTO `sub_material_code` VALUES (3, 1, 1, '789', '555', '535', '35353', '353', '353', '5353', 5353, '535', '353', 1, '2025-08-17 09:38:16', '2025-08-17 09:38:16');
 
 -- ----------------------------
 -- Table structure for sub_material_quote
@@ -303,7 +304,6 @@ CREATE TABLE `sub_material_quote`  (
   `product_id` int(11) NULL DEFAULT NULL COMMENT '产品编码id',
   `material_id` int(11) NOT NULL COMMENT '材料编码ID',
   `delivery` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货方式',
-  `number` int(11) NULL DEFAULT NULL COMMENT '交易数量',
   `packaging` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '包装要求',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
@@ -317,8 +317,8 @@ CREATE TABLE `sub_material_quote`  (
 -- ----------------------------
 -- Records of sub_material_quote
 -- ----------------------------
-INSERT INTO `sub_material_quote` VALUES (1, 1, 1, 2, 6, 10, 2, '1111', 1111, '1111', '1111', '1111', '1111', 1, '2025-07-27 21:43:20', '2025-07-27 22:39:03');
-INSERT INTO `sub_material_quote` VALUES (2, 1, 1, 1, 5, 9, 2, '2222', 222, '222', '22', '222', '22', 1, '2025-07-27 22:40:03', '2025-07-27 22:40:03');
+INSERT INTO `sub_material_quote` VALUES (1, 1, 1, 2, 6, 10, 2, '1111', '1111', '1111', '1111', '1111', 1, '2025-07-27 21:43:20', '2025-07-27 22:39:03');
+INSERT INTO `sub_material_quote` VALUES (2, 1, 1, 1, 5, 9, 2, '2222', '222', '22', '222', '22', 1, '2025-07-27 22:40:03', '2025-08-17 09:39:09');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_quote
@@ -429,7 +429,7 @@ CREATE TABLE `sub_process_bom_child`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表子表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_bom_child
@@ -600,6 +600,7 @@ CREATE TABLE `sub_sales_order`  (
   `product_id` int(11) NOT NULL COMMENT '产品编码id',
   `product_req` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '产品要求',
   `order_number` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单数量',
+  `actual_number` int(11) NULL DEFAULT NULL COMMENT '实际数量，给采购单使用的',
   `unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单位',
   `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交货日期',
   `goods_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货日期',
@@ -613,8 +614,8 @@ CREATE TABLE `sub_sales_order`  (
 -- ----------------------------
 -- Records of sub_sales_order
 -- ----------------------------
-INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07 00:00:00', 3, '31232131', 10, '我的要求', '311', '车1', '2025-07-07 00:00:00', '2025-07-27 00:00:00', '2123121', 1, '2025-07-14 13:55:51', '2025-07-25 19:51:48');
-INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 2, '31232131', 9, '21', '2121', '2121', '2025-07-14 00:00:00', '2025-07-14T10:47:29.000Z', '3131', 1, '2025-07-14 18:47:31', '2025-08-03 19:37:53');
+INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07 00:00:00', 3, '31232131', 10, '我的要求', '311', 311, '车1', '2025-07-07 00:00:00', '2025-07-27 00:00:00', '2123121', 1, '2025-07-14 13:55:51', '2025-08-17 10:37:25');
+INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 2, '31232131', 9, '21', '2121', 2121, '2121', '2025-07-14 00:00:00', '2025-07-14 18:47:29', '3131', 1, '2025-07-14 18:47:31', '2025-08-17 10:37:12');
 
 -- ----------------------------
 -- Table structure for sub_supplier_info

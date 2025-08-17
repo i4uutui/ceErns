@@ -49,6 +49,11 @@ const SubSaleOrder = sequelize.define('SubSaleOrder', {
     allowNull: true,
     comment: ' 产品数量 '
   },
+  actual_number: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    comment: ' 实际数量，给采购单使用的'
+  },
   unit: {
     type: DataTypes.STRING(20),
     allowNull: true,

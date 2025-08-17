@@ -53,10 +53,8 @@ export default defineComponent({
     
     // 获取列表
     const fetchProductList = async () => {
-      const res = await request.get('/api/material_quote', {
+      const res = await request.get('/api/purchase_order', {
         params: {
-          page: 1,
-          pageSize: 10,
           supplier_abbreviation: supplier_abbreviation.value,
           product_code: product_code.value,
           product_name: product_name.value,
@@ -66,6 +64,17 @@ export default defineComponent({
       tableData.value = res.data;
       if(res.total == 0) return ElMessage.error('数据为空！')
     };
+    const onActualNumber = async ({ id, actual_number }) => {
+      const res = await request.get('/api/purchase_order', {
+        params: {
+          id,
+          actual_number
+        },
+      });
+      if(res && res.code == 200){
+        ElMessage.success('修改成功');
+      }
+    }
     // 统计合计
     const getSummaries = ({ columns, data }) => {
       const sums = [];
@@ -129,7 +138,7 @@ export default defineComponent({
             default: () => (
               <>
                 <div id="totalTable1">
-                  <ElTable data={ tableData.value } border stripe style={{ width: "940px" }}>
+                  <ElTable data={ tableData.value } border stripe style={{ width: "1040px" }}>
                     <ElTableColumn prop="material.material_code" label="材料编码" width="120" />
                     <ElTableColumn prop="material.material_name" label="材料名称" width="120" />
                     <ElTableColumn label="型号&规格" width="160">
@@ -144,9 +153,11 @@ export default defineComponent({
                     <ElTableColumn prop="material.other_features" label="其它特性" width="120" />
                     <ElTableColumn prop="material.purchase_unit" label="单位" width="100" />
                     <ElTableColumn prop="material.unit_price" label="单价" width="100" />
-                    <ElTableColumn prop="number" label="预计数量" width="100" />
-                    <ElTableColumn prop="number" label="实际数量" width="100">
-                      
+                    <ElTableColumn prop="notice.sale.order_number" label="预计数量" width="100" />
+                    <ElTableColumn prop="notice.sale.actual_number" label="实际数量" width="100">
+                      {{
+                        default: ({ row }) => <ElInput v-model={ row.notice.sale.actual_number } style="width: 70px" placeholder="请输入实际数量" onBlur={ () => onActualNumber(row.notice.sale) } />
+                      }}
                     </ElTableColumn>
                     <ElTableColumn prop="notice.delivery_time" label="交货时间" width="120" />
                   </ElTable>
@@ -173,7 +184,7 @@ export default defineComponent({
                         生产订单:{ notice.value }
                       </div>
                     </div>
-                    <ElTable data={ tableData.value } border stripe style={{ width: "700px" }}>
+                    <ElTable data={ tableData.value } border stripe style={{ width: "780px" }}>
                       <ElTableColumn prop="material.material_code" label="材料编码" width="80" />
                       <ElTableColumn prop="material.material_name" label="材料名称" width="80" />
                       <ElTableColumn label="型号&规格" width="120">
@@ -188,11 +199,11 @@ export default defineComponent({
                       <ElTableColumn prop="material.other_features" label="其它特性" width="100" />
                       <ElTableColumn prop="material.purchase_unit" label="单位" width="60" />
                       <ElTableColumn prop="material.unit_price" label="单价" width="80" />
-                      <ElTableColumn prop="number" label="预计数量" width="80" />
-                      <ElTableColumn prop="number" label="实际数量" width="80" />
+                      <ElTableColumn prop="notice.sale.order_number" label="预计数量" width="80" />
+                      <ElTableColumn prop="notice.sale.actual_number" label="实际数量" width="80" />
                       <ElTableColumn prop="notice.delivery_time" label="交货时间" width="100" />
                     </ElTable>
-                    <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 700px">
+                    <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 780px">
                       <div>核准：</div>
                       <div>审查：</div>
                       <div>制表：{ user.value?.name }</div>

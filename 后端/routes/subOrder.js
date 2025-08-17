@@ -160,7 +160,8 @@ router.post('/sale_order', authMiddleware, async (req, res) => {
   
   await SubSaleOrder.create({
     customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, company_id,
-    user_id: userId
+    user_id: userId,
+    actual_number: order_number
   })
   
   res.json({ message: '添加成功', code: 200 });
@@ -174,7 +175,7 @@ router.put('/sale_order', authMiddleware, async (req, res) => {
   
   const updateResult = await SubSaleOrder.update({
     customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, company_id,
-    user_id: userId
+    user_id: userId,
   }, {
     where: {
       id

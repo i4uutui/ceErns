@@ -44,11 +44,6 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: true,
     comment: ' 送货方式 '
   },
-  number: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    comment: ' 交易数量 '
-  },
   packaging: {
     type: DataTypes.STRING(100),
     allowNull: true,
