@@ -1,17 +1,17 @@
 /*
- Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
- Source Server         : thinkphp_demo
+ Source Server         : ceshi
  Source Server Type    : MySQL
- Source Server Version : 50722 (5.7.22)
+ Source Server Version : 50740
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50722 (5.7.22)
+ Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 17/08/2025 11:02:32
+ Date: 21/08/2025 11:56:30
 */
 
 SET NAMES utf8mb4;
@@ -214,7 +214,7 @@ CREATE TABLE `sub_material_bom`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_bom
@@ -230,6 +230,7 @@ INSERT INTO `sub_material_bom` VALUES (12, 1, 1, 17, 7, 0, 1, '2025-08-13 10:38:
 INSERT INTO `sub_material_bom` VALUES (13, 1, 1, 19, 6, 0, 1, '2025-08-13 14:41:35', '2025-08-17 09:48:46');
 INSERT INTO `sub_material_bom` VALUES (14, 1, 1, 17, 7, 0, 1, '2025-08-13 14:41:55', '2025-08-17 09:48:46');
 INSERT INTO `sub_material_bom` VALUES (15, 1, 1, 19, 10, 0, 1, '2025-08-13 14:42:03', '2025-08-17 09:48:46');
+INSERT INTO `sub_material_bom` VALUES (16, 1, 1, 17, 7, 1, 1, '2025-08-21 09:35:05', '2025-08-21 09:35:08');
 
 -- ----------------------------
 -- Table structure for sub_material_bom_child
@@ -243,7 +244,7 @@ CREATE TABLE `sub_material_bom_child`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_bom_child
@@ -260,6 +261,7 @@ INSERT INTO `sub_material_bom_child` VALUES (14, 14, 2, 22, '2025-08-13 14:41:55
 INSERT INTO `sub_material_bom_child` VALUES (15, 14, 3, 24, '2025-08-13 14:41:55', '2025-08-17 09:38:34');
 INSERT INTO `sub_material_bom_child` VALUES (16, 15, 2, 23, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
 INSERT INTO `sub_material_bom_child` VALUES (17, 15, 2, 34, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
+INSERT INTO `sub_material_bom_child` VALUES (18, 16, 3, 12, '2025-08-21 09:35:05', '2025-08-21 09:35:05');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -276,7 +278,6 @@ CREATE TABLE `sub_material_code`  (
   `other_features` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '其它特性',
   `usage_unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '使用单位',
   `purchase_unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '采购单位',
-  `unit_price` int(10) NULL DEFAULT NULL COMMENT '单价',
   `currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '币别',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   `is_deleted` int(1) UNSIGNED ZEROFILL NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
@@ -288,8 +289,8 @@ CREATE TABLE `sub_material_code`  (
 -- ----------------------------
 -- Records of sub_material_code
 -- ----------------------------
-INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', 122, '12', '21', 1, '2025-07-08 15:36:33', '2025-08-12 10:18:06');
-INSERT INTO `sub_material_code` VALUES (3, 1, 1, '789', '555', '535', '35353', '353', '353', '5353', 5353, '535', '353', 1, '2025-08-17 09:38:16', '2025-08-17 09:38:16');
+INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', '12', '21', 1, '2025-07-08 15:36:33', '2025-08-12 10:18:06');
+INSERT INTO `sub_material_code` VALUES (3, 1, 1, '789', '555', '535', '35353', '353', '353', '5353', '535', '353', 1, '2025-08-17 09:38:16', '2025-08-17 09:38:16');
 
 -- ----------------------------
 -- Table structure for sub_material_quote
@@ -303,6 +304,7 @@ CREATE TABLE `sub_material_quote`  (
   `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产通知单id',
   `product_id` int(11) NULL DEFAULT NULL COMMENT '产品编码id',
   `material_id` int(11) NOT NULL COMMENT '材料编码ID',
+  `price` int(11) NULL DEFAULT NULL COMMENT '单价',
   `delivery` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货方式',
   `packaging` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '包装要求',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
@@ -317,8 +319,8 @@ CREATE TABLE `sub_material_quote`  (
 -- ----------------------------
 -- Records of sub_material_quote
 -- ----------------------------
-INSERT INTO `sub_material_quote` VALUES (1, 1, 1, 2, 6, 10, 2, '1111', '1111', '1111', '1111', '1111', 1, '2025-07-27 21:43:20', '2025-07-27 22:39:03');
-INSERT INTO `sub_material_quote` VALUES (2, 1, 1, 1, 5, 9, 2, '2222', '222', '22', '222', '22', 1, '2025-07-27 22:40:03', '2025-08-17 09:39:09');
+INSERT INTO `sub_material_quote` VALUES (1, 1, 1, 2, 6, 10, 2, NULL, '1111', '1111', '1111', '1111', '1111', 1, '2025-07-27 21:43:20', '2025-07-27 22:39:03');
+INSERT INTO `sub_material_quote` VALUES (2, 1, 1, 1, 5, 9, 2, 21, '2222', '222', '22', '222', '22', 1, '2025-07-27 22:40:03', '2025-08-21 09:52:23');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_quote
@@ -400,19 +402,19 @@ CREATE TABLE `sub_process_bom`  (
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `product_id` int(11) NOT NULL COMMENT '产品编码id',
   `part_id` int(11) NOT NULL COMMENT '部件编码id',
-  `make_time` int(11) NULL DEFAULT NULL COMMENT '制程总工时',
   `archive` int(11) NULL DEFAULT NULL COMMENT '是否已存档，1未存，0已存',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_bom
 -- ----------------------------
-INSERT INTO `sub_process_bom` VALUES (35, 1, 1, 19, 6, 11, 0, 1, '2025-08-12 15:08:15', '2025-08-13 14:40:09');
-INSERT INTO `sub_process_bom` VALUES (36, 1, 1, 17, 6, 322, 0, 1, '2025-08-12 15:09:18', '2025-08-13 14:40:09');
+INSERT INTO `sub_process_bom` VALUES (35, 1, 1, 19, 6, 0, 1, '2025-08-12 15:08:15', '2025-08-13 14:40:09');
+INSERT INTO `sub_process_bom` VALUES (36, 1, 1, 17, 6, 0, 1, '2025-08-12 15:09:18', '2025-08-13 14:40:09');
+INSERT INTO `sub_process_bom` VALUES (37, 1, 1, 13, 9, 1, 1, '2025-08-21 09:35:20', '2025-08-21 09:35:23');
 
 -- ----------------------------
 -- Table structure for sub_process_bom_child
@@ -429,7 +431,7 @@ CREATE TABLE `sub_process_bom_child`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_bom_child
@@ -438,6 +440,7 @@ INSERT INTO `sub_process_bom_child` VALUES (3, 35, 4, 4, 22, 22, '制程1', '202
 INSERT INTO `sub_process_bom_child` VALUES (4, 35, 3, 3, 44, 55, '制程2', '2025-08-12 15:08:15', '2025-08-12 15:08:15');
 INSERT INTO `sub_process_bom_child` VALUES (5, 36, 3, 4, 12, 331, '生产123456', '2025-08-12 15:09:18', '2025-08-13 10:33:55');
 INSERT INTO `sub_process_bom_child` VALUES (6, 36, 4, 3, 211, 1212, '生产654321', '2025-08-13 10:33:55', '2025-08-13 10:33:55');
+INSERT INTO `sub_process_bom_child` VALUES (7, 37, 3, 3, 21, 33, '2121', '2025-08-21 09:35:20', '2025-08-21 09:35:20');
 
 -- ----------------------------
 -- Table structure for sub_process_code
@@ -466,6 +469,28 @@ CREATE TABLE `sub_process_code`  (
 -- ----------------------------
 INSERT INTO `sub_process_code` VALUES (3, 1, 1, 3, '123', '212', '21', 2121, 21, 21, '212', 1, '2025-07-08 15:56:54', '2025-08-10 11:29:00');
 INSERT INTO `sub_process_code` VALUES (4, 1, 1, 4, '2222', '111', '3131', 21, 213, 3131, '3131', 1, '2025-08-09 16:07:09', '2025-08-12 10:18:03');
+
+-- ----------------------------
+-- Table structure for sub_process_cycle
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_process_cycle`;
+CREATE TABLE `sub_process_cycle`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id，关联企业信息表',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id，关联用户表',
+  `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '生产制程名称',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产制程表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_process_cycle
+-- ----------------------------
+INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', 1, '2025-08-21 09:30:12', '2025-08-21 09:30:12');
+INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', 1, '2025-08-21 09:30:39', '2025-08-21 09:30:51');
+INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', 1, '2025-08-21 09:30:45', '2025-08-21 09:30:45');
 
 -- ----------------------------
 -- Table structure for sub_product_code
@@ -614,8 +639,8 @@ CREATE TABLE `sub_sales_order`  (
 -- ----------------------------
 -- Records of sub_sales_order
 -- ----------------------------
-INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07 00:00:00', 3, '31232131', 10, '我的要求', '311', 311, '车1', '2025-07-07 00:00:00', '2025-07-27 00:00:00', '2123121', 1, '2025-07-14 13:55:51', '2025-08-17 10:37:25');
-INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 2, '31232131', 9, '21', '2121', 2121, '2121', '2025-07-14 00:00:00', '2025-07-14 18:47:29', '3131', 1, '2025-07-14 18:47:31', '2025-08-17 10:37:12');
+INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07 00:00:00', 3, '31232131', 10, '我的要求', '311', 313, '车1', '2025-07-07 00:00:00', '2025-07-27 00:00:00', '2123121', 1, '2025-07-14 13:55:51', '2025-08-21 10:22:35');
+INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10 00:00:00', 2, '3333312', 9, '21', '2121', 2121, '2121', '2025-07-14 00:00:00', '2025-07-14 18:47:29', '3131', 1, '2025-07-14 18:47:31', '2025-08-21 10:19:08');
 
 -- ----------------------------
 -- Table structure for sub_supplier_info

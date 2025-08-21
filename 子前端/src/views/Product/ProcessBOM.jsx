@@ -15,9 +15,6 @@ export default defineComponent({
       part_id: [
         { required: true, message: '请选择部件编码', trigger: 'blur' },
       ],
-      make_time: [
-        { required: true, message: '请选择制程工时', trigger: 'blur' },
-      ],
       process_id: [
         { required: true, message: '请选择工艺编码', trigger: 'blur' }
       ],
@@ -38,7 +35,6 @@ export default defineComponent({
     let form = ref({
       product_id: '',
       part_id: '',
-      make_time: '',
       children: [
         { process_id: '', equipment_id: '', time: '', price: '', long: '' }
       ]
@@ -156,14 +152,14 @@ export default defineComponent({
           }
         }).catch(() => {})
     }
-    const handleUplate = ({ id, product_id, part_id, make_time, children }) => {
+    const handleUplate = ({ id, product_id, part_id, children }) => {
       edit.value = id;
       dialogVisible.value = true;
       let filtered = children.filter(item => {
         return !Object.values(item).every(isEmptyValue);
       });
       if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', long: '' }]
-      form.value = { children: filtered, id, product_id, make_time, part_id };
+      form.value = { children: filtered, id, product_id, part_id };
     }
     // 添加
     const handleAdd = () => {
@@ -181,7 +177,6 @@ export default defineComponent({
       form.value = {
         product_id: '',
         part_id: '',
-        make_time: '',
         children: [
           { process_id: '', equipment_id: '', time: '', price: '', long: '' }
         ]
@@ -246,7 +241,6 @@ export default defineComponent({
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
                   <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" />
                   <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" />
-                  <ElTableColumn prop="make_time" label="制程工时" fixed="left" />
                   {
                     Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`工序-${index + 1}`} key={index}>
@@ -284,9 +278,6 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="部件编码" prop="part_id">
                   <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
-                </ElFormItem>
-                <ElFormItem label="制程工时" prop="make_time">
-                  <ElInput v-model={ form.value.make_time } placeholder="请输入制程工时" />
                 </ElFormItem>
                 <div>
                   {

@@ -37,6 +37,16 @@ const routes = [
           menu: true
         }
       },
+      {
+        path: '/system/ProcessCycle',
+        name: 'ProcessCycle',
+        component: () => import('@/views/System/ProcessCycle.jsx'),
+        meta: {
+          title: '生产制程',
+          parent: '系统管理',
+          menu: true
+        }
+      },
       // 基础资料
       {
         path: '/basic/product-code',

@@ -127,7 +127,6 @@ export default defineComponent({
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
                   <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" />
                   <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" />
-                  <ElTableColumn prop="make_time" label="制程工时" fixed="left" />
                   {
                     Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`工序-${index + 1}`} key={index}>

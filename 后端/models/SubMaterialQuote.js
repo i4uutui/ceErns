@@ -39,6 +39,11 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: false,
     comment: ' 材料编码 ID'
   },
+  price: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: ' 单价 '
+  },
   delivery: {
     type: DataTypes.STRING(100),
     allowNull: true,

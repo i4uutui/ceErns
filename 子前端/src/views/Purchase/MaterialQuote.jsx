@@ -33,7 +33,8 @@ export default defineComponent({
     let form = ref({
       supplier_id: '',
       notice_id: '',
-      material_id: '', 
+      material_id: '',
+      price: '',
       delivery: '',
       packaging: '', 
       transaction_currency: '', 
@@ -111,6 +112,7 @@ export default defineComponent({
         supplier_id: '',
         notice_id: '',
         material_id: '',
+        price: '',
         delivery: '',
         packaging: '', 
         transaction_currency: '', 
@@ -152,7 +154,7 @@ export default defineComponent({
                   <ElTableColumn prop="material.specification" label="规格" />
                   <ElTableColumn prop="material.other_features" label="其他特性" />
                   <ElTableColumn prop="material.purchase_unit" label="采购单位" />
-                  <ElTableColumn prop="material.unit_price" label="采购单价" />
+                  <ElTableColumn prop="price" label="采购单价" />
                   <ElTableColumn prop="delivery" label="送货方式" />
                   <ElTableColumn prop="packaging" label="包装要求" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
@@ -184,6 +186,9 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="材料编码" prop="material_id">
                   <MySelect v-model={ form.value.material_id } apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料编码" />
+                </ElFormItem>
+                <ElFormItem label="采购单价" prop="price">
+                  <ElInput v-model={ form.value.price } placeholder="请输入采购单价" />
                 </ElFormItem>
                 <ElFormItem label="送货方式" prop="delivery">
                   <ElInput v-model={ form.value.delivery } placeholder="请输入送货方式" />

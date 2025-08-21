@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { SubOutsourcingQuote, SubSupplierInfo, SubProductCode, SubPartCode, SubProcessCode, Op } = require('../models');
+const { SubOutsourcingQuote, SubSupplierInfo, SubProductCode, SubPartCode, SubProcessCode, SubProcessBom, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
-
+// 委外报价单
 router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
@@ -64,6 +64,30 @@ router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
   if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
   
   res.json({ message: '修改成功', code: 200 });
+})
+
+
+
+
+// 委外加工单
+router.get('outsourcing_order', authMiddleware, async (req, res) => {
+  const { company_id } = req.user;
+  
+  const rows = await SubOutsourcingQuote.findAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+    },
+    include: [
+      { model: SubSupplierInfo, as: 'supplier' },
+      { model: SubProductCode, as: 'product' },
+      { model: SubPartCode, as: 'part' },
+      { model: SubProcessCode, as: 'process' },
+    ],
+    order: [['created_at', 'DESC']],
+  })
+  const quote = rows.map(e => e.toJSON())
+  
 })
 
 

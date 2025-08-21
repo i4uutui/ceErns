@@ -224,7 +224,7 @@ router.get('/material_code', authMiddleware, async (req, res) => {
 
 // 添加材料编码
 router.post('/material_code', authMiddleware, async (req, res) => {
-  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks } = req.body;
+  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, currency, remarks } = req.body;
   const { id: userId, company_id } = req.user;
   
   const rows = await SubMaterialCode.findAll({
@@ -236,7 +236,7 @@ router.post('/material_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   SubMaterialCode.create({
-    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, company_id,
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, currency, remarks, company_id,
     user_id: userId
   })
   
@@ -245,7 +245,7 @@ router.post('/material_code', authMiddleware, async (req, res) => {
 
 // 更新材料编码接口
 router.put('/material_code', authMiddleware, async (req, res) => {
-  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, id } = req.body;
+  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, currency, remarks, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证材料是否存在
@@ -258,7 +258,7 @@ router.put('/material_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   await SubMaterialCode.update({
-    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, unit_price, currency, remarks, company_id,
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, currency, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -303,7 +303,6 @@ router.get('/process_code', authMiddleware, async (req, res) => {
   })
   const totalPages = Math.ceil(count / pageSize);
   row = rows.map(e => e.toJSON())
-  
   // 返回所需信息
   res.json({ 
     data: formatArrayTime(row), 

@@ -169,12 +169,12 @@ router.post('/sale_order', authMiddleware, async (req, res) => {
 
 // 更新销售订单
 router.put('/sale_order', authMiddleware, async (req, res) => {
-  const { customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, id } = req.body;
+  const { customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, actual_number, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubSaleOrder.update({
-    customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, company_id,
+    customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, actual_number, company_id,
     user_id: userId,
   }, {
     where: {

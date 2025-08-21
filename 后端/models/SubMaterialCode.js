@@ -54,11 +54,6 @@ const SubMaterialCode = sequelize.define('SubMaterialCode', {
     allowNull: true,
     comment: '采购单位'
   },
-  unit_price: {
-    type: DataTypes.DECIMAL(10),
-    allowNull: true,
-    comment: '单价'
-  },
   currency: {
     type: DataTypes.STRING(10),
     allowNull: true,

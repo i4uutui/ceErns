@@ -5,6 +5,7 @@ const AdAdmin = require('./AdAdmin.js') // 产品报价信息表
 const AdCompanyInfo = require('./AdCompanyInfo.js') // 客户企业信息表
 const AdUser = require('./AdUser.js') // 子后台用户表
 const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
+const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
 const SubProductNotice = require('./SubProductNotice.js') // 生产通知单信息表
 const SubProductQuotation = require('./SubProductQuotation.js') // 产品报价信息表
 const SubCustomerInfo = require('./SubCustomerInfo.js') // 客户信息基础信息表
@@ -81,6 +82,7 @@ module.exports = {
   AdCompanyInfo,
   AdUser,
   AdOrganize,
+  SubProcessCycle,
   SubProductNotice,
   SubProductQuotation,
   SubCustomerInfo,

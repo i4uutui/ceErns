@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-const SubProcessBom = sequelize.define('SubProcessBom', {
+const SubProcessCycle = sequelize.define('SubProcessCycle', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -19,35 +19,25 @@ const SubProcessBom = sequelize.define('SubProcessBom', {
     allowNull: false,
     comment: '发布的用户id'
   },
-  product_id: {
-    type: DataTypes.INTEGER(11),
+  name: {
+    type: DataTypes.STRING(100),
     allowNull: false,
-    comment: '产品编码id'
-  },
-  part_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: '部件编码id'
-  },
-  archive: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: '是否已存档，1未存，0已存'
+    comment: '供应商编码'
   },
   is_deleted: {
-    type: DataTypes.TINYINT(1),
+    type: DataTypes.TINYINT(3),
     allowNull: true,
     defaultValue: 1,
     comment: '是否删除：1-未删除，0-已删除'
   }
 }, {
   sequelize,
-  modelName: 'sub_process_bom',
-  tableName: 'sub_process_bom',
+  modelName: 'sub_process_cycle',
+  tableName: 'sub_process_cycle',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  comment: '材料BOM信息表'
+  comment: '生产制程表'
 })
 
-module.exports = SubProcessBom;
+module.exports = SubProcessCycle;

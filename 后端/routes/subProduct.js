@@ -144,7 +144,7 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
       company_id,
       archive
     },
-    attributes: ['id', 'make_time', 'archive', 'product_id', 'part_id'],
+    attributes: ['id', 'archive', 'product_id', 'part_id'],
     include: [
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'], where: whereIncludeProduct },
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
@@ -179,11 +179,11 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
 })
 // 添加工艺BOM
 router.post('/process_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, make_time, archive, children } = req.body;
+  const { product_id, part_id, archive, children } = req.body;
   const { id: userId, company_id } = req.user;
   
   const process = await SubProcessBom.create({
-    product_id, part_id, make_time, archive, company_id,
+    product_id, part_id, archive, company_id,
     user_id: userId
   })
   const childrens = children.map(e => ({ process_bom_id: process.id, ...e }))
@@ -193,7 +193,7 @@ router.post('/process_bom', authMiddleware, async (req, res) => {
 });
 // 更新工艺BOM
 router.put('/process_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, make_time, archive, id, children } = req.body;
+  const { product_id, part_id, archive, id, children } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证工艺BOM是否存在
@@ -201,7 +201,7 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
   if (!process) return res.json({ message: '工艺BOM不存在', code: 401 });
   
   const updateResult = await SubProcessBom.update({
-    product_id, part_id, make_time, archive, company_id,
+    product_id, part_id, archive, company_id,
     user_id: userId
   }, {
     where: { id }
@@ -265,7 +265,7 @@ router.post('/cope_bom', authMiddleware, async (req, res) => {
     process: {
       mainModel: SubProcessBom,
       childModel: SubProcessBomChild,
-      mainFields: ['product_id', 'part_id', 'make_time', 'archive'],
+      mainFields: ['product_id', 'part_id', 'archive'],
       childForeignKey: 'process_bom_id',
       childFields: ['process_id', 'equipment_id', 'time', 'price', 'long']
     }

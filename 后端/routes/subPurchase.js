@@ -96,7 +96,7 @@ router.put('/supplier_info', authMiddleware, async (req, res) => {
 
 // 材料报价
 router.get('/material_quote', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, supplier_abbreviation, product_code, product_name, notice } = req.query;
+  const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
@@ -134,7 +134,7 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
 });
 
 router.post('/material_quote', authMiddleware, async (req, res) => {
-  const { supplier_id, notice_id, material_id, delivery, packaging, transaction_currency, other_transaction_terms, remarks } = req.body;
+  const { supplier_id, notice_id, material_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -149,14 +149,14 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   const result = await SubMaterialQuote.create({
-    supplier_id, notice_id, material_id, product_id, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
+    supplier_id, notice_id, material_id, product_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
     user_id: userId
   })
 
   res.json({ message: "添加成功", code: 200 });
 });
 router.put('/material_quote', authMiddleware, async (req, res) => {
-  const { supplier_id, notice_id, material_id, delivery, packaging, transaction_currency, other_transaction_terms, remarks, id } = req.body;
+  const { supplier_id, notice_id, material_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -171,7 +171,7 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   const updateResult = await SubMaterialQuote.update({
-    supplier_id, notice_id, material_id, product_id, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
+    supplier_id, notice_id, material_id, product_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
     user_id: userId
   }, {
     where: { id }
@@ -187,7 +187,7 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
 
 
 
-// 采购单
+// 采购单（先确认是否有报价单，如果有，再去查些报价单中的材料是否有材料bom，生产通知单暂定）
 router.get('/purchase_order', authMiddleware, async (req, res) => {
   const { supplier_abbreviation, product_code, product_name, notice } = req.query;
   const { company_id } = req.user;
@@ -256,19 +256,5 @@ router.get('/purchase_order', authMiddleware, async (req, res) => {
   res.json({ data: formatArrayTime(result), code: 200 });
 })
 
-router.put('/set_actual_number', authMiddleware, async (req, res) => {
-  const { actual_number, id } = req.body;
-
-  const updateResult = await SubSaleOrder.update({
-    actual_number
-  }, {
-    where: {
-      id
-    }
-  })
-  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
-  
-  res.json({ message: '修改成功', code: 200 });
-})
 
 module.exports = router;

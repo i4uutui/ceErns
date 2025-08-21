@@ -64,13 +64,10 @@ export default defineComponent({
       tableData.value = res.data;
       if(res.total == 0) return ElMessage.error('数据为空！')
     };
-    const onActualNumber = async ({ id, actual_number }) => {
-      const res = await request.get('/api/purchase_order', {
-        params: {
-          id,
-          actual_number
-        },
-      });
+    const onActualNumber = async (notice) => {
+      if(!notice) return ElMessage.error('该采购单未生成生产通知单，无法修改')
+      const { id, actual_number } = notice.sale
+      const res = await request.put('/api/sale_order', { id, actual_number });
       if(res && res.code == 200){
         ElMessage.success('修改成功');
       }
@@ -107,7 +104,7 @@ export default defineComponent({
             header: () => (
               <div class="flex">
                 <div class="pr10 flex">
-                  <span>供应商:</span>
+                  <span>供应商名称:</span>
                   <ElInput v-model={ supplier_abbreviation.value } style="width: 160px" placeholder="请输入"/>
                 </div>
                 <div class="pr10 flex">
@@ -152,11 +149,11 @@ export default defineComponent({
                     </ElTableColumn>
                     <ElTableColumn prop="material.other_features" label="其它特性" width="120" />
                     <ElTableColumn prop="material.purchase_unit" label="单位" width="100" />
-                    <ElTableColumn prop="material.unit_price" label="单价" width="100" />
+                    <ElTableColumn prop="price" label="单价" width="100" />
                     <ElTableColumn prop="notice.sale.order_number" label="预计数量" width="100" />
-                    <ElTableColumn prop="notice.sale.actual_number" label="实际数量" width="100">
+                    <ElTableColumn label="实际数量" width="100">
                       {{
-                        default: ({ row }) => <ElInput v-model={ row.notice.sale.actual_number } style="width: 70px" placeholder="请输入实际数量" onBlur={ () => onActualNumber(row.notice.sale) } />
+                        default: ({ row }) => <ElInput v-model={ row.notice.sale.actual_number } style="width: 70px" placeholder="请输入实际数量" onBlur={ () => onActualNumber(row.notice) } />
                       }}
                     </ElTableColumn>
                     <ElTableColumn prop="notice.delivery_time" label="交货时间" width="120" />

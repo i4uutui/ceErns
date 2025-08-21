@@ -27,9 +27,6 @@ export default defineComponent({
       purchase_unit: [
         { required: true, message: '请输入采购单位', trigger: 'blur' },
       ],
-      unit_price: [
-        { required: true, message: '请输入单价', trigger: 'blur' },
-      ],
       currency: [
         { required: true, message: '请输入币别', trigger: 'blur' },
       ],
@@ -43,7 +40,6 @@ export default defineComponent({
       other_features: '',
       usage_unit: '',
       purchase_unit: '',
-      unit_price: '',
       currency: '',
       remarks: '',
     })
@@ -139,7 +135,6 @@ export default defineComponent({
         other_features: '',
         usage_unit: '',
         purchase_unit: '',
-        unit_price: '',
         currency: '',
         remarks: '',
       }
@@ -176,7 +171,6 @@ export default defineComponent({
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="usage_unit" label="使用单位" />
                   <ElTableColumn prop="purchase_unit" label="采购单位" />
-                  <ElTableColumn prop="unit_price" label="单价" width="100" />
                   <ElTableColumn prop="currency" label="币别" width="100" />
                   <ElTableColumn prop="remarks" label="备注" />
                   <ElTableColumn label="操作" width="140" fixed="right">
@@ -217,9 +211,6 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="采购单位" prop="purchase_unit">
                   <ElInput v-model={ form.value.purchase_unit } placeholder="请输入采购单位" />
-                </ElFormItem>
-                <ElFormItem label="单价" prop="unit_price">
-                  <ElInput v-model={ form.value.unit_price } type="number" placeholder="请输入单价" />
                 </ElFormItem>
                 <ElFormItem label="币别" prop="currency">
                   <ElInput v-model={ form.value.currency } placeholder="请输入币别" />

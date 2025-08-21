@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { AdUser, AdOrganize, Op } = require('../models')
+const { AdUser, AdOrganize, SubProcessCycle, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -275,5 +275,66 @@ router.delete('/organize', authMiddleware, async (req, res) => {
 
   res.json({ message: '删除成功', code: 200 });
 })
+
+
+
+// 生产制程
+router.get('/process_cycle', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
+  const offset = (page - 1) * pageSize;
+  const { company_id } = req.user;
+  
+  const { count, rows } = await SubProcessCycle.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      company_id
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize);
+  row = rows.map(e => e.toJSON())
+  
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(row), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
+})
+router.post('/process_cycle', authMiddleware, async (req, res) => {
+  const { name } = req.body;
+  const { id: userId, company_id } = req.user;
+  
+  const processCycle = await SubProcessCycle.create({
+    name, company_id,
+    user_id: userId
+  })
+  
+  res.json({ msg: '添加成功', code: 200 });
+})
+router.put('/process_cycle', authMiddleware, async (req, res) => {
+  const { name, id } = req.body;
+  const { id: userId, company_id } = req.user;
+  
+  // 验证是否存在
+  const processCycle = await SubProcessCycle.findByPk(id);
+  if (!processCycle) {
+    return res.json({ message: '生产制程不存在', code: 401 });
+  }
+  
+  await processCycle.update({
+    name, company_id,
+    user_id: userId
+  }, { where: { id } })
+  
+  res.json({ msg: "修改成功", code: 200 });
+})
+
+
 
 module.exports = router;   
