@@ -66,9 +66,8 @@ SubMaterialQuote.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'not
 SubMaterialQuote.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 
 SubOutsourcingQuote.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
-SubOutsourcingQuote.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
-SubOutsourcingQuote.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
-SubOutsourcingQuote.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' })
+SubOutsourcingQuote.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'processBom' })
+SubOutsourcingQuote.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
 
 SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })

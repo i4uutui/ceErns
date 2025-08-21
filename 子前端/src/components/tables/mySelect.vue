@@ -100,4 +100,3 @@ function getNestedProperty(obj, path) {
 }
 </script>
 
-

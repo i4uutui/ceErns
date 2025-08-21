@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, Op } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -173,5 +173,59 @@ router.get('/getProductNotice', authMiddleware, async (req, res) => {
   
   res.json({ data: formatArrayTime(row), code: 200 });
 });
+
+// 获取工艺bom列表
+router.get('/getProcessBom', authMiddleware, async (req, res) => {
+  const { company_id } = req.user;
+  
+  const rows = await SubProcessBom.findAll({
+    where: {
+      archive: 0,
+      company_id
+    },
+    attributes: ['id', 'archive', 'product_id', 'part_id'],
+    include: [
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'] },
+      { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
+    ],
+    order: [
+      ['id', 'DESC'],
+    ],
+  })
+  const bom = rows.map(e => {
+    const obj = e.toJSON()
+    obj.name = `${obj.product.product_code}:${obj.product.product_name} - ${obj.part.part_code}:${obj.part.part_name}`
+    return obj
+  })
+  
+  res.json({ data: bom, code: 200 })
+})
+// 获取工艺bom子表的列表
+router.get('/getProcessBomChildren', authMiddleware, async (req, res) => {
+  const { process_bom_id } = req.query;
+  const { company_id } = req.user;
+  
+  const whereQuery = {
+    process_bom_id
+  }
+  const rows = await SubProcessBomChild.findAll({
+    where: whereQuery,
+    attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'long'],
+    include: [
+      { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
+      { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }
+    ],
+    order: [
+      ['id', 'DESC'],
+    ]
+  })
+  const bom = rows.map(e => {
+    const obj = e.toJSON()
+    obj.name = `${obj.process.process_code}:${obj.process.process_name} - ${obj.equipment.equipment_code}:${obj.equipment.equipment_name}`
+    return obj
+  })
+  
+  res.json({ data: bom, code: 200 })
+})
 
 module.exports = router;  

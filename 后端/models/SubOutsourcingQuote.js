@@ -26,20 +26,15 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: false,
     comment: ' 供应商 ID'
   },
-  product_id: {
+  process_bom_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
-    comment: ' 产品编码 ID'
+    comment: ' 工艺BOM ID '
   },
-  part_id: {
-    type: DataTypes.INTEGER(11),
+  process_bom_children_id: {
+    type: DataTypes.INTEGER(5),
     allowNull: false,
-    comment: ' 部件编码 ID'
-  },
-  process_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: ' 工艺编码 ID'
+    comment: ' 工艺BOM副表的id '
   },
   processing_unit_price: {
     type: DataTypes.INTEGER(11),

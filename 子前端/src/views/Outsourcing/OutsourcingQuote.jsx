@@ -1,4 +1,4 @@
-import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElPagination, ElTable, ElTableColumn } from 'element-plus'
+import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElOption, ElPagination, ElSelect, ElTable, ElTableColumn } from 'element-plus'
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
@@ -10,14 +10,11 @@ export default defineComponent({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
       ],
-      product_id: [
-        { required: true, message: '请选择产品编码', trigger: 'blur' }
+      process_bom_id: [
+        { required: true, message: '请选择工艺BOM表', trigger: 'blur' }
       ],
-      part_id: [
-        { required: true, message: '请选择部件编码', trigger: 'blur' }
-      ],
-      process_id: [
-        { required: true, message: '请选择工艺编码', trigger: 'blur' }
+      process_index: [
+        { required: true, message: '请选择工序', trigger: 'blur' }
       ],
       processing_unit_price: [
         { required: true, message: '请输入加工单价', trigger: 'blur' }
@@ -32,9 +29,8 @@ export default defineComponent({
     let dialogVisible = ref(false)
     let form = ref({
       supplier_id: '',
-      product_id: '',
-      part_id: '',
-      process_id: '',
+      process_bom_id: '',
+      process_index: '',
       processing_unit_price: '',
       transaction_currency: '',
       other_transaction_terms: '',
@@ -45,9 +41,12 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
+    let bomList = ref([]) // 工艺Bom列表
+    let procedure = ref([]) // 工序列表
     
     onMounted(() => {
       fetchProductList()
+      getProcessBomList()
     })
     
     // 获取列表
@@ -61,6 +60,14 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    const getProcessBomList = async () => {
+      const res = await request.get('/api/getProcessBom')
+      bomList.value = res.data
+    }
+    const getProcessBomChildren = async (value) => {
+      const res = await request.get(`/api/getProcessBomChildren?process_bom_id=${value}`)
+      procedure.value = res.data
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -89,15 +96,23 @@ export default defineComponent({
         }
       })
     }
+    const changeBomSelect = (value) => {
+      procedure.value = []
+      form.value.process_bom_children_id = ''
+      getProcessBomChildren(value)
+    }
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
       form.value = { ...row };
+      getProcessBomChildren(row.process_bom_id)
     }
     // 添加
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
+      procedure.value = []
+      form.value.process_bom_children_id = ''
       resetForm()
     };
     // 取消弹窗
@@ -106,12 +121,14 @@ export default defineComponent({
       dialogVisible.value = false;
       resetForm()
     }
+    const processChange = ({ children }) => {
+      procedure.value = children.map(e => e)
+    }
     const resetForm = () => {
       form.value = {
         supplier_id: '',
-        product_id: '',
-        part_id: '',
-        process_id: '',
+        process_bom_id: '',
+        process_index: '',
         processing_unit_price: '',
         transaction_currency: '',
         other_transaction_terms: '',
@@ -135,18 +152,18 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="170" />
-                  <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
-                  <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
-                  <ElTableColumn prop="product.drawing" label="工程图号" width="100" />
+                  <ElTableColumn prop="processBom.product.product_code" label="产品编码" width="100" />
+                  <ElTableColumn prop="processBom.product.product_name" label="产品名称" width="100" />
+                  <ElTableColumn prop="processBom.product.drawing" label="工程图号" width="100" />
                   <ElTableColumn label="型号/规格">
                     {({ row }) => (
-                      <span>{row.product.model}/{row.product.specification}</span>
+                      <span>{row.processBom.product.model}/{row.processBom.product.specification}</span>
                     )}
                   </ElTableColumn>
-                  <ElTableColumn prop="part.part_code" label="部件编码" width="100" />
-                  <ElTableColumn prop="part.part_name" label="部件名称" width="100" />
-                  <ElTableColumn prop="process.process_code" label="工艺编码" width="100" />
-                  <ElTableColumn prop="process.process_name" label="工艺名称" width="120" />
+                  <ElTableColumn prop="processBom.part.part_code" label="部件编码" width="100" />
+                  <ElTableColumn prop="processBom.part.part_name" label="部件名称" width="100" />
+                  <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" width="100" />
+                  <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width="120" />
                   <ElTableColumn prop="processing_unit_price" label="加工单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="120" />
                   <ElTableColumn prop="other_transaction_terms" label="交易条件" width="170" />
@@ -172,14 +189,19 @@ export default defineComponent({
                 <ElFormItem label="供应商编码" prop="supplier_id">
                   <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" />
                 </ElFormItem>
-                <ElFormItem label="产品编码" prop="product_id">
-                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
+                <ElFormItem label="工艺BOM" prop="process_bom_id">
+                  <ElSelect v-model={ form.value.process_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺BOM" onChange={ (value) => changeBomSelect(value) }>
+                  {bomList.value.map((e, index) => {
+                    return <ElOption value={ e.id } label={ e.name } key={ index } />
+                  })}
+                  </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="部件编码" prop="part_id">
-                  <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
-                </ElFormItem>
-                <ElFormItem label="工艺编码" prop="process_id">
-                  <MySelect v-model={ form.value.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" />
+                <ElFormItem label="工艺工序" prop="process_bom_children_id">
+                  <ElSelect v-model={ form.value.process_bom_children_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺工序" onChange="changeSelect">
+                  {procedure.value.map((e, index) => {
+                    return <ElOption value={ e.id } label={ e.name } key={ index } />
+                  })}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="加工单价" prop="processing_unit_price">
                   <ElInput v-model={ form.value.processing_unit_price } placeholder="请输入加工单价" />

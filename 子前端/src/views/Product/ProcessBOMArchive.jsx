@@ -76,12 +76,12 @@ export default defineComponent({
       }).catch(() => {})
     }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
-      if(rowIndex >= 1 || columnIndex >= 6 && column.label != '操作'){
+      if(rowIndex >= 1 || columnIndex >= 5 && column.label != '操作'){
         return { backgroundColor: '#fbe1e5' }
       }
     }
     const cellStyle = ({ columnIndex, rowIndex, column }) => {
-      if(columnIndex >= 6 && column.label != '操作'){
+      if(columnIndex >= 5 && column.label != '操作'){
         return { backgroundColor: '#fbe1e5' }
       }
     }

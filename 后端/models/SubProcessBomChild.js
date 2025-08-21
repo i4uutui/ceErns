@@ -24,6 +24,11 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     allowNull: false,
     comment: ' 设备编码 ID，关联设备信息表 '
   },
+  process_index: {
+    type: DataTypes.INTEGER(5),
+    allowNull: false,
+    comment: ' 工序下标 '
+  },
   time: {
     type: DataTypes.INTEGER(11),
     allowNull: true,

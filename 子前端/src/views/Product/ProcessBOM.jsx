@@ -95,6 +95,7 @@ export default defineComponent({
       await formEl.validate(async (valid, fields) => {
         if (valid){
           const low = { ...form.value, archive: 1 }
+          low.children.forEach((e, index) => e.process_index = index + 1)
           if(!edit.value){
             const res = await request.post('/api/process_bom', low);
             if(res && res.code == 200){
@@ -190,12 +191,12 @@ export default defineComponent({
       form.value.children.splice(index, 1)
     }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
-      if(rowIndex >= 1 || columnIndex >= 6 && column.label != '操作'){
+      if(rowIndex >= 1 || columnIndex >= 5 && column.label != '操作'){
         return { backgroundColor: '#fbe1e5' }
       }
     }
     const cellStyle = ({ columnIndex, rowIndex, column }) => {
-      if(columnIndex >= 6 && column.label != '操作'){
+      if(columnIndex >= 5 && column.label != '操作'){
         return { backgroundColor: '#fbe1e5' }
       }
     }

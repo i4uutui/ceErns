@@ -151,7 +151,7 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
       {
         model: SubProcessBomChild,
         as: 'children',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'time', 'price', 'long'],
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'long'],
         include: [
           { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
           { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }
@@ -208,7 +208,7 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
   })
   const childrens = children.map(e => ({ process_bom_id: process.id, ...e }))
   SubProcessBomChild.bulkCreate(childrens, {
-    updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'time', 'price', 'long']
+    updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'long']
   })
   
   res.json({ message: '修改成功', code: 200 });
