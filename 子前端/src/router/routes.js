@@ -313,16 +313,56 @@ const routes = [
       //     menu: true
       //   }
       // },
-      // {
-      //   path: '/production/employee-piece-rate',
-      //   name: 'EmployeePieceRate',
-      //   component: () => import('@/views/Production/EmployeePieceRate.vue'),
-      //   meta: {
-      //     title: '员工计件工资',
-      //     parent: '生产管理',
-      //     menu: true
-      //   }
-      // }
+      {
+        path: '/finance/employee-piece-rate',
+        name: 'EmployeePieceRate',
+        component: () => import('@/views/finance/EmployeePieceRate.jsx'),
+        meta: {
+          title: '员工计件工资',
+          parent: '财务管理',
+          menu: true
+        }
+      },
+      {
+        path: '/finance/accounts-receivable',
+        name: 'AccountsReceivable',
+        component: () => import('@/views/finance/AccountsReceivable.jsx'),
+        meta: {
+          title: '应收货款',
+          parent: '财务管理',
+          menu: true
+        }
+      },
+      {
+        path: '/finance/accounts-payable',
+        name: 'AccountsPayable',
+        component: () => import('@/views/finance/AccountsPayable.jsx'),
+        meta: {
+          title: '应付货款',
+          parent: '财务管理',
+          menu: true
+        }
+      },
+      {
+        path: '/finance/advance-payment',
+        name: 'AdvancePayment',
+        component: () => import('@/views/finance/AdvancePayment.jsx'),
+        meta: {
+          title: '预收货款',
+          parent: '财务管理',
+          menu: true
+        }
+      },
+      {
+        path: '/finance/advance-receipt',
+        name: 'AdvanceReceipt',
+        component: () => import('@/views/finance/AdvanceReceipt.jsx'),
+        meta: {
+          title: '预付货款',
+          parent: '财务管理',
+          menu: true
+        }
+      },
     ]
   }
 ];
