@@ -389,17 +389,11 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   const { id } = req.body;
   const { id: userId, company_id } = req.user;
   
-  const rows = await SubProductNotice.findAll({
-    where: {
-      is_deleted: 1,
-      company_id,
-      id
-    }
-  })
-  if(rows.length == 0){
-    return res.json({ message: '数据不存在，或已被删除', code: 401 })
-  }
-  const row = rows[0].toJSON()
+  // 验证数据是否存在
+  const production = await SubProductNotice.findByPk(id);
+  if (!production) return res.json({ message: '数据不存在，或已被删除', code: 401 });
+  
+  const row = production.toJSON()
   const objData = {
     product_id: row.product_id,
     sale_id: row.sale_id,

@@ -39,7 +39,6 @@ export default defineComponent({
       price: '',
       section_points: '',
       total_processing_price: '',
-      long: '',
       remarks: '',
     })
     let tableData = ref([])
@@ -135,7 +134,6 @@ export default defineComponent({
         price: '',
         section_points: '',
         total_processing_price: '',
-        long: '',
         remarks: '',
       }
     }
@@ -170,7 +168,6 @@ export default defineComponent({
                   <ElTableColumn prop="price" label="加工单价" />
                   <ElTableColumn prop="section_points" label="段数点数" />
                   <ElTableColumn prop="total_processing_price" label="加工总价" />
-                  <ElTableColumn prop="long" label="生产制程" />
                   <ElTableColumn prop="remarks" label="备注" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -210,9 +207,6 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="加工总价" prop="total_processing_price">
                   <ElInput v-model={ form.value.total_processing_price } type="number" placeholder="请输入加工总价" />
-                </ElFormItem>
-                <ElFormItem label="生产制程" prop="long">
-                  <ElInput v-model={ form.value.long } placeholder="请输入生产制程" />
                 </ElFormItem>
                 <ElFormItem label="备注" prop="remarks">
                   <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />

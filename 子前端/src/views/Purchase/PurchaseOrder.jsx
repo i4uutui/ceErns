@@ -123,9 +123,6 @@ export default defineComponent({
                   <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>
                     查询
                   </ElButton>
-                  <ElButton style="margin-top: -5px" type="primary">
-                    提交
-                  </ElButton>
                   <ElButton style="margin-top: -5px" type="primary" v-print={ printObj.value }>
                     打印
                   </ElButton>

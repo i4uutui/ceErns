@@ -16,9 +16,6 @@ export default defineComponent({
       process_index: [
         { required: true, message: '请选择工序', trigger: 'blur' }
       ],
-      processing_unit_price: [
-        { required: true, message: '请输入加工单价', trigger: 'blur' }
-      ],
       transaction_currency: [
         { required: true, message: '请输入交易币别', trigger: 'blur' }
       ],
@@ -28,10 +25,11 @@ export default defineComponent({
     })
     let dialogVisible = ref(false)
     let form = ref({
+      notice_id: '',
       supplier_id: '',
       process_bom_id: '',
       process_index: '',
-      processing_unit_price: '',
+      price: '',
       transaction_currency: '',
       other_transaction_terms: '',
       remarks: ''
@@ -126,10 +124,11 @@ export default defineComponent({
     }
     const resetForm = () => {
       form.value = {
+        notice_id: '',
         supplier_id: '',
         process_bom_id: '',
         process_index: '',
-        processing_unit_price: '',
+        price: '',
         transaction_currency: '',
         other_transaction_terms: '',
         remarks: ''
@@ -152,6 +151,7 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="170" />
+                  <ElTableColumn prop="notice.notice" label="生产订单" width="120" />
                   <ElTableColumn prop="processBom.product.product_code" label="产品编码" width="100" />
                   <ElTableColumn prop="processBom.product.product_name" label="产品名称" width="100" />
                   <ElTableColumn prop="processBom.product.drawing" label="工程图号" width="100" />
@@ -164,7 +164,7 @@ export default defineComponent({
                   <ElTableColumn prop="processBom.part.part_name" label="部件名称" width="100" />
                   <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" width="100" />
                   <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width="120" />
-                  <ElTableColumn prop="processing_unit_price" label="加工单价" width="100" />
+                  <ElTableColumn prop="price" label="加工单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="120" />
                   <ElTableColumn prop="other_transaction_terms" label="交易条件" width="170" />
                   <ElTableColumn prop="remarks" label="备注" width="170" />
@@ -189,6 +189,9 @@ export default defineComponent({
                 <ElFormItem label="供应商编码" prop="supplier_id">
                   <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" />
                 </ElFormItem>
+                <ElFormItem label="生产订单" prop="notice_id">
+                  <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单" />
+                </ElFormItem>
                 <ElFormItem label="工艺BOM" prop="process_bom_id">
                   <ElSelect v-model={ form.value.process_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺BOM" onChange={ (value) => changeBomSelect(value) }>
                   {bomList.value.map((e, index) => {
@@ -203,8 +206,8 @@ export default defineComponent({
                   })}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="加工单价" prop="processing_unit_price">
-                  <ElInput v-model={ form.value.processing_unit_price } placeholder="请输入加工单价" />
+                <ElFormItem label="加工单价" prop="price">
+                  <ElInput v-model={ form.value.price } placeholder="请输入加工单价" />
                 </ElFormItem>
                 <ElFormItem label="交易币别" prop="transaction_currency">
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />

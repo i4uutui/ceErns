@@ -21,6 +21,11 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: false,
     comment: '发布的用户id'
   },
+  notice_id: {
+    type: DataTypes.INTEGER(10),
+    allowNull: false,
+    comment: ' 生产通知单ID'
+  },
   supplier_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -36,7 +41,7 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: false,
     comment: ' 工艺BOM副表的id '
   },
-  processing_unit_price: {
+  price: {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: null,

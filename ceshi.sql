@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 21/08/2025 19:58:16
+ Date: 22/08/2025 14:01:09
 */
 
 SET NAMES utf8mb4;
@@ -330,10 +330,11 @@ CREATE TABLE `sub_outsourcing_quote`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
   `company_id` int(11) NOT NULL COMMENT '企业id',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `notice_id` int(10) NULL DEFAULT NULL COMMENT '生产通知单ID',
   `supplier_id` int(11) NOT NULL COMMENT '供应商ID',
   `process_bom_id` int(11) NOT NULL COMMENT '工艺BOM id',
   `process_bom_children_id` int(5) NULL DEFAULT NULL COMMENT '工艺BOM副表的id',
-  `processing_unit_price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
+  `price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
@@ -346,7 +347,7 @@ CREATE TABLE `sub_outsourcing_quote`  (
 -- ----------------------------
 -- Records of sub_outsourcing_quote
 -- ----------------------------
-INSERT INTO `sub_outsourcing_quote` VALUES (2, 1, 1, 2, 37, 7, 22, '人民币', '自己提货', '222', 1, '2025-08-21 16:34:39', '2025-08-21 19:57:11');
+INSERT INTO `sub_outsourcing_quote` VALUES (2, 1, 1, 6, 2, 37, 7, 22, '人民币', '自己提货', '222', 1, '2025-08-21 16:34:39', '2025-08-22 09:43:04');
 
 -- ----------------------------
 -- Table structure for sub_part_code
@@ -472,7 +473,7 @@ CREATE TABLE `sub_process_code`  (
 -- Records of sub_process_code
 -- ----------------------------
 INSERT INTO `sub_process_code` VALUES (3, 1, 1, 3, '123', '212', '21', 2121, 21, 21, '212', 1, '2025-07-08 15:56:54', '2025-08-10 11:29:00');
-INSERT INTO `sub_process_code` VALUES (4, 1, 1, 4, '2222', '111', '3131', 21, 213, 3131, '3131', 1, '2025-08-09 16:07:09', '2025-08-12 10:18:03');
+INSERT INTO `sub_process_code` VALUES (4, 1, 1, 4, '2222', '111', '3131', 21, 213, 3131, '3131', 1, '2025-08-09 16:07:09', '2025-08-22 09:32:16');
 
 -- ----------------------------
 -- Table structure for sub_process_cycle
