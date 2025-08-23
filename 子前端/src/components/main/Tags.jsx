@@ -1,4 +1,3 @@
-import { ElTag } from 'element-plus';
 import { defineComponent } from 'vue';
 import "./main.css"
 

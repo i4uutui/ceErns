@@ -1,5 +1,4 @@
 import { defineComponent, onMounted, ref, reactive } from 'vue'
-import { ElCard, ElDialog, ElForm, ElFormItem, ElInput, ElButton, ElSelect, ElOption, ElMessage } from 'element-plus'
 import request from '@/utils/request';
 import { Vue3TreeOrg } from 'vue3-tree-org';
 import "vue3-tree-org/lib/vue3-tree-org.css";

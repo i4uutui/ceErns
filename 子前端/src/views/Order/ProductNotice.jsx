@@ -1,12 +1,6 @@
-import { ElButton, ElCard, ElDatePicker, ElDialog, ElForm, ElFormItem, ElInput, ElMessage, ElMessageBox, ElPagination, ElTable, ElTableColumn } from 'element-plus'
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
-
-// import 'element-plus/theme-chalk/src/button.scss'
-// import 'element-plus/theme-chalk/src/card.scss'
-// import 'element-plus/theme-chalk/src/table.scss'
-// import 'element-plus/theme-chalk/src/table-column.scss'
 
 export default defineComponent({
   setup(){

@@ -1,5 +1,4 @@
 import { defineComponent, ref, onMounted } from 'vue';
-import { ElAside, ElMenu, ElMenuItem, ElSubMenu, ElIcon } from 'element-plus';
 import { getItem } from '@/assets/js/storage';
 import { useRoute } from 'vue-router';
 import router from '@/router';

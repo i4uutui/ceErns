@@ -14,7 +14,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { ElSelect, ElOption } from 'element-plus'
 import request from '@/utils/request';
 
 const emit = defineEmits(['change'])

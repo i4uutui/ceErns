@@ -1,5 +1,4 @@
 import { defineComponent, onMounted, ref } from 'vue'
-import { ElCard, ElTabPane, ElTabs } from 'element-plus'
 import request from '@/utils/request';
 
 export default defineComponent({

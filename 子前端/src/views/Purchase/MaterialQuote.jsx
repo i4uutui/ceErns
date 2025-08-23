@@ -1,5 +1,4 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElPagination } from 'element-plus'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 
