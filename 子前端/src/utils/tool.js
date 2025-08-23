@@ -6,6 +6,7 @@ import { getItem } from '@/assets/js/storage';
  */
 export const hasPermission = (permission) => {
   const user = getItem('user');
+  if(user.type == 1) return true; // 管理员拥有所有权限
   if (!user || !user.power || !permission) return false;
   return user.power.includes(permission);
 };
