@@ -1,3 +1,14 @@
+import { getItem } from '@/assets/js/storage';
+/**
+ * 检查用户是否拥有指定权限
+ * @param {string} permission 权限标识（如"user:add"）
+ * @returns {boolean} 是否有权限
+ */
+export const hasPermission = (permission) => {
+  const user = getItem('user');
+  if (!user || !user.power || !permission) return false;
+  return user.power.includes(permission);
+};
 /**
  * 数字转中文大写
  * @param {Number} num 要转换的数字

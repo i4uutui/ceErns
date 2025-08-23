@@ -126,7 +126,7 @@ export default defineComponent({
           {{
             header: () => (
               <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProductNotice:add' } onClick={ handleAdd } >
                   添加生产通知单
                 </ElButton>
               </div>
@@ -153,8 +153,8 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="primary" onClick={ () => handleScheduling(scope.row) }>排期</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>排期</ElButton>
                       </>
                     )}
                   </ElTableColumn>

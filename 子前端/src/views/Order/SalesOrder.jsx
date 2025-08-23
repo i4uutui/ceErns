@@ -148,7 +148,7 @@ export default defineComponent({
           {{
             header: () => (
               <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'SalesOrder:add' } onClick={ handleAdd } >
                   添加销售订单
                 </ElButton>
               </div>
@@ -177,7 +177,7 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'SalesOrder:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>

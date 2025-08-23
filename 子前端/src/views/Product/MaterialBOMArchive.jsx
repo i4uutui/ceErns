@@ -133,7 +133,7 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleCope(scope.row) }>复制新增</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'MaterialBOM:cope' } onClick={ () => handleCope(scope.row) }>复制新增</ElButton>
                       </>
                     )}
                   </ElTableColumn>

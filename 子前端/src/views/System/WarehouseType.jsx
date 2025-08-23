@@ -1,7 +1,6 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import { ElTable, ElTableColumn, ElDialog, ElForm, ElFormItem, ElInput, ElCard, ElButton, ElMessage, ElSwitch, ElCascader, ElMessageBox, ElPagination } from 'element-plus'
 import request from '@/utils/request';
-import router from '@/router';
 import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
@@ -9,7 +8,7 @@ export default defineComponent({
     const formRef = ref(null);
     const rules = reactive({
       name: [
-        { required: true, message: '请输入制程名称', trigger: 'blur' },
+        { required: true, message: '请输入仓库名称', trigger: 'blur' },
       ],
     })
     let dialogVisible = ref(false)
@@ -28,7 +27,7 @@ export default defineComponent({
 
     // 获取列表
     const fetchAdminList = async () => {
-      const res = await request.get('/api/process_cycle', {
+      const res = await request.get('/api/warehouse_cycle', {
         params: {
           page: currentPage.value,
           pageSize: pageSize.value
@@ -45,7 +44,7 @@ export default defineComponent({
             const formValue = {
               ...form.value,
             }
-            const res = await request.post('/api/process_cycle', formValue);
+            const res = await request.post('/api/warehouse_cycle', formValue);
             if(res && res.code == 200){
               ElMessage.success('添加成功');
             }
@@ -56,7 +55,7 @@ export default defineComponent({
               id: edit.value,
               name: form.value.name,
             }
-            const res = await request.put('/api/process_cycle', myForm);
+            const res = await request.put('/api/warehouse_cycle', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
             }
@@ -101,8 +100,8 @@ export default defineComponent({
           {{
             header: () => (
               <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessCycle:add' } onClick={ handleAdd } >
-                  添加生产制程
+                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'Warehouse:add' } onClick={ handleAdd } >
+                  新增仓库
                 </ElButton>
               </div>
             ),
@@ -114,7 +113,7 @@ export default defineComponent({
                   <ElTableColumn label="操作">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'ProcessCycle:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'Warehouse:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -124,7 +123,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改生产制程' : '添加生产制程' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改仓库' : '添加仓库' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">

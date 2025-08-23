@@ -205,15 +205,15 @@ export default defineComponent({
             header: () => (
               <div class="flex row-between">
                 <div>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'MaterialBOM:add' } onClick={ handleAdd } >
                     添加材料BOM
                   </ElButton>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
+                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'MaterialBOM:archive' } onClick={ handleArchive } >
                     存档
                   </ElButton>
                 </div>
                 <div>
-                  <ElButton style="margin-top: -5px" type="warning" onClick={ goArchive } >
+                  <ElButton style="margin-top: -5px" type="warning" v-permission={ 'MaterialBOM:newPage' } onClick={ goArchive } >
                     材料BOM库
                   </ElButton>
                 </div>
@@ -240,8 +240,8 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'MaterialBOM:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" v-permission={ 'MaterialBOM:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                       </>
                     )}
                   </ElTableColumn>

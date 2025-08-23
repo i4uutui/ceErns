@@ -24,7 +24,12 @@ const routes = [
         meta: {
           title: '用户管理',
           parent: '系统管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'user:add', label: '新增' },
+            { code: 'user:edit', label: '修改' },
+            { code: 'user:delete', label: '删除' }
+          ]
         }
       },
       {
@@ -44,7 +49,25 @@ const routes = [
         meta: {
           title: '生产制程',
           parent: '系统管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'ProcessCycle:add', label: '新增' },
+            { code: 'ProcessCycle:edit', label: '修改' },
+          ]
+        }
+      },
+      {
+        path: '/system/WarehouseType',
+        name: 'WarehouseType',
+        component: () => import('@/views/System/WarehouseType.jsx'),
+        meta: {
+          title: '仓库类型',
+          parent: '系统管理',
+          menu: true,
+          buttons: [
+            { code: 'Warehouse:add', label: '新增' },
+            { code: 'Warehouse:edit', label: '修改' },
+          ]
         }
       },
       // 基础资料
@@ -55,7 +78,12 @@ const routes = [
         meta: {
           title: '产品编码',
           parent: '基础资料',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'ProductCode:add', label: '新增' },
+            { code: 'ProductCode:edit', label: '修改' },
+            { code: 'ProductCode:delete', label: '删除' },
+          ]
         }
       },
       {
@@ -65,7 +93,12 @@ const routes = [
         meta: {
           title: '部位编码',
           parent: '基础资料',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'PartCode:add', label: '新增' },
+            { code: 'PartCode:edit', label: '修改' },
+            { code: 'PartCode:delete', label: '删除' },
+          ]
         }
       },
       {
@@ -75,7 +108,12 @@ const routes = [
         meta: {
           title: '原材料编码',
           parent: '基础资料',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'MaterialCode:add', label: '新增' },
+            { code: 'MaterialCode:edit', label: '修改' },
+            { code: 'MaterialCode:delete', label: '删除' },
+          ]
         }
       },
       {
@@ -85,7 +123,12 @@ const routes = [
         meta: {
           title: '工艺编码',
           parent: '基础资料',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'ProcessCode:add', label: '新增' },
+            { code: 'ProcessCode:edit', label: '修改' },
+            { code: 'ProcessCode:delete', label: '删除' },
+          ]
         }
       },
       {
@@ -95,7 +138,12 @@ const routes = [
         meta: {
           title: '设备编码',
           parent: '基础资料',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'EquipmentCode:add', label: '新增' },
+            { code: 'EquipmentCode:edit', label: '修改' },
+            { code: 'EquipmentCode:delete', label: '删除' },
+          ]
         }
       },
       {
@@ -105,7 +153,12 @@ const routes = [
         meta: {
           title: '员工信息',
           parent: '基础资料',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'EmployeeInfo:add', label: '新增' },
+            { code: 'EmployeeInfo:edit', label: '修改' },
+            { code: 'EmployeeInfo:delete', label: '删除' },
+          ]
         }
       },
       // 订单管理
@@ -116,7 +169,12 @@ const routes = [
         meta: {
           title: '客户资料',
           parent: '订单管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'CustomerInfo:add', label: '新增' },
+            { code: 'CustomerInfo:edit', label: '修改' },
+            { code: 'CustomerInfo:delete', label: '删除' },
+          ]
         }
       },
       {
@@ -126,7 +184,11 @@ const routes = [
         meta: {
           title: '销售订单',
           parent: '订单管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'SalesOrder:add', label: '新增' },
+            { code: 'SalesOrder:edit', label: '修改' },
+          ]
         }
       },
       {
@@ -136,7 +198,11 @@ const routes = [
         meta: {
           title: '产品报价',
           parent: '订单管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'ProductQuote:add', label: '新增' },
+            { code: 'ProductQuote:edit', label: '修改' },
+          ]
         }
       },
       {
@@ -146,7 +212,12 @@ const routes = [
         meta: {
           title: '生产通知单',
           parent: '订单管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'ProductNotice:add', label: '新增' },
+            { code: 'ProductNotice:edit', label: '修改' },
+            { code: 'ProductNotice:date', label: '排期' },
+          ]
         }
       },
       {
@@ -156,7 +227,10 @@ const routes = [
         meta: {
           title: '产品出货单',
           parent: '订单管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'ProductDelivery:print', label: '打印' },
+          ]
         }
       },
       // 产品信息
@@ -177,7 +251,14 @@ const routes = [
         meta: {
           title: '材料BOM',
           parent: '产品信息',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'MaterialBOM:add', label: '新增' },
+            { code: 'MaterialBOM:edit', label: '修改' },
+            { code: 'MaterialBOM:delete', label: '删除' },
+            { code: 'MaterialBOM:archive', label: '存档' },
+            { code: 'MaterialBOM:newPage', label: '材料BOM库' },
+          ]
         }
       },
       {
@@ -187,7 +268,10 @@ const routes = [
         meta: {
           title: '材料BOM存档库',
           parent: '产品信息',
-          menu: false
+          menu: false,
+          buttons: [
+            { code: 'MaterialBOM:cope', label: '复制新增' },
+          ]
         }
       },
       {
@@ -197,7 +281,14 @@ const routes = [
         meta: {
           title: '工艺BOM',
           parent: '产品信息',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'ProcessBOM:add', label: '新增' },
+            { code: 'ProcessBOM:edit', label: '修改' },
+            { code: 'ProcessBOM:delete', label: '删除' },
+            { code: 'ProcessBOM:archive', label: '存档' },
+            { code: 'ProcessBOM:newPage', label: '工艺BOM库' },
+          ]
         }
       },
       {
@@ -207,7 +298,10 @@ const routes = [
         meta: {
           title: '工艺BOM存档库',
           parent: '产品信息',
-          menu: false
+          menu: false,
+          buttons: [
+            { code: 'ProcessBOM:cope', label: '复制新增' },
+          ]
         }
       },
       // // 采购管理
@@ -218,7 +312,11 @@ const routes = [
         meta: {
           title: '供应商资料',
           parent: '采购管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'SupplierInfo:add', label: '新增' },
+            { code: 'SupplierInfo:edit', label: '修改' },
+          ]
         }
       },
       {
@@ -228,7 +326,11 @@ const routes = [
         meta: {
           title: '原材料报价',
           parent: '采购管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'MaterialQuote:add', label: '新增' },
+            { code: 'MaterialQuote:edit', label: '修改' },
+          ]
         }
       },
       {
@@ -238,7 +340,10 @@ const routes = [
         meta: {
           title: '采购单',
           parent: '采购管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'PurchaseOrder:print', label: '打印' },
+          ]
         }
       },
       // // 委外管理
@@ -313,6 +418,16 @@ const routes = [
       //     menu: true
       //   }
       // },
+      {
+        path: '/warehouse/warehouse-rate',
+        name: 'WarehouseRate',
+        component: () => import('@/views/Warehouse/WarehouseRate.jsx'),
+        meta: {
+          title: '仓库管理',
+          parent: '仓库管理',
+          menu: true
+        }
+      },
       {
         path: '/finance/employee-piece-rate',
         name: 'EmployeePieceRate',

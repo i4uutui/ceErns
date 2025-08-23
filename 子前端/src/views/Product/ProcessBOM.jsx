@@ -220,15 +220,15 @@ export default defineComponent({
             header: () => (
               <div class="flex row-between">
                 <div>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessBOM:add' } onClick={ handleAdd } >
                     添加工艺BOM
                   </ElButton>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ handleArchive } >
+                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessBOM:archive' } onClick={ handleArchive } >
                     存档
                   </ElButton>
                 </div>
                 <div>
-                  <ElButton style="margin-top: -5px" type="warning" onClick={ goArchive } >
+                  <ElButton style="margin-top: -5px" type="warning" v-permission={ 'ProcessBOM:newPage' } onClick={ goArchive } >
                     工艺BOM库
                   </ElButton>
                 </div>
@@ -259,8 +259,8 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'ProcessBOM:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" v-permission={ 'ProcessBOM:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                       </>
                     )}
                   </ElTableColumn>

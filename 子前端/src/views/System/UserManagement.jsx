@@ -7,7 +7,7 @@ import { getItem } from '@/assets/js/storage';
 export default defineComponent({
   setup(){
     const formRef = ref(null);
-    const props = reactive({ multiple: true })
+    const props = reactive({ multiple: true, checkStrictly: true })
     const user = getItem('user')
     const rules = reactive({
       username: [
@@ -142,11 +142,18 @@ export default defineComponent({
         if (!groupedRoutes[parent]) {
           groupedRoutes[parent] = [];
         }
-        groupedRoutes[parent].push({
-          value: route.name,
+        const menuItem = {
+          value: route.name, // 菜单权限标识
           label: route.meta.title,
-          children: []
-        });
+          children: [] // 存放按钮权限
+        };
+        if (route.meta.buttons && route.meta.buttons.length) {
+          menuItem.children = route.meta.buttons.map(btn => ({
+            value: btn.code, // 按钮权限标识
+            label: btn.label // 按钮显示名称
+          }));
+        }
+        groupedRoutes[parent].push(menuItem);
       });
       let filtered = Object.fromEntries(
         Object.entries(filterMenu(groupedRoutes)).filter(([_, routes]) => routes.length > 0)

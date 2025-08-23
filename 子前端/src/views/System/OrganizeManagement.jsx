@@ -7,6 +7,7 @@ import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
+    const user = getItem('user')
     const formRef = ref(null);
     const rules = reactive({
       label: [
@@ -88,11 +89,13 @@ export default defineComponent({
       dialogVisible.value = false
     }
     const onNodeAdd = (node) => {
+      if(user.type != 1) return
       edit.value = 0;
       form.value.pid = node.id
       dialogVisible.value = true
     }
     const onNodeEdit = (node) => {
+      if(user.type != 1) return
       edit.value = node.id;
       form.value = {
         pid: node.pid,
@@ -102,6 +105,7 @@ export default defineComponent({
       dialogVisible.value = true
     }
     const nodeDelete = (node) => {
+      if(user.type != 1) return
       handleDelete(node.id)
     }
 
