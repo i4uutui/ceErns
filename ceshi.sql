@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 23/08/2025 11:36:20
+ Date: 25/08/2025 19:33:21
 */
 
 SET NAMES utf8mb4;
@@ -335,19 +335,23 @@ CREATE TABLE `sub_outsourcing_quote`  (
   `process_bom_id` int(11) NOT NULL COMMENT '工艺BOM id',
   `process_bom_children_id` int(5) NULL DEFAULT NULL COMMENT '工艺BOM副表的id',
   `price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
+  `now_price` int(11) NULL DEFAULT NULL COMMENT '实际单价',
+  `number` int(11) NULL DEFAULT NULL COMMENT '委外实际数量',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
+  `ment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '加工要求',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `status` int(2) NULL DEFAULT NULL COMMENT '报价单的状态：1已报价，2：已委外，3：已入库',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_outsourcing_quote
 -- ----------------------------
-INSERT INTO `sub_outsourcing_quote` VALUES (2, 1, 1, 6, 2, 37, 7, 22, '人民币', '自己提货', '222', 1, '2025-08-21 16:34:39', '2025-08-22 09:43:04');
+INSERT INTO `sub_outsourcing_quote` VALUES (4, 1, 1, 6, 1, 36, 5, 58, 58, 311, '￥', '自己拉货', NULL, '请准备一辆货车', 2, 1, '2025-08-25 15:05:25', '2025-08-25 15:07:03');
 
 -- ----------------------------
 -- Table structure for sub_part_code
@@ -609,12 +613,11 @@ CREATE TABLE `sub_production_progress`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_production_progress
 -- ----------------------------
-INSERT INTO `sub_production_progress` VALUES (7, 1, 1, 6, 10, 3, 1, NULL, NULL, NULL, 1, '2025-08-06 14:43:43', '2025-08-06 14:43:43');
 
 -- ----------------------------
 -- Table structure for sub_sales_order
