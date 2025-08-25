@@ -10,6 +10,7 @@ const service = axios.create({
 
 // 请求拦截器
 service.interceptors.request.use(config => {
+    config.headers['Content-Type'] = 'application/json'
 		const token = getItem("token");
 		if (token) {
 			config.headers["Authorization"] = `${token}`;

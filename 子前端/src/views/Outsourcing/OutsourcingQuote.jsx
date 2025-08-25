@@ -40,6 +40,7 @@ export default defineComponent({
     let edit = ref(0)
     let bomList = ref([]) // 工艺Bom列表
     let procedure = ref([]) // 工序列表
+    let allSelect = ref([]) // 用户选择的列表
     
     onMounted(() => {
       fetchProductList()
@@ -48,11 +49,9 @@ export default defineComponent({
     
     // 获取列表
     const fetchProductList = async () => {
-      const res = await request.get('/api/outsourcing_quote', {
-        params: {
-          page: currentPage.value,
-          pageSize: pageSize.value
-        },
+      const res = await request.post('/api/outsourcing_quote', {
+        page: currentPage.value,
+        pageSize: pageSize.value
       });
       tableData.value = res.data;
       total.value = res.total;
@@ -70,7 +69,7 @@ export default defineComponent({
       await formEl.validate(async (valid, fields) => {
         if (valid){
           if(!edit.value){
-            const res = await request.post('/api/outsourcing_quote', form.value);
+            const res = await request.post('/api/add_outsourcing_quote', form.value);
             if(res && res.code == 200){
               ElMessage.success('添加成功');
               dialogVisible.value = false;
@@ -91,6 +90,30 @@ export default defineComponent({
             }
           }
         }
+      })
+    }
+    const makeJson = async (value) => {
+      if(value.length == 0) return ElMessage.error('请先选择报价单')
+      const res = await request.put('/api/set_outsourcing_quote', {
+        allSelect: value
+      });
+      if(res && res.code == 200){
+        ElMessage.success('操作成功');
+        dialogVisible.value = false;
+        fetchProductList();
+      }
+    }
+    // 委外加工
+    const handleJob = async () => {
+      makeJson(allSelect.value)
+    }
+    const handleMakeJob = (row) => {
+      const JSONObj = [{ id: row.id, status: 2 }]
+      makeJson(JSONObj)
+    }
+    const handleSelectionChange = (select) => {
+      allSelect.value = select.map(e => {
+        return { id: e.id, status: 2 }
       })
     }
     const changeBomSelect = (value) => {
@@ -140,14 +163,21 @@ export default defineComponent({
           {{
             header: () => (
               <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } v-permission={ 'OutsourcingQuote:add' }>
                   添加委外报价
+                </ElButton>
+                <ElButton style="margin-top: -5px" type="primary" onClick={ handleJob } v-permission={ 'OutsourcingQuote:allQuote' }>
+                  批量委外加工
                 </ElButton>
               </div>
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
+                  <ElTableColumn type="selection" width="55" />
+                  <ElTableColumn label="状态" width="100">
+                    {() => <span style="color: red">已报价</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="170" />
                   <ElTableColumn prop="notice.notice" label="生产订单" width="120" />
@@ -168,10 +198,11 @@ export default defineComponent({
                   <ElTableColumn prop="other_transaction_terms" label="交易条件" width="170" />
                   <ElTableColumn prop="remarks" label="备注" width="170" />
                   <ElTableColumn prop="created_at" label="创建时间" width="170" />
-                  <ElTableColumn label="操作" width="140" fixed="right">
+                  <ElTableColumn label="操作" width="160" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) } v-permission={ 'OutsourcingQuote:edit' }>修改</ElButton>
+                        <ElButton size="small" type="primary" onClick={ () => handleMakeJob(scope.row) } v-permission={ 'OutsourcingQuote:quote' }>委外加工</ElButton>
                       </>
                     )}
                   </ElTableColumn>

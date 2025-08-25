@@ -354,7 +354,13 @@ const routes = [
         meta: {
           title: '委外报价',
           parent: '委外管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'OutsourcingQuote:add', label: '添加委外报价' },
+            { code: 'OutsourcingQuote:edit', label: '修改' },
+            { code: 'OutsourcingQuote:quote', label: '委外加工' },
+            { code: 'OutsourcingQuote:allQuote', label: '批量委外加工' },
+          ]
         }
       },
       {
@@ -362,9 +368,14 @@ const routes = [
         name: 'OutsourcingOrder',
         component: () => import('@/views/Outsourcing/OutsourcingOrder.jsx'),
         meta: {
-          title: '委外加工单',
+          title: '委外加工',
           parent: '委外管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'OutsourcingOrder:print', label: '打印' },
+            { code: 'OutsourcingOrder:wareh', label: '入库' },
+            { code: 'OutsourcingOrder:allWareh', label: '批量入库' },
+          ]
         }
       },
       {

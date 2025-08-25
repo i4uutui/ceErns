@@ -47,6 +47,18 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     defaultValue: null,
     comment: ' 加工单价 '
   },
+  now_price: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    defaultValue: null,
+    comment: ' 实际单价 '
+  },
+  number: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    defaultValue: null,
+    comment: ' 委外实际数量 '
+  },
   transaction_currency: {
     type: DataTypes.STRING(10),
     allowNull: true,
@@ -57,10 +69,20 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: true,
     comment: ' 交易条件 '
   },
+  ment: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    comment: ' 加工要求 '
+  },
   remarks: {
     type: DataTypes.TEXT,
     allowNull: true,
     comment: ' 备注 '
+  },
+  status: {
+    type: DataTypes.INTEGER(2),
+    allowNull: false,
+    comment: ' 报价单的状态：1已报价，2：已委外，3：已入库 '
   },
   is_deleted: {
     type: DataTypes.TINYINT(1),
