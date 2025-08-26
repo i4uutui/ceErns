@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubMaterialBom, SubMaterialCode, SubMaterialBomChild, SubPartCode, SubProductCode, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, Op, sequelize } = require('../models');
+const { SubMaterialBom, SubMaterialCode, SubMaterialBomChild, SubPartCode, SubProductCode, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, Op, sequelize } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -151,10 +151,11 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
       {
         model: SubProcessBomChild,
         as: 'children',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'long'],
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'cycle_id'],
         include: [
           { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
-          { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }
+          { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] },
+          { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
         ]
       }
     ],
@@ -206,9 +207,8 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
   }, {
     where: { id }
   })
-  const childrens = children.map(e => ({ process_bom_id: process.id, ...e }))
-  SubProcessBomChild.bulkCreate(childrens, {
-    updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'long']
+  SubProcessBomChild.bulkCreate(children, {
+    updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'cycle_id']
   })
   
   res.json({ message: '修改成功', code: 200 });
@@ -267,7 +267,7 @@ router.post('/cope_bom', authMiddleware, async (req, res) => {
       childModel: SubProcessBomChild,
       mainFields: ['product_id', 'part_id', 'archive'],
       childForeignKey: 'process_bom_id',
-      childFields: ['process_id', 'equipment_id', 'time', 'price', 'long']
+      childFields: ['process_id', 'equipment_id', 'time', 'price', 'cycle_id']
     }
   };
   const { mainModel, childModel, mainFields, childForeignKey, childFields } = configMap[type];

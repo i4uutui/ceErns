@@ -116,9 +116,47 @@ function isEmptyValue(value) {
   // 其他类型视为有值
   return false;
 }
+/**
+ * 处理精确计算
+ * @returns {string} 返回最后的计算结果
+ */
+const PreciseMath = {
+  getDecimalLength(num) {
+    const parts = num.toString().split('.');
+    return parts[1] ? parts[1].length : 0;
+  },
+  // 加
+  add(a, b) {
+    const maxDecimals = Math.max(this.getDecimalLength(a), this.getDecimalLength(b));
+    const factor = Math.pow(10, maxDecimals);
+    return (Math.round(a * factor) + Math.round(b * factor)) / factor;
+  },
+  // 减
+  sub(a, b) {
+    const maxDecimals = Math.max(this.getDecimalLength(a), this.getDecimalLength(b));
+    const factor = Math.pow(10, maxDecimals);
+    return (Math.round(a * factor) - Math.round(b * factor)) / factor;
+  },
+  // 乘
+  mul(a, b) {
+    const aDecimals = this.getDecimalLength(a);
+    const bDecimals = this.getDecimalLength(b);
+    const factor = Math.pow(10, aDecimals + bDecimals);
+    return (Math.round(a * Math.pow(10, aDecimals)) * Math.round(b * Math.pow(10, bDecimals))) / factor;
+  },
+  // 除
+  div(a, b) {
+    const aDecimals = this.getDecimalLength(a);
+    const bDecimals = this.getDecimalLength(b);
+    const factorA = Math.pow(10, aDecimals);
+    const factorB = Math.pow(10, bDecimals);
+    return (Math.round(a * factorA) / Math.round(b * factorB)) * Math.pow(10, bDecimals - aDecimals);
+  }
+};
 
 export {
   numberToChinese,
   getRandomString,
-  isEmptyValue
+  isEmptyValue,
+  PreciseMath
 }

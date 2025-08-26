@@ -19,6 +19,9 @@ export default defineComponent({
     let notice = ref('')
     let status = ref('')
     let tableData = ref([])
+    let currentPage = ref(1);
+    let pageSize = ref(30);
+    let total = ref(0);
     let isPrint = ref(false)
     let allSelect = ref([])
     let chirmStatus = ref([2, 3])
@@ -53,8 +56,8 @@ export default defineComponent({
     // 获取列表
     const fetchProductList = async () => {
       const res = await request.post('/api/outsourcing_quote', {
-        page: 1,
-        pageSize: 100,
+        page: currentPage.value,
+        pageSize: pageSize.value,
         supplier_abbreviation: supplier_abbreviation.value,
         product_name: product_name.value,
         product_code: product_code.value,
@@ -62,19 +65,32 @@ export default defineComponent({
         status: chirmStatus.value
       });
       tableData.value = res.data;
+      total.value = res.total;
     };
     const setWarehousing = (value) => {
       ElMessage.error('等待实现......')
     }
     // 点击入库按钮
     const handleWarehousing = (row) => {
-      const all = [row.id]
-      setWarehousing(all)
+      ElMessageBox.confirm('是否确认入库？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(res => {
+        const all = [row.id]
+        setWarehousing(all)
+      }).catch({})
     }
     // 点击批量入库按钮
     const handleAllWarehousing = () => {
       if(allSelect.value.length == 0) return ElMessage.error('请先选择加工单')
-      setWarehousing(allSelect.value)
+      ElMessageBox.confirm('是否确认入库？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(res => {
+        setWarehousing(allSelect.value)
+      }).catch({})
     }
     // 用户主动多选，然后保存到allSelect
     const handleSelectionChange = (select) => {
@@ -92,6 +108,16 @@ export default defineComponent({
     const handleDelete = (row) => {
       const index = tableData.value.findIndex(e => e.id == row.id)
       tableData.value.splice(index, 1)
+    }
+    // 分页相关
+    function pageSizeChange(val) {
+      currentPage.value = 1;
+      pageSize.value = val;
+      fetchProductList()
+    }
+    function currentPageChange(val) {
+      currentPage.value = val;
+      fetchProductList();
     }
     
     return() => (
@@ -142,45 +168,38 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <div id="totalTable1">
-                  <ElTable data={ tableData.value } border stripe onSelectionChange={ (select) => handleSelectionChange(select) }>
-                    <ElTableColumn type="selection" width="55" />
-                    <ElTableColumn label="状态" width="120">
-                      {({ row }) => <span style="color: red">{ statusType[row.status] }</span>}
-                    </ElTableColumn>
-                    <ElTableColumn prop="processBom.part.part_code" label="部位编码" width="120" />
-                    <ElTableColumn prop="processBom.part.part_name" label="部位名称" width="120" />
-                    <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" width="120" />
-                    <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width="120" />
-                    <ElTableColumn label="加工要求" width="160">
-                      {({ row }) => <ElInput v-model={ row.ment } placeholder="请输入加工要求" />}
-                    </ElTableColumn>
-                    <ElTableColumn prop="notice.sale.unit" label="单位" width="100" />
-                    <ElTableColumn label="委外数量" width="100">
-                      {({ row }) => <el-input v-model={ row.number } type='number' placeholder="请输入委外数量" />}
-                    </ElTableColumn>
-                    <ElTableColumn label="加工单价" width="100">
-                      {({ row }) => <el-input v-model={ row.now_price } type="number" placeholder="请输入加工单价" />}
-                    </ElTableColumn>
-                    <ElTableColumn prop="notice.sale.delivery_time" label="要求交期" width="180" />
-                    <ElTableColumn label="操作" width="150" fixed="right">
-                      {(scope) => (
-                        <>
-                          {/*
-                          <ElButton size="small" type="default" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
-                          */}
-                          <ElButton size="small" type="primary" onClick={ () => handleWarehousing(scope.row) } v-permission={ 'OutsourcingOrder:wareh' }>入库</ElButton>
-                        </>
-                      )}
-                    </ElTableColumn>
-                  </ElTable>
-                  <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 940px">
-                    <div>核准：</div>
-                    <div>审查：</div>
-                    <div>制表：{ user.value?.name }</div>
-                    <div>日期：{ nowDate.value }</div>
-                  </div>
-                </div>
+                <ElTable data={ tableData.value } border stripe onSelectionChange={ (select) => handleSelectionChange(select) }>
+                  <ElTableColumn type="selection" width="55" />
+                  <ElTableColumn label="状态" width="120">
+                    {({ row }) => <span style="color: red">{ statusType[row.status] }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn prop="processBom.part.part_code" label="部位编码" width="120" />
+                  <ElTableColumn prop="processBom.part.part_name" label="部位名称" width="120" />
+                  <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" width="120" />
+                  <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width="120" />
+                  <ElTableColumn label="加工要求" width="160">
+                    {({ row }) => <ElInput v-model={ row.ment } placeholder="请输入加工要求" />}
+                  </ElTableColumn>
+                  <ElTableColumn prop="notice.sale.unit" label="单位" width="100" />
+                  <ElTableColumn label="委外数量" width="100">
+                    {({ row }) => <el-input v-model={ row.number } type='number' placeholder="请输入委外数量" />}
+                  </ElTableColumn>
+                  <ElTableColumn label="加工单价" width="100">
+                    {({ row }) => <el-input v-model={ row.now_price } type="number" placeholder="请输入加工单价" />}
+                  </ElTableColumn>
+                  <ElTableColumn prop="notice.sale.delivery_time" label="要求交期" width="180" />
+                  <ElTableColumn label="操作" width="150" fixed="right">
+                    {(scope) => (
+                      <>
+                        {/*
+                        <ElButton size="small" type="default" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                        */}
+                        <ElButton size="small" type="primary" onClick={ () => handleWarehousing(scope.row) } v-permission={ 'OutsourcingOrder:wareh' }>入库</ElButton>
+                      </>
+                    )}
+                  </ElTableColumn>
+                </ElTable>
+                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
                 <div class="printTable" id='totalTable2'>
                   <div id="printTable">
                     <div class="flex row-between" style="padding: 20px;width: 640px;">

@@ -156,6 +156,16 @@ export default defineComponent({
         remarks: ''
       }
     }
+    // 分页相关
+    function pageSizeChange(val) {
+      currentPage.value = 1;
+      pageSize.value = val;
+      fetchProductList()
+    }
+    function currentPageChange(val) {
+      currentPage.value = val;
+      fetchProductList();
+    }
 
     return() => (
       <>

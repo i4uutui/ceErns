@@ -72,7 +72,7 @@ export default defineComponent({
       })
     }
     const handleScheduling = (row) => {
-      ElMessageBox.confirm('是否确认将此通知单进行排期？', '提示', {
+      ElMessageBox.confirm('是否确认将此通知单进行排产？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning',
@@ -153,7 +153,7 @@ export default defineComponent({
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>排期</ElButton>
+                        <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>产</ElButton>
                       </>
                     )}
                   </ElTableColumn>

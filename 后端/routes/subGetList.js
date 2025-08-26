@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, Op } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -206,7 +206,8 @@ router.get('/getProcessBomChildren', authMiddleware, async (req, res) => {
   const { company_id } = req.user;
   
   const whereQuery = {
-    process_bom_id
+    process_bom_id,
+    company_id
   }
   const rows = await SubProcessBomChild.findAll({
     where: whereQuery,
@@ -226,6 +227,18 @@ router.get('/getProcessBomChildren', authMiddleware, async (req, res) => {
   })
   
   res.json({ data: bom, code: 200 })
+})
+
+router.get('/getProcessCycle', authMiddleware, async (req, res) => {
+  const { company_id } = req.user;
+  
+  const rows = await SubProcessCycle.findAll({
+    where: {
+      company_id
+    }
+  })
+  const cycleRows = rows.map(e => e.toJSON())
+  res.json({ data: cycleRows, code: 200 })
 })
 
 module.exports = router;  

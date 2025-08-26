@@ -58,6 +58,7 @@ SubProcessBom.hasMany(SubProcessBomChild, { foreignKey: 'process_bom_id', as: 'c
 SubProcessBomChild.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'parent' })
 SubProcessBomChild.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' })
 SubProcessBomChild.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'equipment' })
+SubProcessBomChild.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 SubProcessCode.hasOne(SubProcessBomChild, { foreignKey: 'process_id' })
 SubEquipmentCode.hasOne(SubProcessBomChild, { foreignKey: 'equipment_id' })
 

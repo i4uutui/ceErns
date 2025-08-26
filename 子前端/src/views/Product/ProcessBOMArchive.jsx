@@ -35,7 +35,7 @@ export default defineComponent({
             },
             time: '',
             price: '',
-            long: '',
+            cycle_id: '',
           });
         }
         return newItem;
@@ -135,7 +135,7 @@ export default defineComponent({
                         <ElTableColumn prop={`children[${index}].time`} label="单件工时" />
                         <ElTableColumn prop={`children[${index}].price`} label="加工单价" />
                         <ElTableColumn prop={`children[${index}].process.section_points`} label="段数点数" />
-                        <ElTableColumn prop={`children[${index}].long`} label="生产制程" />
+                        <ElTableColumn prop={`children[${index}].cycle.name`} label="生产制程" />
                       </ElTableColumn>
                     ))
                   }

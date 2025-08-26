@@ -26,8 +26,8 @@ export default defineComponent({
       price: [
         { required: true, message: '请输入加工单价', trigger: 'blur' },
       ],
-      long: [
-        { required: true, message: '请输入生产制程', trigger: 'blur' },
+      cycle_id: [
+        { required: true, message: '请选择生产制程', trigger: 'blur' },
       ]
     })
     let dialogVisible = ref(false)
@@ -35,7 +35,7 @@ export default defineComponent({
       product_id: '',
       part_id: '',
       children: [
-        { process_id: '', equipment_id: '', time: '', price: '', long: '' }
+        { process_id: '', equipment_id: '', time: '', price: '', cycle_id: '' }
       ]
     })
     let tableData = ref([])
@@ -66,7 +66,7 @@ export default defineComponent({
             },
             time: '',
             price: '',
-            long: '',
+            cycle_id: '',
           });
         }
         return newItem;
@@ -158,7 +158,7 @@ export default defineComponent({
       let filtered = children.filter(item => {
         return !Object.values(item).every(isEmptyValue);
       });
-      if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', long: '' }]
+      if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', cycle_id: '' }]
       form.value = { children: filtered, id, product_id, part_id };
     }
     // 添加
@@ -178,12 +178,12 @@ export default defineComponent({
         product_id: '',
         part_id: '',
         children: [
-          { process_id: '', equipment_id: '', time: '', price: '', long: '' }
+          { process_id: '', equipment_id: '', time: '', price: '', cycle_id: '' }
         ]
       }
     }
     const handleAddJson = () => {
-      const obj = { process_id: '', equipment_id: '', time: '', price: '', long: '' }
+      const obj = { process_id: '', equipment_id: '', time: '', price: '', cycle_id: '' }
       form.value.children.push(obj)
     }
     const handledeletedJson = (index) => {
@@ -251,7 +251,7 @@ export default defineComponent({
                         <ElTableColumn prop={`children[${index}].time`} label="单件工时" />
                         <ElTableColumn prop={`children[${index}].price`} label="加工单价" />
                         <ElTableColumn prop={`children[${index}].process.section_points`} label="段数点数" />
-                        <ElTableColumn prop={`children[${index}].long`} label="生产制程" />
+                        <ElTableColumn prop={`children[${index}].cycle.name`} label="生产制程" />
                       </ElTableColumn>
                     ))
                   }
@@ -295,9 +295,9 @@ export default defineComponent({
                         <ElFormItem label="加工单价" prop={ `children[${index}].price` } rules={ rules.price }>
                           <ElInput v-model={ e.price } placeholder="请输入加工单价" />
                         </ElFormItem>
-                        <ElFormItem label="生产制程" prop={ `children[${index}].long` } rules={ rules.long }>
+                        <ElFormItem label="生产制程" prop={ `children[${index}].cycle_id` } rules={ rules.cycle_id }>
                           <div class="flex">
-                            <ElInput v-model={ e.long } placeholder="请输入生产制程" />
+                            <MySelect v-model={ e.cycle_id } apiUrl="/api/getProcessCycle" query="name" itemValue="name" placeholder="请输入生产制程" />
                             <div class="flex">
                               {
                                 index == form.value.children.length - 1 && index < 20 ? <ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon> : <></>

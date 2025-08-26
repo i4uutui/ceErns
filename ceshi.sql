@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 25/08/2025 19:33:21
+ Date: 26/08/2025 16:14:59
 */
 
 SET NAMES utf8mb4;
@@ -419,7 +419,7 @@ CREATE TABLE `sub_process_bom`  (
 INSERT INTO `sub_process_bom` VALUES (35, 1, 1, 19, 6, 0, 1, '2025-08-12 15:08:15', '2025-08-21 16:11:39');
 INSERT INTO `sub_process_bom` VALUES (36, 1, 1, 19, 6, 0, 1, '2025-08-12 15:09:18', '2025-08-21 16:11:40');
 INSERT INTO `sub_process_bom` VALUES (37, 1, 1, 19, 5, 0, 1, '2025-08-21 09:35:20', '2025-08-21 16:11:41');
-INSERT INTO `sub_process_bom` VALUES (38, 1, 1, 16, 9, 1, 1, '2025-08-21 16:00:29', '2025-08-21 16:00:29');
+INSERT INTO `sub_process_bom` VALUES (38, 1, 1, 16, 9, 1, 1, '2025-08-21 16:00:29', '2025-08-26 15:51:31');
 
 -- ----------------------------
 -- Table structure for sub_process_bom_child
@@ -433,7 +433,7 @@ CREATE TABLE `sub_process_bom_child`  (
   `process_index` int(5) NULL DEFAULT NULL COMMENT '工序下标',
   `time` int(11) NULL DEFAULT NULL COMMENT '单件工时(小时)',
   `price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
-  `long` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生产制程',
+  `cycle_id` int(11) NULL DEFAULT NULL COMMENT '生产制程ID',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -442,14 +442,14 @@ CREATE TABLE `sub_process_bom_child`  (
 -- ----------------------------
 -- Records of sub_process_bom_child
 -- ----------------------------
-INSERT INTO `sub_process_bom_child` VALUES (3, 35, 4, 4, 1, 22, 22, '制程1', '2025-08-12 15:08:15', '2025-08-21 16:11:23');
-INSERT INTO `sub_process_bom_child` VALUES (4, 35, 3, 3, 2, 44, 55, '制程2', '2025-08-12 15:08:15', '2025-08-21 16:11:23');
-INSERT INTO `sub_process_bom_child` VALUES (5, 36, 3, 4, 2, 12, 331, '生产123456', '2025-08-12 15:09:18', '2025-08-21 16:11:25');
-INSERT INTO `sub_process_bom_child` VALUES (6, 36, 4, 3, 1, 211, 1212, '生产654321', '2025-08-13 10:33:55', '2025-08-21 16:11:25');
-INSERT INTO `sub_process_bom_child` VALUES (7, 37, 3, 3, 1, 21, 33, '2121', '2025-08-21 09:35:20', '2025-08-21 16:11:26');
-INSERT INTO `sub_process_bom_child` VALUES (8, 38, 3, 3, 1, 21, 121, '3131', '2025-08-21 16:00:29', '2025-08-21 16:00:29');
-INSERT INTO `sub_process_bom_child` VALUES (9, 38, 4, 3, 2, 212, 31, '311', '2025-08-21 16:00:29', '2025-08-21 16:00:29');
-INSERT INTO `sub_process_bom_child` VALUES (10, 38, 4, 3, 3, 31, 21, '3131', '2025-08-21 16:00:29', '2025-08-21 16:00:29');
+INSERT INTO `sub_process_bom_child` VALUES (3, 35, 4, 4, 1, 22, 22, 1, '2025-08-12 15:08:15', '2025-08-26 15:27:30');
+INSERT INTO `sub_process_bom_child` VALUES (4, 35, 3, 3, 2, 44, 55, 1, '2025-08-12 15:08:15', '2025-08-26 15:27:32');
+INSERT INTO `sub_process_bom_child` VALUES (5, 36, 3, 4, 2, 12, 331, 1, '2025-08-12 15:09:18', '2025-08-26 15:27:35');
+INSERT INTO `sub_process_bom_child` VALUES (6, 36, 4, 3, 1, 211, 1212, 1, '2025-08-13 10:33:55', '2025-08-26 15:27:37');
+INSERT INTO `sub_process_bom_child` VALUES (7, 37, 3, 3, 1, 21, 33, 2, '2025-08-21 09:35:20', '2025-08-26 15:27:39');
+INSERT INTO `sub_process_bom_child` VALUES (8, 38, 3, 3, 1, 21, 121, 1, '2025-08-21 16:00:29', '2025-08-26 15:51:31');
+INSERT INTO `sub_process_bom_child` VALUES (9, 38, 4, 3, 2, 212, 31, 2, '2025-08-21 16:00:29', '2025-08-26 15:27:40');
+INSERT INTO `sub_process_bom_child` VALUES (10, 38, 4, 3, 3, 31, 21, 3, '2025-08-21 16:00:29', '2025-08-26 15:50:14');
 
 -- ----------------------------
 -- Table structure for sub_process_code

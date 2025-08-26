@@ -41,16 +41,10 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     defaultValue: null,
     comment: ' 加工单价 '
   },
-  processing: {
-    type: DataTypes.STRING(255),
+  cycle_id: {
+    type: DataTypes.INTEGER(11),
     allowNull: true,
-    defaultValue: null,
-    comment: ' 加工要求 '
-  },
-  long: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: ' 生产制程 '
+    comment: ' 生产制程ID '
   },
 }, {
   sequelize,
