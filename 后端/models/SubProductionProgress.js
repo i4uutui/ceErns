@@ -24,36 +24,52 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     allowNull: false,
     comment: '生产通知单id'
   },
-  product_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: '产品编码id'
-  },
   customer_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     comment: '客户id'
   },
-  sale_id: {
+  product_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
-    comment: '销售id'
+    comment: '产品编码id'
   },
-  out_number: {
-    type: DataTypes.INTEGER(20),
-    allowNull: true,
-    comment: '委外/库存数量'
+  part_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '部件编码id'
+  },
+  bom_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: 'Bom表的id'
   },
   order_number: {
     type: DataTypes.INTEGER(20),
     allowNull: true,
     comment: '生产数量'
   },
+  out_number: {
+    type: DataTypes.INTEGER(20),
+    allowNull: true,
+    comment: '委外/库存数量'
+  },
+  start_date: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: ' 预计起始生产时间 '
+  },
   remarks: {
     type: DataTypes.TEXT,
     allowNull: true,
     comment: ' 生产特别要求 '
   },
+  is_deleted: {
+    type: DataTypes.INTEGER(1).UNSIGNED.ZEROFILL,
+    allowNull: true,
+    defaultValue: 1,
+    comment: '1：未删除；0：已删除',
+  }
 }, {
   sequelize,
   modelName: 'sub_production_progress',

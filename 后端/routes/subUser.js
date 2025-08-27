@@ -7,6 +7,23 @@ const bcrypt = require('bcrypt');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
 // 获取后台用户列表（分页）
+/**
+ * @swagger
+ * /api/user:
+ *   get:
+ *     summary: 获取后台用户列表（分页）
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ */
 router.get('/user', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
@@ -55,6 +72,30 @@ router.get('/user', authMiddleware, async (req, res) => {
 });
 
 // 添加用户
+/**
+ * @swagger
+ * /api/user:
+ *   post:
+ *     summary: 新增用户
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: username
+ *         schema:
+ *           type: string
+ *       - name: password
+ *         schema:
+ *           type: string
+ *       - name: name
+ *         schema:
+ *           type: string
+ *       - name: power
+ *         schema:
+ *           type: string
+ *       - name: status
+ *         schema:
+ *           type: int
+ */
 router.post('/user', authMiddleware, async (req, res) => {
   const { username, password, name, power, status } = req.body;
   
@@ -85,6 +126,33 @@ router.post('/user', authMiddleware, async (req, res) => {
 });
 
 // 更新子管理员接口
+/**
+ * @swagger
+ * /api/user:
+ *   put:
+ *     summary: 更新用户
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ *       - name: username
+ *         schema:
+ *           type: string
+ *       - name: password
+ *         schema:
+ *           type: string
+ *       - name: name
+ *         schema:
+ *           type: string
+ *       - name: power
+ *         schema:
+ *           type: string
+ *       - name: status
+ *         schema:
+ *           type: int
+ */
 router.put('/user', authMiddleware, async (req, res) => {
   const { username, password, name, power, status, id } = req.body;
   
@@ -124,6 +192,18 @@ router.put('/user', authMiddleware, async (req, res) => {
 });
 
 // 删除子后台用户
+/**
+ * @swagger
+ * /api/user:
+ *   delete:
+ *     summary: 删除用户
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
 router.delete('/user/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   
@@ -184,6 +264,15 @@ function buildOrgTree(nodes) {
   // tree.forEach(rootNode => sortChildren(rootNode));
   return tree;
 }
+/**
+ * @swagger
+ * /api/organize:
+ *   get:
+ *     summary: 组织结构
+ *     description: 本接口不需要传参数，直接调用即可
+ *     tags:
+ *       - 系统管理
+ */
 router.get('/organize', authMiddleware, async (req, res) => {
   const { company_id } = req.user;
   
@@ -213,6 +302,27 @@ router.get('/organize', authMiddleware, async (req, res) => {
     code: 200
   });
 })
+/**
+ * @swagger
+ * /api/organize:
+ *   post:
+ *     summary: 新增组织节点
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: pid
+ *         schema:
+ *           type: int
+ *         description: 父节点ID，如果没有则填0
+ *       - name: label
+ *         schema:
+ *           type: string
+ *         description: 节点名称
+ *       - name: menber_id
+ *         schema:
+ *           type: string
+ *         description: 关联的用户ID
+ */
 router.post('/organize', authMiddleware, async (req, res) => {
   const { label, pid = 0, menber_id } = req.body;
   // menber_id所选择的用户id，pid父节点id
@@ -236,6 +346,31 @@ router.post('/organize', authMiddleware, async (req, res) => {
 
   res.json({ message: '添加成功', code: 200 });
 })
+/**
+ * @swagger
+ * /api/organize:
+ *   put:
+ *     summary: 修改组织节点
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ *         description: 当前节点ID
+ *       - name: pid
+ *         schema:
+ *           type: int
+ *         description: 父节点ID，如果没有则填0
+ *       - name: label
+ *         schema:
+ *           type: string
+ *         description: 节点名称
+ *       - name: menber_id
+ *         schema:
+ *           type: string
+ *         description: 关联的用户ID
+ */
 router.put('/organize', authMiddleware, async (req, res) => {
   const { label, pid = 0, menber_id, id } = req.body;
   // menber_id所选择的用户id，pid父节点id
@@ -259,6 +394,19 @@ router.put('/organize', authMiddleware, async (req, res) => {
 
   res.json({ message: '修改成功', code: 200 });
 })
+/**
+ * @swagger
+ * /api/organize:
+ *   delete:
+ *     summary: 删除组织节点
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ *         description: 当前节点ID
+ */
 router.delete('/organize', authMiddleware, async (req, res) => {
   const { id } = req.query;
 
@@ -279,6 +427,23 @@ router.delete('/organize', authMiddleware, async (req, res) => {
 
 
 // 生产制程
+/**
+ * @swagger
+ * /api/process_cycle:
+ *   get:
+ *     summary: 获取生产制程列表（分页）
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ */
 router.get('/process_cycle', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
@@ -306,6 +471,18 @@ router.get('/process_cycle', authMiddleware, async (req, res) => {
     code: 200 
   });
 })
+/**
+ * @swagger
+ * /api/process_cycle:
+ *   post:
+ *     summary: 新增生产制程
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: name
+ *         schema:
+ *           type: string
+ */
 router.post('/process_cycle', authMiddleware, async (req, res) => {
   const { name } = req.body;
   const { id: userId, company_id } = req.user;
@@ -317,6 +494,21 @@ router.post('/process_cycle', authMiddleware, async (req, res) => {
   
   res.json({ msg: '添加成功', code: 200 });
 })
+/**
+ * @swagger
+ * /api/process_cycle:
+ *   put:
+ *     summary: 修改生产制程
+ *     tags:
+ *       - 系统管理
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ *       - name: name
+ *         schema:
+ *           type: string
+ */
 router.put('/process_cycle', authMiddleware, async (req, res) => {
   const { name, id } = req.body;
   const { id: userId, company_id } = req.user;

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, Op } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -390,37 +390,84 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   // 验证数据是否存在
-  const notice = await SubProductNotice.findByPk(id);
+  const notice = await SubProductNotice.findOne({
+    where: { id },
+    include: [
+      { model: SubSaleOrder, as: 'sale' },
+      { model: SubCustomerInfo, as: 'customer' },
+      { model: SubProductCode, as: 'product' }
+    ]
+  });
   if (!notice) return res.json({ message: '数据不存在，或已被删除', code: 401 });
   const noticeRow = notice.toJSON()
+  if(noticeRow.is_notice == 0) return res.json({ message: '此订单已有排产记录，不能重复排产', code: 401 })
   
   // 通过产品id查找工艺BOSS中相同的产品id数据
   const bom = await SubProcessBom.findAll({
     where: {
-      product_id: noticeRow.product_id
+      product_id: noticeRow.product_id,
+      archive: 0
     },
+    attributes: ['id', 'archive', 'product_id', 'part_id'],
+    include: [
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'] },
+      { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
+      {
+        model: SubProcessBomChild,
+        as: 'children',
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'cycle_id', 'all_time', 'all_load', 'add_finish', 'order_number'],
+        include: [
+          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
+          { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] },
+          { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
+        ]
+      }
+    ],
+    order: [
+      ['id', 'DESC'],
+    ],
   })
-  const bomRows = bom.map(e => e.toJSON())
-  
-  const objData = {
-    product_id: row.product_id,
+  let wait = []
+  const bomRows = bom.map(e => {
+    const data = e.toJSON()
+    data.children.forEach(o => {
+      if(o.order_number == null){
+        wait.push({ ...o, order_number: noticeRow.sale.order_number })
+        o.order_number = noticeRow.sale.order_number
+      }
+    })
+    return data
+  })
+  if(wait.length != 0){
+    SubProcessBomChild.bulkCreate(wait, {updateOnDuplicate:["order_number"]})
   }
-  const red = await SubProductionProgress.findAll({
-    where: {
+  noticeRow.bom = bomRows
+  
+  const objData = []
+  bomRows.forEach(item => {
+    const obj = {
+      company_id,
+      user_id: userId,
       notice_id: id,
-      company_id
+      customer_id: noticeRow.customer_id,
+      product_id: item.product_id,
+      part_id: item.part_id,
+      bom_id: item.id,
+      order_number: noticeRow.sale.order_number,
+      out_number: null,
+      start_date: null,
+      remarks: null
     }
+    objData.push(obj)
   })
-  if(red.length != 0){
-    return res.json({ message: '该生产通知单已排期', code: 401 })
-  }
+  const result = await SubProductionProgress.bulkCreate(objData, {updateOnDuplicate:['company_id', 'user_id', 'notice_id', 'customer_id', 'product_id', 'part_id', 'bom_id', 'order_number', 'out_number', 'remarks']})
   
-  const result = await SubProductionProgress.create({
-    notice_id: id,
-    ...objData,
-    company_id,
-    user_id: userId
-  })
+  if(objData.length){
+    // 设置此数据为已排产
+    await SubProductNotice.update({
+      is_notice: 0
+    }, { where: { id } })
+  }
   
   res.json({ message: '操作成功', code: 200 });
 })

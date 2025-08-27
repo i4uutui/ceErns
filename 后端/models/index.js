@@ -72,10 +72,10 @@ SubOutsourcingQuote.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as:
 SubOutsourcingQuote.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
 SubOutsourcingQuote.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
-SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
-SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
-SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
-SubProductionProgress.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
+// SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+// SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
+// SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
+// SubProductionProgress.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 
 module.exports = {
   Op,

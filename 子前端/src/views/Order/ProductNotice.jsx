@@ -153,7 +153,7 @@ export default defineComponent({
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>产</ElButton>
+                        <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>排产</ElButton>
                       </>
                     )}
                   </ElTableColumn>

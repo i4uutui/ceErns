@@ -4,8 +4,14 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocs = require('./config/swagger.js');
+
 app.use(cors());
 app.use(bodyParser.json());
+
+// 配置 Swagger 文档路由
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // 路由
 app.use('/admin', require('./routes/admin'));
@@ -23,6 +29,7 @@ app.use('/upload', require('./routes/upload'));
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`服务器运行在端口 ${PORT}`);
+  console.log(`Swagger 文档地址: http://localhost:${PORT}/api-docs`);
 });
 
 

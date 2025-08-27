@@ -46,6 +46,26 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     allowNull: true,
     comment: ' 生产制程ID '
   },
+  all_time: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: ' 全部工时-H '
+  },
+  all_load: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: ' 每日负荷-H '
+  },
+  add_finish: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: ' 累计完成 '
+  },
+  order_number: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: ' 订单尾数 '
+  },
 }, {
   sequelize,
   modelName: 'sub_process_bom_child',
