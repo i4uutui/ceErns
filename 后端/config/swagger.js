@@ -19,16 +19,17 @@ const swaggerOptions = {
     },
     components: {
       securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT'
+        ApiKeyAuth: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'Authorization'
         }
       }
     },
+    // 全局应用此认证方式
     security: [
       {
-        bearerAuth: []
+        ApiKeyAuth: []
       }
     ]
   },
