@@ -35,10 +35,10 @@ const SubEquipmentCode = sequelize.define('SubEquipmentCode', {
     defaultValue: 2,
     comment: ' 设备数量 '
   },
-  department: {
-    type: DataTypes.STRING(50),
+  cycle_id: {
+    type: DataTypes.INTEGER(11),
     allowNull: true,
-    comment: ' 所属部门 '
+    comment: ' 所属制程组 '
   },
   working_hours: {
     type: DataTypes.STRING(10),

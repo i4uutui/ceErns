@@ -151,11 +151,17 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
       {
         model: SubProcessBomChild,
         as: 'children',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'cycle_id'],
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price'],
         include: [
           { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
-          { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] },
-          { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
+          {
+            model: SubEquipmentCode,
+            as: 'equipment',
+            attributes: ['id', 'equipment_code', 'equipment_name'],
+            include: [
+              { model: SubProcessCycle, as: 'cycle' }
+            ]
+          }
         ]
       }
     ],

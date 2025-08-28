@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, Op } = require('../models')
+const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, Op, SubProcessCycle } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -392,6 +392,9 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id
     },
+    include: [
+      { model: SubProcessCycle, as: 'cycle' }
+    ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -413,7 +416,7 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
 
 // 添加设备信息
 router.post('/equipment_code', authMiddleware, async (req, res) => {
-  const { equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks } = req.body;
+  const { equipment_code, equipment_name, equipment_quantity, cycle_id, working_hours, equipment_efficiency, equipment_status, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -426,7 +429,7 @@ router.post('/equipment_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   SubEquipmentCode.create({
-    equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks, company_id,
+    equipment_code, equipment_name, equipment_quantity, cycle_id, working_hours, equipment_efficiency, equipment_status, remarks, company_id,
     user_id: userId
   })
   
@@ -435,7 +438,7 @@ router.post('/equipment_code', authMiddleware, async (req, res) => {
 
 // 更新设备信息接口
 router.put('/equipment_code', authMiddleware, async (req, res) => {
-  const { equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks, id } = req.body;
+  const { equipment_code, equipment_name, equipment_quantity, cycle_id, working_hours, equipment_efficiency, equipment_status, remarks, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证设备是否存在
@@ -448,7 +451,7 @@ router.put('/equipment_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   await SubEquipmentCode.update({
-    equipment_code, equipment_name, equipment_quantity, department, working_hours, equipment_efficiency, equipment_status, remarks, company_id,
+    equipment_code, equipment_name, equipment_quantity, cycle_id, working_hours, equipment_efficiency, equipment_status, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   

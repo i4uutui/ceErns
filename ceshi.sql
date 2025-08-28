@@ -11,7 +11,7 @@
  Target Server Version : 50740
  File Encoding         : 65001
 
- Date: 27/08/2025 16:29:40
+ Date: 28/08/2025 15:58:16
 */
 
 SET NAMES utf8mb4;
@@ -182,7 +182,7 @@ CREATE TABLE `sub_equipment_code`  (
   `equipment_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '设备编码',
   `equipment_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '设备名称',
   `equipment_quantity` int(11) NULL DEFAULT 2 COMMENT '设备数量',
-  `department` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '所属部门',
+  `cycle_id` int(11) NULL DEFAULT NULL COMMENT '所属制程组',
   `working_hours` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '工作时长(小时)',
   `equipment_efficiency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '设备效能',
   `equipment_status` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '设备状态',
@@ -196,8 +196,8 @@ CREATE TABLE `sub_equipment_code`  (
 -- ----------------------------
 -- Records of sub_equipment_code
 -- ----------------------------
-INSERT INTO `sub_equipment_code` VALUES (3, 1, 1, '123', '设备2121', 12, '121', '121', '211', '21', '212', 1, '2025-07-08 16:06:29', '2025-08-12 10:17:56');
-INSERT INTO `sub_equipment_code` VALUES (4, 1, 1, '111', '设备4444', 22, '2121', '2121', '212', '121', '2121', 1, '2025-08-09 16:06:56', '2025-08-09 16:06:56');
+INSERT INTO `sub_equipment_code` VALUES (3, 1, 1, '123', '设备2121', 12, 3, '121', '211', '21', '212', 1, '2025-07-08 16:06:29', '2025-08-28 14:45:19');
+INSERT INTO `sub_equipment_code` VALUES (4, 1, 1, '111', '设备4444', 22, 1, '2121', '212', '121', '2121', 1, '2025-08-09 16:06:56', '2025-08-28 14:45:11');
 
 -- ----------------------------
 -- Table structure for sub_material_bom
@@ -419,7 +419,7 @@ CREATE TABLE `sub_process_bom`  (
 INSERT INTO `sub_process_bom` VALUES (35, 1, 1, 19, 6, 0, 1, '2025-08-12 15:08:15', '2025-08-21 16:11:39');
 INSERT INTO `sub_process_bom` VALUES (36, 1, 1, 19, 6, 0, 1, '2025-08-12 15:09:18', '2025-08-21 16:11:40');
 INSERT INTO `sub_process_bom` VALUES (37, 1, 1, 19, 5, 0, 1, '2025-08-21 09:35:20', '2025-08-21 16:11:41');
-INSERT INTO `sub_process_bom` VALUES (38, 1, 1, 16, 9, 1, 1, '2025-08-21 16:00:29', '2025-08-26 15:51:31');
+INSERT INTO `sub_process_bom` VALUES (38, 1, 1, 16, 9, 1, 1, '2025-08-21 16:00:29', '2025-08-28 15:26:54');
 
 -- ----------------------------
 -- Table structure for sub_process_bom_child
@@ -433,7 +433,6 @@ CREATE TABLE `sub_process_bom_child`  (
   `process_index` int(5) NULL DEFAULT NULL COMMENT '工序下标',
   `time` int(11) NULL DEFAULT NULL COMMENT '单件工时(小时)',
   `price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
-  `cycle_id` int(11) NULL DEFAULT NULL COMMENT '生产制程ID',
   `all_time` int(11) NULL DEFAULT NULL COMMENT '全部工时-H',
   `all_load` int(11) NULL DEFAULT NULL COMMENT '每日负荷-H',
   `add_finish` int(11) NULL DEFAULT NULL COMMENT '累计完成',
@@ -446,14 +445,14 @@ CREATE TABLE `sub_process_bom_child`  (
 -- ----------------------------
 -- Records of sub_process_bom_child
 -- ----------------------------
-INSERT INTO `sub_process_bom_child` VALUES (3, 35, 4, 4, 1, 22, 22, 1, NULL, NULL, NULL, 2121, '2025-08-12 15:08:15', '2025-08-27 11:01:38');
-INSERT INTO `sub_process_bom_child` VALUES (4, 35, 3, 3, 2, 44, 55, 1, NULL, NULL, NULL, 2121, '2025-08-12 15:08:15', '2025-08-27 11:01:38');
-INSERT INTO `sub_process_bom_child` VALUES (5, 36, 3, 4, 2, 12, 331, 1, NULL, NULL, NULL, 2121, '2025-08-12 15:09:18', '2025-08-27 11:01:38');
-INSERT INTO `sub_process_bom_child` VALUES (6, 36, 4, 3, 1, 211, 1212, 1, NULL, NULL, NULL, 2121, '2025-08-13 10:33:55', '2025-08-27 11:01:38');
-INSERT INTO `sub_process_bom_child` VALUES (7, 37, 3, 3, 1, 21, 33, 2, NULL, NULL, NULL, 2121, '2025-08-21 09:35:20', '2025-08-27 11:01:38');
-INSERT INTO `sub_process_bom_child` VALUES (8, 38, 3, 3, 1, 21, 121, 1, NULL, NULL, NULL, NULL, '2025-08-21 16:00:29', '2025-08-26 15:51:31');
-INSERT INTO `sub_process_bom_child` VALUES (9, 38, 4, 3, 2, 212, 31, 2, NULL, NULL, NULL, NULL, '2025-08-21 16:00:29', '2025-08-26 15:27:40');
-INSERT INTO `sub_process_bom_child` VALUES (10, 38, 4, 3, 3, 31, 21, 3, NULL, NULL, NULL, NULL, '2025-08-21 16:00:29', '2025-08-26 15:50:14');
+INSERT INTO `sub_process_bom_child` VALUES (3, 35, 4, 4, 1, 22, 22, NULL, NULL, NULL, 2121, '2025-08-12 15:08:15', '2025-08-27 11:01:38');
+INSERT INTO `sub_process_bom_child` VALUES (4, 35, 3, 3, 2, 44, 55, NULL, NULL, NULL, 2121, '2025-08-12 15:08:15', '2025-08-27 11:01:38');
+INSERT INTO `sub_process_bom_child` VALUES (5, 36, 3, 4, 2, 12, 331, NULL, NULL, NULL, 2121, '2025-08-12 15:09:18', '2025-08-27 11:01:38');
+INSERT INTO `sub_process_bom_child` VALUES (6, 36, 4, 3, 1, 211, 1212, NULL, NULL, NULL, 2121, '2025-08-13 10:33:55', '2025-08-27 11:01:38');
+INSERT INTO `sub_process_bom_child` VALUES (7, 37, 3, 3, 1, 21, 33, NULL, NULL, NULL, 2121, '2025-08-21 09:35:20', '2025-08-27 11:01:38');
+INSERT INTO `sub_process_bom_child` VALUES (8, 38, 3, 3, 1, 21, 121, NULL, NULL, NULL, NULL, '2025-08-21 16:00:29', '2025-08-26 15:51:31');
+INSERT INTO `sub_process_bom_child` VALUES (9, 38, 4, 3, 2, 212, 31, NULL, NULL, NULL, NULL, '2025-08-21 16:00:29', '2025-08-26 15:27:40');
+INSERT INTO `sub_process_bom_child` VALUES (10, 38, 4, 4, 3, 31, 21, NULL, NULL, NULL, NULL, '2025-08-21 16:00:29', '2025-08-28 15:26:54');
 
 -- ----------------------------
 -- Table structure for sub_process_code
@@ -570,7 +569,7 @@ CREATE TABLE `sub_product_notice`  (
 -- ----------------------------
 INSERT INTO `sub_product_notice` VALUES (5, 1, 1, '1111', 2, 9, 2, '2025-07-30T16:00:00.000Z', NULL, 1, '2025-07-25 22:56:01', '2025-07-25 22:56:01');
 INSERT INTO `sub_product_notice` VALUES (6, 1, 1, '2222', 3, 10, 1, '2025-07-28 00:00:00', 1, 1, '2025-07-25 22:56:09', '2025-08-27 11:48:55');
-INSERT INTO `sub_product_notice` VALUES (7, 1, 1, '11111', 2, 19, 2, '2025-08-11 00:00:00', 0, 1, '2025-08-03 19:54:20', '2025-08-27 11:40:33');
+INSERT INTO `sub_product_notice` VALUES (7, 1, 1, '11111', 2, 19, 2, '2025-08-11 00:00:00', 0, 1, '2025-08-03 19:54:20', '2025-08-28 14:12:46');
 
 -- ----------------------------
 -- Table structure for sub_product_quotation
@@ -613,6 +612,7 @@ CREATE TABLE `sub_production_progress`  (
   `part_id` int(11) NULL DEFAULT NULL COMMENT '部件id',
   `bom_id` int(11) NULL DEFAULT NULL COMMENT 'bom表的id',
   `order_number` int(20) NULL DEFAULT NULL COMMENT '委外/库存数量',
+  `customer_order` int(20) NULL DEFAULT NULL COMMENT '客户订单号',
   `out_number` int(20) NULL DEFAULT NULL COMMENT '生产数量',
   `start_date` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '预计起始生产时间',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '生产特别要求',
@@ -620,14 +620,14 @@ CREATE TABLE `sub_production_progress`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_production_progress
 -- ----------------------------
-INSERT INTO `sub_production_progress` VALUES (4, 1, 1, 7, 2, 19, 5, 37, 2121, NULL, NULL, NULL, 1, '2025-08-27 11:40:33', '2025-08-27 11:40:33');
-INSERT INTO `sub_production_progress` VALUES (5, 1, 1, 7, 2, 19, 6, 36, 2121, NULL, NULL, NULL, 1, '2025-08-27 11:40:33', '2025-08-27 11:40:33');
-INSERT INTO `sub_production_progress` VALUES (6, 1, 1, 7, 2, 19, 6, 35, 2121, NULL, NULL, NULL, 1, '2025-08-27 11:40:33', '2025-08-27 11:40:33');
+INSERT INTO `sub_production_progress` VALUES (7, 1, 1, 7, 2, 19, 5, 37, 2121, 3333312, NULL, NULL, NULL, 1, '2025-08-28 14:12:46', '2025-08-28 14:12:46');
+INSERT INTO `sub_production_progress` VALUES (8, 1, 1, 7, 2, 19, 6, 36, 2121, 3333312, NULL, NULL, NULL, 1, '2025-08-28 14:12:46', '2025-08-28 14:12:46');
+INSERT INTO `sub_production_progress` VALUES (9, 1, 1, 7, 2, 19, 6, 35, 2121, 3333312, NULL, NULL, NULL, 1, '2025-08-28 14:12:46', '2025-08-28 14:12:46');
 
 -- ----------------------------
 -- Table structure for sub_sales_order

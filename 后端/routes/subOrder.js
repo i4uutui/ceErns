@@ -454,6 +454,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       part_id: item.part_id,
       bom_id: item.id,
       order_number: noticeRow.sale.order_number,
+      customer_order: notice.sale.customer_order,
       out_number: null,
       start_date: null,
       remarks: null
@@ -471,7 +472,6 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   
   res.json({ message: '操作成功', code: 200 });
 })
-
 module.exports = router;
 
 

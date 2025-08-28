@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, Op } = require('../models');
+const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -18,15 +18,28 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
     },
     include: [
       { model: SubProductNotice, as: 'notice' },
+      { model: SubCustomerInfo, as: 'customer' },
+      { model: SubProductCode, as: 'product' },
+      { model: SubPartCode, as: 'part' },
       {
-        model: SubProductCode,
-        as: 'product',
+        model: SubProcessBom,
+        as: 'bom',
         include: [
-          { model: SubPartCode, as: 'part' }
+          {
+            model: SubProcessBomChild,
+            as: 'children',
+            include: [
+              { model: SubProcessCode, as: 'process' },
+              {
+                model: SubEquipmentCode,
+                as: 'equipment',
+                attributes: ['id', 'equipment_name', 'equipment_code', 'working_hours', 'equipment_efficiency', 'equipment_quantity'],
+                include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }]
+              },
+            ]
+          }
         ]
       },
-      { model: SubCustomerInfo, as: 'customer' },
-      { model: SubSaleOrder, as: 'sale' },
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),

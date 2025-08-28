@@ -22,7 +22,7 @@ const SubProcessCycle = sequelize.define('SubProcessCycle', {
   name: {
     type: DataTypes.STRING(100),
     allowNull: false,
-    comment: '供应商编码'
+    comment: '制程名称'
   },
   is_deleted: {
     type: DataTypes.TINYINT(3),

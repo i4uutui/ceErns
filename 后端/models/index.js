@@ -32,6 +32,8 @@ AdUser.hasMany(AdOrganize, { foreignKey: 'menber_id', as: 'organize' });
 AdOrganize.hasMany(AdOrganize, { foreignKey: 'pid', as: 'children' });
 AdOrganize.belongsTo(AdUser, { foreignKey: 'menber_id', as: 'menber' });
 
+SubEquipmentCode.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
+
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 SubProductCode.hasMany(SubSaleOrder, { foreignKey: 'product_id', as: 'order' })
@@ -58,7 +60,6 @@ SubProcessBom.hasMany(SubProcessBomChild, { foreignKey: 'process_bom_id', as: 'c
 SubProcessBomChild.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'parent' })
 SubProcessBomChild.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' })
 SubProcessBomChild.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'equipment' })
-SubProcessBomChild.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 SubProcessCode.hasOne(SubProcessBomChild, { foreignKey: 'process_id' })
 SubEquipmentCode.hasOne(SubProcessBomChild, { foreignKey: 'equipment_id' })
 
@@ -72,10 +73,11 @@ SubOutsourcingQuote.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as:
 SubOutsourcingQuote.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
 SubOutsourcingQuote.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
-// SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
-// SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
-// SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
-// SubProductionProgress.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
+SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
+SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
+SubProductionProgress.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
+SubProductionProgress.belongsTo(SubProcessBom, { foreignKey: 'bom_id', as: 'bom' })
 
 module.exports = {
   Op,

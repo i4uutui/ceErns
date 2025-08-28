@@ -1,6 +1,7 @@
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
+import EquipmentTable from '@/components/production/equipmentTable.vue';
 
 export default defineComponent({
   setup(){
@@ -31,6 +32,7 @@ export default defineComponent({
     let currentPage = ref(1);
     let pageSize = ref(10);
     let total = ref(0);
+    let uniqueEquipments = ref([])
     
     onMounted(() => {
       fetchProductList()
@@ -45,6 +47,14 @@ export default defineComponent({
         },
       });
       tableData.value = res.data;
+      // 集合equipment并且去重
+      uniqueEquipments.value = [...res.data
+        .flatMap(item => item?.bom?.children ?? [])
+        .map(child => child.equipment)
+        .filter(Boolean)
+        .reduce((map, equip) => map.set(equip.id, equip), new Map())
+        .values()
+      ];
       total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
@@ -84,18 +94,14 @@ export default defineComponent({
       currentPage.value = val;
       fetchProductList();
     }
-    
+
     return() => (
       <>
         <ElCard>
           {{
-            // header: () => (
-            //   <div class="clearfix">
-            //     <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-            //       添加产品报价
-            //     </ElButton>
-            //   </div>
-            // ),
+            header: () => (
+              <EquipmentTable dataValue={ uniqueEquipments.value }></EquipmentTable>
+            ),
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
