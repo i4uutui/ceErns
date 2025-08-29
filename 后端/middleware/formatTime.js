@@ -2,7 +2,7 @@
 const dayjs = require('dayjs');
 
 const formatTime = (time) => {
-  return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '';
+  return time ? dayjs(time).format('YYYY-MM-DD') : '';
 };
 
 // 格式化对象中的时间字段

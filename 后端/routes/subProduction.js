@@ -47,7 +47,11 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
   })
   const totalPages = Math.ceil(count / pageSize)
   
-  const fromData = rows.map(item => item.toJSON())
+  const fromData = rows.map(item => {
+    const dataValue = item.toJSON()
+    dataValue.notice = formatObjectTime(dataValue.notice)
+    return dataValue
+  })
   
   // 返回所需信息
   res.json({ 

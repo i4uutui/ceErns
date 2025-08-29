@@ -54,6 +54,11 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     allowNull: true,
     comment: '客户订单号'
   },
+  rece_time: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: '接单日期'
+  },
   out_number: {
     type: DataTypes.INTEGER(20),
     allowNull: true,

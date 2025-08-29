@@ -214,7 +214,7 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
     where: { id }
   })
   SubProcessBomChild.bulkCreate(children, {
-    updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'cycle_id']
+    updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price']
   })
   
   res.json({ message: '修改成功', code: 200 });

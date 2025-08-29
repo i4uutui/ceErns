@@ -415,11 +415,10 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       {
         model: SubProcessBomChild,
         as: 'children',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'cycle_id', 'all_time', 'all_load', 'add_finish', 'order_number'],
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'all_time', 'all_load', 'add_finish', 'order_number'],
         include: [
           { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
           { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] },
-          { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
         ]
       }
     ],
@@ -454,8 +453,9 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       part_id: item.part_id,
       bom_id: item.id,
       order_number: noticeRow.sale.order_number,
-      customer_order: notice.sale.customer_order,
-      out_number: null,
+      customer_order: noticeRow.sale.customer_order,
+      rece_time: noticeRow.sale.rece_time,
+      out_number: noticeRow.sale.order_number,
       start_date: null,
       remarks: null
     }

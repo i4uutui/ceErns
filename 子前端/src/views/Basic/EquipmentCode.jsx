@@ -161,8 +161,8 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="equipment_code" label="设备编码" />
                   <ElTableColumn prop="equipment_name" label="设备名称" />
-                  <ElTableColumn prop="equipment_quantity" label="设备数量" />
                   <ElTableColumn prop="cycle.name" label="所属部门" />
+                  <ElTableColumn prop="equipment_quantity" label="设备数量" />
                   <ElTableColumn prop="working_hours" label="工作时长(时)" />
                   <ElTableColumn prop="equipment_efficiency" label="设备效能" />
                   <ElTableColumn prop="equipment_status" label="设备状态" />
@@ -191,14 +191,14 @@ export default defineComponent({
                 <ElFormItem label="设备名称" prop="equipment_name">
                   <ElInput v-model={ form.value.equipment_name } placeholder="请输入设备名称" />
                 </ElFormItem>
-                <ElFormItem label="设备数量" prop="equipment_quantity">
-                  <ElInput v-model={ form.value.equipment_quantity } type="number" placeholder="请输入设备数量" />
-                </ElFormItem>
                 <ElFormItem label="制程组" prop="cycle_id">
                   <MySelect v-model={ form.value.cycle_id } apiUrl="/api/getProcessCycle" query="name" itemValue="name" placeholder="请选择制程组" />
                 </ElFormItem>
-                <ElFormItem label="工作时长(时)" prop="working_hours">
-                  <ElInput v-model={ form.value.working_hours } type="number" placeholder="请输入工作时长(时)" />
+                <ElFormItem label="设备数量" prop="equipment_quantity">
+                  <ElInput v-model={ form.value.equipment_quantity } type="number" placeholder="请输入设备数量" />
+                </ElFormItem>
+                <ElFormItem label="工作时长(H)" prop="working_hours">
+                  <ElInput v-model={ form.value.working_hours } type="number" placeholder="请输入工作时长(H)" />
                 </ElFormItem>
                 <ElFormItem label="设备效能" prop="equipment_efficiency">
                   <ElInput v-model={ form.value.equipment_efficiency } placeholder="请输入设备效能" />

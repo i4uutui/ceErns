@@ -60,7 +60,7 @@ a {
 }
 ::-webkit-scrollbar-thumb:horizontal{
   width: 10px;
-  background-color: rgba(229, 229, 229, 1);
+  background-color: rgba(82, 196, 26, 1);
   -webkit-border-radius: 6px;
 }
 html,

@@ -101,6 +101,7 @@ export default defineComponent({
             
           }else{
             // 修改
+            low.children.forEach(e => e.process_bom_id = edit.value)
             const myForm = {
               id: edit.value,
               ...low
