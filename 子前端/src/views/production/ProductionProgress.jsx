@@ -29,9 +29,6 @@ export default defineComponent({
       remarks: '',
     })
     let tableData = ref([])
-    let currentPage = ref(1);
-    let pageSize = ref(10);
-    let total = ref(0);
     let cycle = ref([])
     let uniqueEquipments = ref([])
     
@@ -78,12 +75,7 @@ export default defineComponent({
     
     // 获取列表
     const fetchProductList = async () => {
-      const res = await request.get('/api/production_progress', {
-        params: {
-          page: currentPage.value,
-          pageSize: pageSize.value
-        },
-      });
+      const res = await request.get('/api/production_progress');
       tableData.value = res.data;
       // 集合equipment并且去重
       uniqueEquipments.value = [...res.data
@@ -93,7 +85,6 @@ export default defineComponent({
         .reduce((map, equip) => map.set(equip.id, equip), new Map())
         .values()
       ];
-      total.value = res.total;
     };
     const getProcessCycle = async () => {
       const res = await request.get('/api/getProcessCycle')
@@ -135,43 +126,33 @@ export default defineComponent({
       let cycleLength = cycle.value.length * 3
       if(rowIndex == 1 && columnIndex >= 0 && columnIndex < cycleLength || rowIndex == 0 && columnIndex >= columnLength && columnIndex < columnLength + cycleLength){
         if(rowIndex == 0){
-          return { backgroundColor: getColumnStyle(columnIndex, columnLength) }
+          return { backgroundColor: getColumnStyle(columnIndex, columnLength, 3) }
         }else{
-          return { backgroundColor: getColumnStyle(columnIndex, 0) }
+          return { backgroundColor: getColumnStyle(columnIndex, 0, 3) }
         }
       }
       if(rowIndex == 0 && columnIndex == columnLength - 1){
         return { backgroundColor: '#A8EAE4' }
       }
-      if(rowIndex == 0 && columnIndex >= columnLength + cycleLength && columnIndex < row.length - 1 || rowIndex == 1 && columnIndex >= cycleLength && columnIndex < row.length){
+      if(rowIndex == 0 && columnIndex >= columnLength + cycleLength && columnIndex <= row.length - 1 && columnIndex % 2 == 1 || rowIndex == 1 && Math.floor((columnIndex - 1) / 8) % 2 == 0){
         return { backgroundColor: '#fbe1e5' }
       }
     }
     const cellStyle = ({ columnIndex, rowIndex, column }) => {
       if(columnIndex >= columnLength && columnIndex < columnLength + cycle.value.length * 3){
-        return { backgroundColor: getColumnStyle(columnIndex, columnLength) }
+        return { backgroundColor: getColumnStyle(columnIndex, columnLength, 3) }
       }
       if(columnIndex == columnLength - 1){
         return { backgroundColor: '#A8EAE4' }
       }
-      if(columnIndex >= columnLength + cycle.value.length * 3 && column.label != '操作'){
+      if(columnIndex >= columnLength + cycle.value.length * 3 && Math.floor((columnIndex) / 8) % 2 == 0){
         return { backgroundColor: '#fbe1e5' }
       }
     }
-    const getColumnStyle = (columnNumber, startNumber) => {
+    const getColumnStyle = (columnNumber, startNumber, number) => {
       const offset = columnNumber - startNumber;
-      const group = Math.floor(offset / 3);
+      const group = Math.floor(offset / number);
       return group % 2 === 0 ? '#C9E4B4' : '#A8EAE4';
-    }
-    // 分页相关
-    function pageSizeChange(val) {
-      currentPage.value = 1;
-      pageSize.value = val;
-      fetchProductList()
-    }
-    function currentPageChange(val) {
-      currentPage.value = val;
-      fetchProductList();
     }
 
     return() => (
@@ -183,7 +164,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
                   <ElTableColumn prop="notice.notice" label="生产订单号" width="100" />
                   <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" />
                   <ElTableColumn prop="customer_order" label="客户订单号" width="120" />
@@ -228,15 +209,16 @@ export default defineComponent({
                       </ElTableColumn>
                     ))
                   }
-                  <ElTableColumn label="操作" width="140" fixed="right">
-                    {(scope) => (
-                      <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                      </>
-                    )}
-                  </ElTableColumn>
+                  {/*
+                    <ElTableColumn label="操作" width="140" fixed="right">
+                      {(scope) => (
+                        <>
+                          <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        </>
+                      )}
+                    </ElTableColumn>
+                  */}
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}

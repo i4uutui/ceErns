@@ -6,12 +6,9 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 
 // 获取生产进度表列表
 router.get('/production_progress', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
-  const offset = (page - 1) * pageSize;
-  
   const { company_id } = req.user;
   
-  const { count, rows } = await SubProductionProgress.findAndCountAll({
+  const rows = await SubProductionProgress.findAll({
     where: {
       is_deleted: 1,
       company_id,
@@ -42,12 +39,10 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
       },
     ],
     order: [['created_at', 'DESC']],
-    limit: parseInt(pageSize),
-    offset
+    limit: 200
   })
-  const totalPages = Math.ceil(count / pageSize)
   
-  const fromData = rows.map(item => {
+  const fromData = rows.map((item, index) => {
     const dataValue = item.toJSON()
     dataValue.notice = formatObjectTime(dataValue.notice)
     return dataValue
@@ -56,10 +51,6 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
   // 返回所需信息
   res.json({ 
     data: formatArrayTime(fromData), 
-    total: count, 
-    totalPages, 
-    currentPage: parseInt(page), 
-    pageSize: parseInt(pageSize),
     code: 200 
   });
 });
